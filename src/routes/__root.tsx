@@ -19,7 +19,11 @@ function RootLayout() {
   const pathname = useRouterState({ select: (s) => s.location.pathname });
   const items: TabBarItem[] = TABS.map((tab) => ({
     ...tab,
-    active: tab.href === "/" ? pathname === "/" : pathname.startsWith(tab.href),
+    // The decks tab also owns deck screens (/decks/...).
+    active:
+      tab.href === "/"
+        ? pathname === "/" || pathname.startsWith("/decks")
+        : pathname.startsWith(tab.href),
   }));
   return (
     <AppShell nav={<TabBar label={t.nav.label} items={items} linkAs={RouterLink} />}>

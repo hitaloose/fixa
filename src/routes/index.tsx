@@ -1,6 +1,4 @@
 import { createFileRoute } from "@tanstack/react-router";
-import { t } from "../i18n/pt-BR";
+import { DeckListScreen } from "../features/decks";
 
-export const Route = createFileRoute("/")({
-  component: () => <h1 className="pt-6 font-display text-[32px] font-bold">{t.nav.decks}</h1>,
-});
+export const Route = createFileRoute("/")({ component: DeckListScreen });

@@ -5,6 +5,7 @@ export {
   type DoneToday,
   effectiveLimits,
   LEARN_AHEAD_MS,
+  type QueueCounts,
   type QueueInput,
   releaseBuried,
   type StudyQueue,
