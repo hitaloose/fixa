@@ -1,6 +1,6 @@
 import fc from "fast-check";
 import { describe, expect, it } from "vitest";
-import { addDays, daysBetween, endOfStudyDay, studyDay } from "./index";
+import { addDays, daysBetween, endOfStudyDay, startOfStudyDay, studyDay } from "./index";
 
 const SP = "America/Sao_Paulo"; // UTC-3, no DST
 const LISBON = "Europe/Lisbon"; // DST: 2026-03-29 01:00Z (+1h), 2026-10-25 01:00Z (-1h)
@@ -105,6 +105,33 @@ describe("endOfStudyDay", () => {
         expect(end).toBeGreaterThan(now);
         expect(studyDay(end - 1, cutoff, tz)).toBe(today);
         expect(studyDay(end, cutoff, tz)).toBe(addDays(today, 1));
+      }),
+    );
+  });
+});
+
+describe("startOfStudyDay", () => {
+  it.each([
+    ["afternoon → today's cutoff", "2026-11-16T15:00:00Z", SP, "2026-11-16T07:00:00.000Z"],
+    ["before cutoff → yesterday's cutoff", "2026-11-16T06:00:00Z", SP, "2026-11-15T07:00:00.000Z"],
+    ["exactly at cutoff → now", "2026-11-16T07:00:00Z", SP, "2026-11-16T07:00:00.000Z"],
+  ])("%s", (_label, iso, tz, start) => {
+    expect(new Date(startOfStudyDay(at(iso), 4, tz)).toISOString()).toBe(start);
+  });
+
+  it("is the first instant of the current study day, for any instant and zone", () => {
+    const zones = fc.constantFrom("UTC", SP, LISBON, "Australia/Sydney", "Asia/Kolkata");
+    const instants = fc.integer({
+      min: at("2020-01-01T00:00:00Z"),
+      max: at("2035-01-01T00:00:00Z"),
+    });
+    fc.assert(
+      fc.property(instants, fc.integer({ min: 0, max: 23 }), zones, (now, cutoff, tz) => {
+        const start = startOfStudyDay(now, cutoff, tz);
+        const today = studyDay(now, cutoff, tz);
+        expect(start).toBeLessThanOrEqual(now);
+        expect(studyDay(start, cutoff, tz)).toBe(today);
+        expect(studyDay(start - 1, cutoff, tz)).toBe(addDays(today, -1));
       }),
     );
   });

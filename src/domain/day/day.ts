@@ -86,15 +86,24 @@ export function studyDay(now: number, cutoffHour: number, timeZone: string): str
 }
 
 /**
- * First instant of the next study day (exclusive end of today). Handles DST: when the cutoff
- * wall time is skipped it is the moment clocks jump past it; when repeated, its first occurrence.
+ * Instant at which study day `day` begins. Handles DST: when the cutoff wall time is skipped it
+ * is the moment clocks jump past it; when repeated, its first occurrence.
  */
-export function endOfStudyDay(now: number, cutoffHour: number, timeZone: string): number {
-  const tomorrow = addDays(studyDay(now, cutoffHour, timeZone), 1);
-  const wallAsUtc = parseDay(tomorrow) + cutoffHour * HOUR_MS;
+function dayStart(day: string, cutoffHour: number, timeZone: string): number {
+  const wallAsUtc = parseDay(day) + cutoffHour * HOUR_MS;
   const candidates = [
     wallAsUtc - offsetAt(wallAsUtc - DAY_MS, timeZone),
     wallAsUtc - offsetAt(wallAsUtc + DAY_MS, timeZone),
-  ].filter((c) => studyDay(c, cutoffHour, timeZone) === tomorrow);
+  ].filter((c) => studyDay(c, cutoffHour, timeZone) === day);
   return Math.min(...candidates);
+}
+
+/** First instant of the current study day. */
+export function startOfStudyDay(now: number, cutoffHour: number, timeZone: string): number {
+  return dayStart(studyDay(now, cutoffHour, timeZone), cutoffHour, timeZone);
+}
+
+/** First instant of the next study day (exclusive end of today). */
+export function endOfStudyDay(now: number, cutoffHour: number, timeZone: string): number {
+  return dayStart(addDays(studyDay(now, cutoffHour, timeZone), 1), cutoffHour, timeZone);
 }

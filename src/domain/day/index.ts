@@ -1,1 +1,1 @@
-export { addDays, daysBetween, endOfStudyDay, studyDay } from "./day";
+export { addDays, daysBetween, endOfStudyDay, startOfStudyDay, studyDay } from "./day";
