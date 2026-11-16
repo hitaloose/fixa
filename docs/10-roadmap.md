@@ -20,8 +20,8 @@ Marque `[x]` ao concluir. Cada fase termina com o app utilizável. Todo item seg
 
 ## Fase 1 — MVP
 
-- [ ] `domain/day` (hora de corte) e `domain/scheduler` (ts-fsrs + etapas) com os testes de `docs/05-agendamento.md`
-- [ ] `domain/queue` (limites, ordem, irmãos, pai/filhos)
+- [x] `domain/day` (hora de corte) e `domain/scheduler` (ts-fsrs + etapas) com os testes de `docs/05-agendamento.md`
+- [x] `domain/queue` (limites, ordem, irmãos, pai/filhos)
 - [ ] Baralhos: criar (com `::`), renomear, mover, criar subbaralho, excluir, recolher/expandir
 - [ ] Tela inicial com árvore e contagens corretas
 - [ ] Visão geral do baralho (contagens, estimativa, previsão de 7 dias)
