@@ -4,8 +4,8 @@ Marque `[x]` ao concluir. Cada fase termina com o app utilizável. Todo item seg
 
 ## Fase 0 — Fundação
 
-- [ ] Vite + React 19 + TypeScript strict + TanStack Router + Tailwind v4 com tokens de `docs/09-design.md`
-- [ ] Biome (com `noSkippedTests`/`noFocusedTests` como erro), dependency-cruiser com as regras de `docs/03-arquitetura.md`
+- [x] Vite + React 19 + TypeScript strict + TanStack Router + Tailwind v4 com tokens de `docs/09-design.md`
+- [x] Biome (com `noSkippedTests`/`noFocusedTests` como erro), dependency-cruiser com as regras de `docs/03-arquitetura.md`
 - [ ] Vitest + coverage com thresholds por pasta, Testing Library, fake-indexeddb, fast-check, Stryker em `src/domain`, Playwright
 - [ ] Script `pnpm check` e GitHub Actions rodando-o (+ mutação e e2e)
 - [ ] `tests/factories` (makeDeck, makeNote, makeCard, makeReviewLog, makePreset)
