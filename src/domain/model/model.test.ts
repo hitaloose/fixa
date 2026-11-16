@@ -63,7 +63,7 @@ describe("presetSchema", () => {
 
   it.each([
     [["1m", "10m", "1h", "1d"], true],
-    [["30s"], true],
+    [["30s"], false],
     [[], true],
     [["10"], false],
     [["m"], false],

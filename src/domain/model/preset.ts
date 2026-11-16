@@ -1,8 +1,8 @@
 import { z } from "zod";
 import { entity } from "./base";
 
-/** "30s", "1m", "10m", "1h", "1d" — positive integer + unit. */
-export const stepSchema = z.string().regex(/^[1-9]\d*[smhd]$/, "expected a step like 10m");
+/** "1m", "10m", "1h", "1d" — positive integer + unit (m/h/d: the units ts-fsrs supports). */
+export const stepSchema = z.string().regex(/^[1-9]\d*[mhd]$/, "expected a step like 10m");
 const count = z.number().int().nonnegative();
 
 export const presetSchema = entity({
