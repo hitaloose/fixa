@@ -100,6 +100,7 @@ export function makeNote(overrides: Partial<Note> = {}): Note {
 
 const NEW_SCHEDULING: CardSnapshot = {
   queue: "new",
+  state: "new",
   buriedUntilDay: null,
   due: FACTORY_NOW,
   stability: 0,

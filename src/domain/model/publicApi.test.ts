@@ -16,6 +16,7 @@ const ID = "00000000-0000-7000-8000-000000000001";
 const base = { id: ID, createdAt: 1, updatedAt: 1, deletedAt: null };
 const scheduling = {
   queue: "new",
+  state: "new",
   buriedUntilDay: null,
   due: 0,
   stability: 0,

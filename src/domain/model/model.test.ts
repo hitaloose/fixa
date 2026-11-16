@@ -188,6 +188,7 @@ function validCard() {
     deckId: ID2,
     templateOrd: 0,
     queue: "new" as const,
+    state: "new" as const,
     buriedUntilDay: null,
     newPosition: 0,
     due: 1_000,
@@ -231,6 +232,28 @@ describe("cardSchema", () => {
     );
   });
 
+  it("keeps the FSRS state while suspended or buried", () => {
+    const review = { ...validCard(), state: "review" as const, reps: 3 };
+    expect(cardSchema.safeParse({ ...review, queue: "suspended" }).success).toBe(true);
+    expect(
+      cardSchema.safeParse({ ...review, queue: "buried", buriedUntilDay: "2026-11-17" }).success,
+    ).toBe(true);
+  });
+
+  it("requires queue to equal the FSRS state when the card is studyable", () => {
+    expect(
+      cardSchema.safeParse({ ...validCard(), queue: "review", state: "learning" }).success,
+    ).toBe(false);
+    expect(cardSchema.safeParse({ ...validCard(), queue: "review", state: "review" }).success).toBe(
+      true,
+    );
+  });
+
+  it("rejects a missing FSRS state", () => {
+    const { state: _state, ...withoutState } = validCard();
+    expect(cardSchema.safeParse(withoutState).success).toBe(false);
+  });
+
   it("rejects an unknown queue", () => {
     expect(cardSchema.safeParse({ ...validCard(), queue: "done" }).success).toBe(false);
   });
@@ -245,6 +268,7 @@ function validLog() {
     stateBefore: "new" as const,
     cardBefore: {
       queue: "new" as const,
+      state: "new" as const,
       buriedUntilDay: null,
       due: 1_000,
       stability: 0,

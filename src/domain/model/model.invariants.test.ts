@@ -33,6 +33,7 @@ const deck = {
 };
 const scheduling = {
   queue: "new",
+  state: "new",
   buriedUntilDay: null,
   due: 0,
   stability: 0,
@@ -107,6 +108,12 @@ describe("refinement issues point at the offending field", () => {
     ]);
   });
 
+  it("studyable card whose queue differs from its FSRS state", () => {
+    expect(issues(cardSchema, { ...card, queue: "review" })).toEqual([
+      { path: ["queue"], message: "queue must equal the FSRS state unless suspended or buried" },
+    ]);
+  });
+
   it("duplicate field names", () => {
     expect(
       issues(noteTypeSchema, { ...noteType, fields: [field("a", "A"), field("b", "A")] }),
@@ -169,8 +176,15 @@ describe("patterns are anchored at both ends", () => {
 });
 
 describe("every documented enum value is accepted and others rejected", () => {
-  it.each(["new", "learning", "review", "relearning", "suspended"])("card queue %s", (queue) => {
-    expect(cardSchema.safeParse({ ...card, queue }).success).toBe(true);
+  it.each(["new", "learning", "review", "relearning"])(
+    "card queue %s (matching its state)",
+    (queue) => {
+      expect(cardSchema.safeParse({ ...card, queue, state: queue }).success).toBe(true);
+    },
+  );
+
+  it("card queue suspended", () => {
+    expect(cardSchema.safeParse({ ...card, queue: "suspended" }).success).toBe(true);
   });
 
   it("card queue buried (with its day)", () => {

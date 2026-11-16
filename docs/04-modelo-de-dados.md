@@ -71,6 +71,7 @@ Tipos padrão criados no primeiro uso (seed) com IDs fixos conhecidos.
 | `deckId` | string | O cartão pertence ao baralho, não a nota (igual Anki). |
 | `templateOrd` | int | Índice do template (ou número do cloze − 1). |
 | `queue` | `"new" \| "learning" \| "review" \| "relearning" \| "suspended" \| "buried"` | Fila efetiva. `suspended`/`buried` guardam o estado FSRS intacto. |
+| `state` | `"new" \| "learning" \| "review" \| "relearning"` | Estado FSRS. Igual a `queue`, exceto quando suspenso/enterrado — é o que permite reativar o cartão sem perder o estado. Também vai no snapshot `cardBefore` do `ReviewLog`. |
 | `buriedUntilDay` | string \| null | `"2026-11-17"` — volta automaticamente. |
 | `newPosition` | int | Ordem de introdução dos novos. |
 | `due` | number (epoch ms) | Próxima apresentação. |
