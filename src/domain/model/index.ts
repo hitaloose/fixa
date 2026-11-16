@@ -6,3 +6,4 @@ export * from "./note";
 export * from "./noteType";
 export * from "./preset";
 export * from "./reviewLog";
+export * from "./settings";
