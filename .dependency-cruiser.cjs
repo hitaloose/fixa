@@ -29,11 +29,11 @@ module.exports = {
       to: { path: "^src/(features|data|domain|routes|app|workers)/" },
     },
     {
-      name: "data-only-domain-model-and-lib",
+      name: "data-only-domain-and-lib",
       severity: "error",
       from: { path: "^src/data/" },
       to: {
-        path: ["^src/(features|ui|routes|app|workers|i18n)/", "^src/domain/(?!model/|ports\\.ts)"],
+        path: "^src/(features|ui|routes|app|workers|i18n)/",
       },
     },
     {

@@ -1,14 +1,14 @@
 import {
   type Preset,
   type PresetInput,
-  parseCard,
-  parseDeck,
   parseNote,
   parseNoteType,
   parsePreset,
 } from "../../domain/model";
 import type { Clock, IdGenerator } from "../../domain/ports";
 import type { FixaDb } from "../db";
+import { createCardsRepository } from "./cards";
+import { createDecksRepository } from "./decks";
 import { createEntityRepository } from "./entityRepository";
 import { createMediaRepository } from "./media";
 import { createReviewLogsRepository } from "./reviewLogs";
@@ -28,10 +28,10 @@ export function createRepositories({ db, clock, ids }: RepositoryDeps) {
       parse: parsePreset,
       ...entity,
     }),
-    decks: createEntityRepository({ table: db.decks, parse: parseDeck, ...entity }),
+    decks: createDecksRepository({ db, ...entity }),
     noteTypes: createEntityRepository({ table: db.noteTypes, parse: parseNoteType, ...entity }),
     notes: createEntityRepository({ table: db.notes, parse: parseNote, ...entity }),
-    cards: createEntityRepository({ table: db.cards, parse: parseCard, ...entity }),
+    cards: createCardsRepository({ db, ...entity }),
     reviewLogs: createReviewLogsRepository({ table: db.reviewLogs, clock }),
     media: createMediaRepository({ table: db.media }),
     settings: createSettingsRepository({ table: db.settings }),

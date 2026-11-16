@@ -102,12 +102,14 @@ Testes de unidade/componente ficam **ao lado** do arquivo (`foo.ts` + `foo.test.
 | `routes` | `features/*/index.ts`, `ui`, `app` | internos de feature, `data`, `domain` |
 | `features/x` | `ui`, `data`, `domain`, `lib`, `i18n`, a própria feature | outra feature |
 | `ui` | `lib`, `i18n` | `features`, `data`, `domain` |
-| `data` | `domain/model`, `lib` | `features`, `ui`, React |
+| `data` | `domain` (modelo e regras puras), `lib` | `features`, `ui`, `i18n`, React |
 | `domain` | só `domain` (+ libs puras: ts-fsrs, zod) | **qualquer outra pasta**, React, Dexie, DOM |
 | `lib` | nada do projeto | — |
 | `workers` | `domain`, `lib` | `features`, `ui` |
 
 **Como features chegam aos dados:** `src/data/runtime.ts` guarda `{ db, clock, ids, repos }`, configurado uma vez no bootstrap (`src/app`) e por teste (`configureRuntime`). Hooks de feature usam `runtime().repos`; nenhuma feature importa `app`, e `data` continua sem React.
+
+**`data` usa regras puras do `domain`** (ex.: `planDeckPath`, `checkMove`) dentro da mesma transação em que lê e grava — assim a validação e a escrita não se separam. A dependência continua apontando para o domínio. *(Decisão de 2026-11-16, aprovada pelo usuário.)*
 
 **`lib` não importa `domain`:** as implementações de `Clock`/`IdGenerator` em `lib` são estruturalmente compatíveis com `domain/ports.ts`, sem import.
 

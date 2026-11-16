@@ -23,7 +23,8 @@ export function doneTodayFrom(
     ) {
       continue;
     }
-    const entry = (done[deckId] ??= { newIntroduced: 0, reviewsDone: 0 });
+    const entry = done[deckId] ?? { newIntroduced: 0, reviewsDone: 0 };
+    done[deckId] = entry;
     if (log.stateBefore === "new") entry.newIntroduced += 1;
     else entry.reviewsDone += 1;
   }

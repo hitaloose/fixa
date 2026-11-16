@@ -107,7 +107,7 @@ export function searchTree(tree: DeckNode[], query: string): DeckNode[] {
   const q = fold(query.trim());
   if (!q) return tree;
   const search = (nodes: readonly DeckNode[]): DeckNode[] =>
-    nodes.flatMap((node) => {
+    nodes.flatMap((node): DeckNode[] => {
       const children = search(node.children);
       if (children.length > 0)
         return [{ ...node, deck: { ...node.deck, collapsed: false }, children }];
