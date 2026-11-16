@@ -1,0 +1,10 @@
+node_modules/
+dist/
+dev-dist/
+coverage/
+reports/
+.stryker-tmp/
+test-results/
+playwright-report/
+*.local
+.DS_Store

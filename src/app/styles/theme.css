@@ -1,0 +1,65 @@
+@import "tailwindcss";
+
+/* Design tokens — source of truth: docs/09-design.md */
+@theme {
+  --color-bg: #f5f3ee;
+  --color-surface: #ffffff;
+  --color-ink: #17181c;
+  --color-muted: #5e6068;
+  --color-faint: #8a8c93;
+  --color-line: #e3e0d8;
+  --color-line-soft: #eeebe4;
+  --color-primary: #2b4fd8;
+  --color-danger: #b42318;
+
+  --color-new: #2b4fd8;
+  --color-new-bg: #eef1fc;
+  --color-new-ink: #2440b8;
+  --color-learning: #b4530a;
+  --color-learning-bg: #fcf0e6;
+  --color-learning-ink: #93430a;
+  --color-review: #23744a;
+  --color-review-bg: #e8f3ec;
+  --color-review-ink: #1e6640;
+
+  --color-again-bg: #fbe9e7;
+  --color-again-ink: #a11f15;
+  --color-hard-bg: #ecebe6;
+  --color-hard-ink: #2f3136;
+  --color-good-bg: #e3f1e8;
+  --color-good-ink: #1a5c39;
+  --color-easy-bg: #e6ebfb;
+  --color-easy-ink: #2440b8;
+
+  --font-sans: "Inter", system-ui, sans-serif;
+  --font-display: "Space Grotesk", "Inter", system-ui, sans-serif;
+
+  --radius-section: 20px;
+  --radius-list: 16px;
+  --radius-field: 14px;
+  --radius-button: 12px;
+  --radius-chip: 999px;
+
+  --spacing-tabbar: 84px;
+}
+
+@layer base {
+  html,
+  body {
+    background: var(--color-bg);
+    color: var(--color-ink);
+    font-family: var(--font-sans);
+    font-size: 15px;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    /* biome-ignore lint/complexity/noImportantStyles: reduced-motion must override every animation */
+    animation-duration: 0.01ms !important;
+    /* biome-ignore lint/complexity/noImportantStyles: reduced-motion must override every transition */
+    transition-duration: 0.01ms !important;
+  }
+}
