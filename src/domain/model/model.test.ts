@@ -7,7 +7,7 @@ import {
   noteTypeSchema,
   presetSchema,
   reviewLogSchema,
-} from "./index";
+} from "./schemas";
 
 const ID = "00000000-0000-7000-8000-000000000001";
 const ID2 = "00000000-0000-7000-8000-000000000002";

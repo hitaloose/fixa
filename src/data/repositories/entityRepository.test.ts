@@ -1,6 +1,6 @@
 import { describe, expect, it } from "vitest";
 import { testDb } from "../../../tests/db";
-import { deckSchema } from "../../domain/model";
+import { parseDeck } from "../../domain/model";
 import { fixedClock } from "../../lib/clock";
 import { sequentialIds } from "../../lib/ids";
 import { createEntityRepository } from "./entityRepository";
@@ -13,7 +13,7 @@ function setup() {
   const clock = fixedClock(T0);
   const repo = createEntityRepository({
     table: db.decks,
-    schema: deckSchema,
+    parse: parseDeck,
     clock,
     ids: sequentialIds(),
   });

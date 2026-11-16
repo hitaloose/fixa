@@ -1,24 +1,24 @@
 /**
- * Deterministic test data. Every factory parses through the domain schema, so a factory
+ * Deterministic test data. Every factory parses through the domain parse functions, so a factory
  * can never produce an invalid entity. IDs are sequential and reset before each test
  * (tests/setup.node.ts).
  */
 import {
   type Card,
   type CardSnapshot,
-  cardSchema,
   type Deck,
-  deckSchema,
   type Media,
-  mediaSchema,
   type Note,
   type NoteType,
-  noteSchema,
-  noteTypeSchema,
   type Preset,
-  presetSchema,
+  parseCard,
+  parseDeck,
+  parseMedia,
+  parseNote,
+  parseNoteType,
+  parsePreset,
+  parseReviewLog,
   type ReviewLog,
-  reviewLogSchema,
 } from "../../src/domain/model";
 import { sequentialIds } from "../../src/lib/ids";
 
@@ -47,11 +47,11 @@ const base = () => ({
 });
 
 export function makePreset(overrides: Partial<Preset> = {}): Preset {
-  return presetSchema.parse({ ...base(), ...overrides });
+  return parsePreset({ ...base(), ...overrides });
 }
 
 export function makeDeck(overrides: Partial<Deck> = {}): Deck {
-  return deckSchema.parse({
+  return parseDeck({
     ...base(),
     name: "Baralho",
     parentId: null,
@@ -65,7 +65,7 @@ export function makeDeck(overrides: Partial<Deck> = {}): Deck {
 }
 
 export function makeNoteType(overrides: Partial<NoteType> = {}): NoteType {
-  return noteTypeSchema.parse({
+  return parseNoteType({
     ...base(),
     name: "Básico",
     kind: "standard",
@@ -87,7 +87,7 @@ export function makeNoteType(overrides: Partial<NoteType> = {}): NoteType {
 }
 
 export function makeNote(overrides: Partial<Note> = {}): Note {
-  return noteSchema.parse({
+  return parseNote({
     ...base(),
     noteTypeId: overrides.noteTypeId ?? nextId(),
     fields: { front: "Frente", back: "Verso" },
@@ -113,7 +113,7 @@ const NEW_SCHEDULING: CardSnapshot = {
 };
 
 export function makeCard(overrides: Partial<Card> = {}): Card {
-  return cardSchema.parse({
+  return parseCard({
     ...base(),
     noteId: overrides.noteId ?? nextId(),
     deckId: overrides.deckId ?? nextId(),
@@ -126,7 +126,7 @@ export function makeCard(overrides: Partial<Card> = {}): Card {
 }
 
 export function makeReviewLog(overrides: Partial<ReviewLog> = {}): ReviewLog {
-  return reviewLogSchema.parse({
+  return parseReviewLog({
     id: nextId(),
     cardId: overrides.cardId ?? nextId(),
     reviewedAt: FACTORY_NOW,
@@ -144,7 +144,7 @@ export function makeReviewLog(overrides: Partial<ReviewLog> = {}): ReviewLog {
 
 export function makeMedia(overrides: Partial<Media> = {}): Media {
   const id = overrides.id ?? nextHex64();
-  return mediaSchema.parse({
+  return parseMedia({
     id,
     fileName: `${id}.png`,
     mime: "image/png",

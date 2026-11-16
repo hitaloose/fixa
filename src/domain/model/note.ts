@@ -17,3 +17,5 @@ export const noteSchema = entity({
 });
 
 export type Note = z.output<typeof noteSchema>;
+
+export const parseNote = (input: unknown): Note => noteSchema.parse(input);

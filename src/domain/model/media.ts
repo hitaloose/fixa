@@ -10,3 +10,5 @@ export const mediaSchema = z.object({
 });
 
 export type Media = z.output<typeof mediaSchema>;
+
+export const parseMedia = (input: unknown): Media => mediaSchema.parse(input);

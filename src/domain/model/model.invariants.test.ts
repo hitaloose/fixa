@@ -9,7 +9,7 @@ import {
   presetSchema,
   reviewLogSchema,
   settingsSchema,
-} from "./index";
+} from "./schemas";
 
 /** Field-level issues (path + message), so forms can show the error next to the right field. */
 function issues(schema: z.ZodType, value: unknown) {

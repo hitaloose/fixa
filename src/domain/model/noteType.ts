@@ -35,3 +35,5 @@ export const noteTypeSchema = entity({
 export type NoteType = z.output<typeof noteTypeSchema>;
 export type NoteField = z.output<typeof noteFieldSchema>;
 export type CardTemplate = z.output<typeof cardTemplateSchema>;
+
+export const parseNoteType = (input: unknown): NoteType => noteTypeSchema.parse(input);

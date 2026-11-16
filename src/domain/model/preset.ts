@@ -27,3 +27,6 @@ export const presetSchema = entity({
 });
 
 export type Preset = z.output<typeof presetSchema>;
+
+export type PresetInput = z.input<typeof presetSchema>;
+export const parsePreset = (input: unknown): Preset => presetSchema.parse(input);

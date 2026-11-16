@@ -1,5 +1,4 @@
 import type { Table } from "dexie";
-import type { z } from "zod";
 import type { BaseEntity } from "../../domain/model";
 import type { Clock, IdGenerator } from "../../domain/ports";
 
@@ -14,23 +13,25 @@ export interface EntityRepository<T extends BaseEntity, I> {
   restore(id: string): Promise<void>;
 }
 
-export interface EntityRepositoryDeps<T extends BaseEntity, I> {
+export interface EntityRepositoryDeps<T extends BaseEntity> {
   table: Table<NoInfer<T>, string, unknown>;
-  schema: z.ZodType<T, I>;
+  /** Domain parse function (e.g. parseDeck): validates and returns the entity, or throws. */
+  parse: (input: unknown) => T;
   clock: Clock;
   ids: IdGenerator;
 }
 
 /**
  * CRUD with validation, automatic timestamps and soft delete (deletedAt).
- * Every write is validated by the domain schema before it touches IndexedDB.
+ * Every write is validated by the domain parse function before it touches IndexedDB.
  */
-export function createEntityRepository<T extends BaseEntity, I>({
+/** `I` is the input shape for create (defaults to T; presets use PresetInput). */
+export function createEntityRepository<T extends BaseEntity, I = T>({
   table,
-  schema,
+  parse,
   clock,
   ids,
-}: EntityRepositoryDeps<T, I>): EntityRepository<T, I> {
+}: EntityRepositoryDeps<T>): EntityRepository<T, I> {
   async function mustGet(id: string): Promise<T> {
     const found = await table.get(id);
     if (!found) throw new Error(`${table.name} ${id} not found`);
@@ -38,7 +39,7 @@ export function createEntityRepository<T extends BaseEntity, I>({
   }
 
   async function write(next: unknown): Promise<T> {
-    const valid = schema.parse(next);
+    const valid = parse(next);
     await table.put(valid);
     return valid;
   }

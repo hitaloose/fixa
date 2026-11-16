@@ -21,3 +21,17 @@ export const DEFAULT_SETTINGS: Settings = {
   haptics: true,
   theme: "light",
 };
+
+/** Validates one setting value; throws when invalid. */
+export function parseSetting<K extends SettingKey>(key: K, value: unknown): Settings[K] {
+  return settingsSchema.shape[key].parse(value) as Settings[K];
+}
+
+/** Like parseSetting, but returns undefined for a missing or invalid value. */
+export function safeParseSetting<K extends SettingKey>(
+  key: K,
+  value: unknown,
+): Settings[K] | undefined {
+  const result = settingsSchema.shape[key].safeParse(value);
+  return result.success ? (result.data as Settings[K]) : undefined;
+}

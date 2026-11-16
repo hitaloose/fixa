@@ -28,3 +28,5 @@ export const deckSchema = entity({
 
 export type Deck = z.output<typeof deckSchema>;
 export type DeckOverrides = z.output<typeof deckOverridesSchema>;
+
+export const parseDeck = (input: unknown): Deck => deckSchema.parse(input);

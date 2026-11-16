@@ -68,6 +68,21 @@ module.exports = {
       from: { path: "^src/workers/" },
       to: { path: "^src/(features|ui|data|routes|app)/" },
     },
+    {
+      name: "zod-only-in-domain-boundaries",
+      comment:
+        "zod is a detail of domain/model, domain/backup and domain/import (docs/02 › Decisões).",
+      severity: "error",
+      from: { path: "^src/", pathNot: "^src/domain/(model|backup|import)/" },
+      to: { path: "node_modules/zod/" },
+    },
+    {
+      name: "domain-model-public-api-only",
+      comment: "Outside domain/model, import only its index (types + parse functions).",
+      severity: "error",
+      from: { path: "^src/", pathNot: "^src/domain/model/" },
+      to: { path: "^src/domain/model/(?!index\\.ts$)" },
+    },
   ],
   options: {
     doNotFollow: { path: "node_modules" },

@@ -1,5 +1,5 @@
 import type { EntityTable } from "dexie";
-import { type ReviewLog, reviewLogSchema } from "../../domain/model";
+import { parseReviewLog, type ReviewLog } from "../../domain/model";
 import type { Clock } from "../../domain/ports";
 
 /** Append-only: logs are never overwritten or deleted; "undo" only marks undoneAt. */
@@ -12,7 +12,7 @@ export function createReviewLogsRepository({
 }) {
   return {
     async append(log: ReviewLog): Promise<void> {
-      await table.add(reviewLogSchema.parse(log));
+      await table.add(parseReviewLog(log));
     },
 
     byCard: (cardId: string): Promise<ReviewLog[]> =>

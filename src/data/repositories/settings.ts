@@ -1,9 +1,10 @@
 import type { EntityTable } from "dexie";
 import {
   DEFAULT_SETTINGS,
+  parseSetting,
   type SettingKey,
   type Settings,
-  settingsSchema,
+  safeParseSetting,
 } from "../../domain/model";
 import type { SettingRow } from "../db";
 
@@ -11,12 +12,12 @@ export function createSettingsRepository({ table }: { table: EntityTable<Setting
   return {
     async get<K extends SettingKey>(key: K): Promise<Settings[K]> {
       const row = await table.get(key);
-      const parsed = settingsSchema.shape[key].safeParse(row?.value);
-      return parsed.success ? (parsed.data as Settings[K]) : DEFAULT_SETTINGS[key];
+      const stored = row ? safeParseSetting(key, row.value) : undefined;
+      return stored === undefined ? DEFAULT_SETTINGS[key] : stored;
     },
 
     async set<K extends SettingKey>(key: K, value: Settings[K]): Promise<void> {
-      await table.put({ key, value: settingsSchema.shape[key].parse(value) });
+      await table.put({ key, value: parseSetting(key, value) });
     },
   };
 }

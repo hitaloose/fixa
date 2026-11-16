@@ -1,4 +1,4 @@
-import { type NoteType, noteTypeSchema, presetSchema } from "../domain/model";
+import { type NoteType, parseNoteType, parsePreset } from "../domain/model";
 import type { Clock } from "../domain/ports";
 import type { FixaDb } from "./db";
 
@@ -80,12 +80,12 @@ export async function ensureSeed({ db, clock }: { db: FixaDb; clock: Clock }, la
   await db.transaction("rw", db.presets, db.noteTypes, async () => {
     if (!(await db.presets.get(SEED_IDS.preset))) {
       await db.presets.add(
-        presetSchema.parse({ id: SEED_IDS.preset, name: labels.presetName, ...stamps }),
+        parsePreset({ id: SEED_IDS.preset, name: labels.presetName, ...stamps }),
       );
     }
     for (const nt of seedNoteTypes(labels)) {
       if (!(await db.noteTypes.get(nt.id)))
-        await db.noteTypes.add(noteTypeSchema.parse({ ...nt, ...stamps }));
+        await db.noteTypes.add(parseNoteType({ ...nt, ...stamps }));
     }
   });
 }

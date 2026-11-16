@@ -41,3 +41,5 @@ export const cardSchema = entity({
 export type Card = z.output<typeof cardSchema>;
 export type Queue = z.output<typeof queueSchema>;
 export type FsrsState = z.output<typeof fsrsStateSchema>;
+
+export const parseCard = (input: unknown): Card => cardSchema.parse(input);

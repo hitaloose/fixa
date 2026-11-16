@@ -21,3 +21,5 @@ export const reviewLogSchema = z.object({
 
 export type ReviewLog = z.output<typeof reviewLogSchema>;
 export type CardSnapshot = z.output<typeof cardSnapshotSchema>;
+
+export const parseReviewLog = (input: unknown): ReviewLog => reviewLogSchema.parse(input);
