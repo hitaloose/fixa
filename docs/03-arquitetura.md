@@ -107,6 +107,10 @@ Testes de unidade/componente ficam **ao lado** do arquivo (`foo.ts` + `foo.test.
 | `lib` | nada do projeto | — |
 | `workers` | `domain`, `lib` | `features`, `ui` |
 
+**Como features chegam aos dados:** `src/data/runtime.ts` guarda `{ db, clock, ids, repos }`, configurado uma vez no bootstrap (`src/app`) e por teste (`configureRuntime`). Hooks de feature usam `runtime().repos`; nenhuma feature importa `app`, e `data` continua sem React.
+
+**`lib` não importa `domain`:** as implementações de `Clock`/`IdGenerator` em `lib` são estruturalmente compatíveis com `domain/ports.ts`, sem import.
+
 Se duas features precisam conversar (ex.: "estudar" a partir da tela do baralho), a ligação é por **rota** (navegação), não por import.
 
 ## Fluxos principais
