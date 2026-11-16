@@ -1,0 +1,49 @@
+// Vitest Snapshot v1, https://vitest.dev/guide/snapshot.html
+
+exports[`scheduler properties > is reproducible: a fixed sequence yields the recorded schedule 1`] = `
+{
+  "final": {
+    "lapses": 1,
+    "reps": 7,
+    "scheduledDays": 14,
+    "state": "review",
+  },
+  "schedule": [
+    [
+      3,
+      "new",
+      0,
+    ],
+    [
+      3,
+      "learning",
+      2,
+    ],
+    [
+      3,
+      "review",
+      9,
+    ],
+    [
+      1,
+      "review",
+      0,
+    ],
+    [
+      3,
+      "relearning",
+      2,
+    ],
+    [
+      3,
+      "review",
+      4,
+    ],
+    [
+      4,
+      "review",
+      14,
+    ],
+  ],
+}
+`;
