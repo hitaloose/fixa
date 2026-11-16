@@ -6,17 +6,17 @@ Marque `[x]` ao concluir. Cada fase termina com o app utilizável. Todo item seg
 
 - [x] Vite + React 19 + TypeScript strict + TanStack Router + Tailwind v4 com tokens de `docs/09-design.md`
 - [x] Biome (com `noSkippedTests`/`noFocusedTests` como erro), dependency-cruiser com as regras de `docs/03-arquitetura.md`
-- [ ] Vitest + coverage com thresholds por pasta, Testing Library, fake-indexeddb, fast-check, Stryker em `src/domain`, Playwright
-- [ ] Script `pnpm check` e GitHub Actions rodando-o (+ mutação e e2e)
+- [x] Vitest + coverage com thresholds por pasta, Testing Library, fake-indexeddb, fast-check, Stryker em `src/domain`, Playwright
+- [x] Script `pnpm check` e GitHub Actions rodando-o (+ mutação e e2e)
 - [x] `tests/factories` (makeDeck, makeNote, makeCard, makeReviewLog, makePreset)
 - [x] `domain/ports.ts` (Clock, IdGenerator) + implementações em `lib/`
-- [ ] PWA: manifest, ícones, precache, prompt de atualização, `navigator.storage.persist()`
-- [ ] Fontes locais (Inter, Space Grotesk)
+- [x] PWA: manifest, ícones, precache, prompt de atualização, `navigator.storage.persist()`
+- [x] Fontes locais (Inter, Space Grotesk)
 - [x] `domain/model` com schemas zod de todas as entidades
 - [x] Dexie schema v1 + repositórios
 - [x] Seed: predefinição "Padrão", tipos Básico, Básico (e invertido), Omissão
-- [ ] `ui/primitives` e `ui/patterns` base + `TabBar` + layout com área segura
-- [ ] `i18n/pt-BR.ts`
+- [x] `ui/primitives` e `ui/patterns` base + `TabBar` + layout com área segura
+- [x] `i18n/pt-BR.ts`
 
 ## Fase 1 — MVP
 
