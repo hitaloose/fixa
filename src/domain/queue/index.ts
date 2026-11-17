@@ -1,4 +1,5 @@
 export { doneTodayFrom } from "./doneToday";
+export { buryCard, setFlag, suspendCard, unsuspendCard } from "./manual";
 export {
   buildQueue,
   burySiblings,

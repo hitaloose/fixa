@@ -70,6 +70,14 @@ export function DeckOverviewScreen({ deckId }: { deckId: string }) {
         <p className="mt-3 text-center text-sm text-muted">{t.overview.estimate(minutes)}</p>
       </section>
 
+      <Link
+        to="/decks/$deckId/study"
+        params={{ deckId: deck.id }}
+        className="inline-flex min-h-14 items-center justify-center rounded-list bg-ink px-4 font-semibold text-surface"
+      >
+        {t.study.start}
+      </Link>
+
       <section className="rounded-section border border-line bg-surface p-4">
         <h2 id={forecastId} className="text-sm font-semibold">
           {t.overview.forecast}

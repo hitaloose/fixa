@@ -28,7 +28,7 @@ Marque `[x]` ao concluir. Cada fase termina com o app utilizável. Todo item seg
 - [x] `domain/templates`: `{{Campo}}`, `{{FrontSide}}`, cloze (inclusive dentro de fórmula)
 - [x] Editor de nota (Tiptap): formatação, imagem e áudio locais, etiquetas, fixar campo, pré-visualização, histórico, duplicatas
 - [ ] Fórmulas: nó `math` + KaTeX + sheet do MathLive (`docs/07-formulas.md`)
-- [ ] Sessão de estudo: frente/verso, 4 botões com intervalos, atalhos, desfazer, marcar, enterrar, suspender, editar, cronômetro, áudio
+- [x] Sessão de estudo: frente/verso, 4 botões com intervalos, atalhos, desfazer, marcar, enterrar, suspender, editar, cronômetro, áudio
 - [ ] Opções do baralho (predefinições, overrides "só este baralho"/"só hoje")
 - [ ] Navegador: `domain/search`, filtros, ordenação, cartões/notas, lista virtualizada, ações em massa
 - [ ] Estatísticas: hoje, revisões, retenção, sequência, tempo, heatmap, estado dos cartões, respostas por botão

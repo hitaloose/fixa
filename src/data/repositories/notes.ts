@@ -137,6 +137,11 @@ export function createNotesRepository({
         .toArray();
     },
 
+    async getMany(ids: readonly string[]): Promise<Note[]> {
+      const notes = await db.notes.bulkGet([...ids]);
+      return notes.filter((n): n is Note => n !== undefined);
+    },
+
     /** Most recently added notes that still exist, newest first. */
     async recentlyAdded(limit = 50): Promise<Note[]> {
       const entries = await db.addHistory.orderBy("id").reverse().toArray();

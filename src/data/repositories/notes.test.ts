@@ -220,3 +220,15 @@ describe("notes.duplicatesOf", () => {
     expect(await repos.notes.duplicatesOf(reversed.id, "  ")).toEqual([]);
   });
 });
+
+describe("notes.getMany", () => {
+  it("returns the existing notes among the given ids", async () => {
+    const { note } = await repos.notes.add({
+      noteTypeId: reversed.id,
+      deckId: DECK,
+      fields: { front: "cat" },
+      tags: [],
+    });
+    expect((await repos.notes.getMany([note.id, DECK])).map((n) => n.id)).toEqual([note.id]);
+  });
+});

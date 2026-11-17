@@ -27,6 +27,16 @@ describe("DeckOverviewScreen", () => {
     expect(screen.getByRole("link", { name: "Voltar para baralhos" })).toHaveAttribute("href", "/");
   });
 
+  it("links to studying this deck", async () => {
+    const { repos } = await setup();
+    const deck = await repos.decks.createByPath("Inglês", SEED_IDS.preset);
+    renderWithRouter(<DeckOverviewScreen deckId={deck.id} />);
+    expect(await screen.findByRole("link", { name: "Estudar" })).toHaveAttribute(
+      "href",
+      `/decks/${deck.id}/study`,
+    );
+  });
+
   it("links to adding a card to this deck", async () => {
     const { repos } = await setup();
     const deck = await repos.decks.createByPath("Inglês", SEED_IDS.preset);

@@ -118,7 +118,7 @@ Se duas features precisam conversar (ex.: "estudar" a partir da tela do baralho)
 ## Fluxos principais
 
 **Responder um cartão**
-1. A sessão de estudo (estado em Zustand, na feature `study`) tem a fila em memória montada por `domain/queue`.
+1. A sessão de estudo (estado no hook `useStudySession`, na feature `study`) tem a fila em memória montada por `domain/queue`.
 2. Toque em "Bom" → `domain/scheduler.answer(card, rating, now, preset)` devolve `{ nextCard, reviewLog }`.
 3. `cardsRepository.applyReview(nextCard, reviewLog)` grava os dois numa transação Dexie.
 4. A sessão avança para o próximo cartão sem esperar o `useLiveQuery`.

@@ -38,6 +38,10 @@ for (const proto of [Element.prototype, Range.prototype]) {
 if (!Range.prototype.getBoundingClientRect) Range.prototype.getBoundingClientRect = zeroRect;
 if (!document.elementFromPoint) document.elementFromPoint = () => null;
 
+// jsdom does not implement media playback; tests that care spy on these.
+HTMLMediaElement.prototype.play = () => Promise.resolve();
+HTMLMediaElement.prototype.pause = () => {};
+
 afterEach(() => {
   cleanup();
 });
