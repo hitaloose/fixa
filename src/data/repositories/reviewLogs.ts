@@ -25,6 +25,15 @@ export function createReviewLogsRepository({
     recent: (limit: number): Promise<ReviewLog[]> =>
       table.orderBy("reviewedAt").reverse().limit(limit).toArray(),
 
+    /** When studying began and when it last happened (for the backup reminder). */
+    async bounds(): Promise<{ first: number | null; last: number | null }> {
+      const [first, last] = await Promise.all([
+        table.orderBy("reviewedAt").first(),
+        table.orderBy("reviewedAt").last(),
+      ]);
+      return { first: first?.reviewedAt ?? null, last: last?.reviewedAt ?? null };
+    },
+
     async markUndone(id: string): Promise<void> {
       const updated = await table.update(id, { undoneAt: clock.now() });
       if (updated === 0) throw new Error(`reviewLog ${id} not found`);

@@ -3,9 +3,11 @@ import { tanstackRouter } from "@tanstack/router-plugin/vite";
 import react from "@vitejs/plugin-react";
 import { defineConfig } from "vite";
 import { VitePWA } from "vite-plugin-pwa";
+import pkg from "./package.json" with { type: "json" };
 
 export default defineConfig({
   build: { target: "es2022" },
+  define: { __APP_VERSION__: JSON.stringify(pkg.version) },
   plugins: [
     tanstackRouter({ target: "react", autoCodeSplitting: true, routesDirectory: "src/routes" }),
     react(),

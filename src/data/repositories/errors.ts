@@ -17,3 +17,13 @@ export class NoteOperationError extends Error {
     this.name = "NoteOperationError";
   }
 }
+
+export type BackupFileErrorCode = "unreadable" | "invalid";
+
+/** A file that cannot be restored; the UI maps `code` to a message in src/i18n. */
+export class BackupFileError extends Error {
+  constructor(readonly code: BackupFileErrorCode) {
+    super(`backup file rejected: ${code}`);
+    this.name = "BackupFileError";
+  }
+}

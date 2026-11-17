@@ -1,5 +1,5 @@
 import { describe, expect, it, vi } from "vitest";
-import { requestPersistentStorage } from "./storage";
+import { requestPersistentStorage, storageInfo } from "./storage";
 
 describe("requestPersistentStorage", () => {
   it("reports 'unsupported' when the Storage API is missing", async () => {
@@ -31,5 +31,26 @@ describe("requestPersistentStorage", () => {
       persist: async () => true,
     };
     expect(await requestPersistentStorage({ storage })).toBe("unsupported");
+  });
+});
+
+describe("storageInfo", () => {
+  it("reports persistence and usage", async () => {
+    const nav = {
+      storage: {
+        persisted: async () => true,
+        persist: async () => true,
+        estimate: async () => ({ usage: 2_000_000, quota: 100_000_000 }),
+      },
+    };
+    expect(await storageInfo(nav)).toEqual({
+      persisted: true,
+      usage: 2_000_000,
+      quota: 100_000_000,
+    });
+  });
+
+  it("is null where the Storage API does not exist", async () => {
+    expect(await storageInfo({})).toBeNull();
   });
 });

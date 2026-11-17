@@ -290,6 +290,70 @@ export const t = {
     buttons: "Respostas por botão",
     noCards: "Nenhum cartão ainda.",
   },
+  settings: {
+    title: "Ajustes",
+    open: "Ajustes",
+    backup: "Backup",
+    lastBackup: (days: number | null) =>
+      days === null
+        ? "Último backup: nunca"
+        : days === 0
+          ? "Último backup: hoje"
+          : days === 1
+            ? "Último backup: ontem"
+            : `Último backup: há ${days} dias`,
+    kind: "Tipo de backup",
+    full: "Completo (com mídia e histórico)",
+    light: "Leve (sem mídia e sem histórico)",
+    export: "Exportar backup",
+    exported: "Backup exportado.",
+    restore: "Restaurar backup",
+    restoreHint: "Arquivo .fixa exportado deste ou de outro aparelho",
+    restoreTitle: "Restaurar backup",
+    restoreSummary: (decks: number, cards: number, date: string) =>
+      `${plural(decks, "baralho", "baralhos")}, ${plural(cards, "cartão", "cartões")} · exportado em ${date}`,
+    mergeExplain:
+      "Junta com o que já está aqui: fica a versão mais recente de cada item e nenhuma revisão se perde.",
+    merge: "Mesclar",
+    merged: "Backup mesclado.",
+    replaceExplain: "Apaga tudo deste aparelho e carrega o backup.",
+    replaceWord: "substituir",
+    replaceConfirm: "Digite “substituir” para confirmar",
+    replace: "Substituir tudo",
+    replaced: "Backup restaurado.",
+    errors: {
+      unreadable: "Esse arquivo não é um backup do Fixa.",
+      invalid: "Esse backup está corrompido ou é de uma versão mais nova do Fixa.",
+    },
+    study: "Estudo",
+    cutoffHour: "Virada do dia (hora)",
+    cutoffHint: "Revisões depois da meia-noite contam para o dia anterior até essa hora",
+    haptics: "Vibrar ao responder",
+    reminderDays: "Lembrar de fazer backup a cada (dias)",
+    storage: "Armazenamento",
+    persisted: (yes: boolean) =>
+      yes ? "Armazenamento persistente: ativado" : "Armazenamento persistente: não garantido",
+    usage: (usedMb: string, quotaMb: string) => `${usedMb} MB usados de ${quotaMb} MB`,
+    noStorageInfo: "Informação de armazenamento indisponível neste navegador.",
+    askPersist: "Pedir armazenamento persistente",
+    iosHint:
+      "No iPhone, instale o app na tela inicial antes de estudar: os dados do Safari e do app instalado ficam separados.",
+    trash: "Lixeira",
+    trashCount: (n: number) =>
+      n === 0 ? "Lixeira vazia" : plural(n, "item na lixeira", "itens na lixeira"),
+    emptyTrash: "Esvaziar lixeira",
+    emptyTrashTitle: "Esvaziar lixeira?",
+    emptyTrashDescription:
+      "Os itens excluídos serão apagados de vez. Itens com mais de 30 dias já são apagados sozinhos.",
+    emptyTrashConfirm: "Esvaziar",
+    emptied: "Lixeira esvaziada.",
+    reminder: {
+      title: "Backup",
+      never: "Você ainda não fez um backup.",
+      daysAgo: (n: number) => `Seu último backup foi há ${plural(n, "dia", "dias")}.`,
+      action: "Fazer backup",
+    },
+  },
   app: { name: "Fixa" },
   nav: {
     label: "Navegação principal",

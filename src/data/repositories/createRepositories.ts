@@ -1,6 +1,7 @@
 import { parseNoteType } from "../../domain/model";
 import type { Clock, IdGenerator } from "../../domain/ports";
 import type { FixaDb } from "../db";
+import { createBackupRepository } from "./backup";
 import { createBulkRepository } from "./bulk";
 import { createCardsRepository } from "./cards";
 import { createDecksRepository } from "./decks";
@@ -29,6 +30,7 @@ export function createRepositories({ db, clock, ids }: RepositoryDeps) {
     media: createMediaRepository({ table: db.media }),
     settings: createSettingsRepository({ table: db.settings }),
     bulk: createBulkRepository({ db, ...entity }),
+    backup: createBackupRepository({ db, clock }),
   };
 }
 

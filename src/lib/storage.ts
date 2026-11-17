@@ -21,3 +21,19 @@ export async function requestPersistentStorage(nav: {
     return "unsupported";
   }
 }
+
+export interface StorageInfo {
+  persisted: boolean;
+  usage: number;
+  quota: number;
+}
+
+/** What the settings screen shows about local storage; null where the API is missing. */
+export async function storageInfo(nav: {
+  storage?: StorageLike & { estimate?: () => Promise<{ usage?: number; quota?: number }> };
+}): Promise<StorageInfo | null> {
+  const storage = nav.storage;
+  if (!storage?.estimate || !storage.persisted) return null;
+  const [persisted, estimate] = await Promise.all([storage.persisted(), storage.estimate()]);
+  return { persisted, usage: estimate.usage ?? 0, quota: estimate.quota ?? 0 };
+}

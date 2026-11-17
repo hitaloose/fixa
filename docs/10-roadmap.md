@@ -32,7 +32,7 @@ Marque `[x]` ao concluir. Cada fase termina com o app utilizável. Todo item seg
 - [x] Opções do baralho (predefinições, overrides "só este baralho"/"só hoje")
 - [x] Navegador: `domain/search`, filtros, ordenação, cartões/notas, lista virtualizada, ações em massa
 - [x] Estatísticas: hoje, revisões, retenção, sequência, tempo, heatmap, estado dos cartões, respostas por botão
-- [ ] Backup: exportar, restaurar (substituir/mesclar com replay), lembrete (`docs/06-dados-e-backup.md`)
+- [x] Backup: exportar, restaurar (substituir/mesclar com replay), lembrete (`docs/06-dados-e-backup.md`)
 - [ ] E2E offline: criar baralho → cartão com fração → estudar → estatística; exportar → mesclar em outro perfil
 
 ## Fase 2 — Compatibilidade Anki

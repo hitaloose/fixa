@@ -2,6 +2,8 @@ export { createRepositories, type Repositories, type RepositoryDeps } from "./cr
 export type { DeckOptionsWrite } from "./decks";
 export type { EntityRepository } from "./entityRepository";
 export {
+  BackupFileError,
+  type BackupFileErrorCode,
   type DeckErrorCode,
   DeckOperationError,
   type NoteErrorCode,
