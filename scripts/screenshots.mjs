@@ -39,7 +39,10 @@ async function seed(page) {
 
   await page.goto(BASE);
   await page.getByRole("button", { name: "Novo baralho" }).click();
-  await page.getByRole("dialog").getByRole("textbox", { name: "Nome" }).fill("Matemática::Geometria");
+  await page
+    .getByRole("dialog")
+    .getByRole("textbox", { name: "Nome" })
+    .fill("Matemática::Geometria");
   await page.getByRole("dialog").getByRole("button", { name: "Criar" }).click();
   await page.getByRole("link", { name: "Matemática" }).waitFor();
 
@@ -49,7 +52,9 @@ async function seed(page) {
     ["Fórmula de Bhaskara", "x = \\frac{-b \\pm \\sqrt{b^2 - 4ac}}{2a}"],
   ];
   await page.goto(`${BASE}add`);
-  await page.getByRole("combobox", { name: "Baralho" }).selectOption({ label: "Matemática::Geometria" });
+  await page
+    .getByRole("combobox", { name: "Baralho" })
+    .selectOption({ label: "Matemática::Geometria" });
   for (const [front, latex] of cards) {
     await page.getByRole("textbox", { name: "Frente" }).click();
     await page.keyboard.type(front);
