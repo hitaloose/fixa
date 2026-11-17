@@ -1,9 +1,16 @@
 import { useCallback, useEffect, useMemo, useReducer, useRef } from "react";
 import { runtime } from "../../../data/runtime";
-import { startOfStudyDay, studyDay } from "../../../domain/day";
+import { endOfStudyDay, startOfStudyDay, studyDay } from "../../../domain/day";
 import { subtreeIds } from "../../../domain/decks";
 import type { Card, Note, NoteType, Preset } from "../../../domain/model";
-import { buryCard, setFlag, suspendCard } from "../../../domain/queue";
+import {
+  buryCard,
+  forgottenToday,
+  reviewAhead,
+  setFlag,
+  studyByTag,
+  suspendCard,
+} from "../../../domain/queue";
 import type { Rating } from "../../../domain/scheduler";
 import { t } from "../../../i18n/pt-BR";
 import {
@@ -40,7 +47,13 @@ interface State {
   tick: number;
 }
 
-async function loadSession(deckId: string): Promise<Loaded | null> {
+/** A custom study session (docs/01 › Estudo personalizado). */
+export type CustomStudy =
+  | { kind: "forgotten" }
+  | { kind: "tag"; tag: string }
+  | { kind: "ahead"; days: number };
+
+async function loadSession(deckId: string, custom: CustomStudy | null): Promise<Loaded | null> {
   const { repos, clock, timeZone } = runtime();
   const now = clock.now();
   const cutoffHour = await repos.settings.get("cutoffHour");
@@ -55,6 +68,13 @@ async function loadSession(deckId: string): Promise<Loaded | null> {
     repos.settings.get("haptics"),
   ]);
   const notes = await repos.notes.getMany([...new Set(cards.map((c) => c.noteId))]);
+  const cardIds = !custom
+    ? null
+    : custom.kind === "forgotten"
+      ? forgottenToday(cards, logsToday, startOfStudyDay(now, cutoffHour, timeZone))
+      : custom.kind === "tag"
+        ? studyByTag(cards, notes, custom.tag)
+        : reviewAhead(cards, endOfStudyDay(now, cutoffHour, timeZone), custom.days);
   return {
     data: {
       rootDeckId: deckId,
@@ -65,6 +85,7 @@ async function loadSession(deckId: string): Promise<Loaded | null> {
       cutoffHour,
       timeZone,
       pinnedId: null,
+      custom: cardIds ? { cardIds, answered: [] } : null,
     },
     notes: new Map(notes.map((n) => [n.id, n])),
     noteTypes: new Map(noteTypes.map((nt) => [nt.id, nt])),
@@ -80,7 +101,8 @@ export interface StudyCard {
 }
 
 /** Study session for a deck: in-memory queue, persisted answers, undo stack (docs/05). */
-export function useStudySession(deckId: string) {
+export function useStudySession(deckId: string, custom: CustomStudy | null = null) {
+  const customKey = JSON.stringify(custom);
   const state = useRef<State>({
     loaded: undefined,
     revealed: false,
@@ -110,13 +132,13 @@ export function useStudySession(deckId: string) {
 
   useEffect(() => {
     let cancelled = false;
-    void loadSession(deckId).then((loaded) => {
+    void loadSession(deckId, JSON.parse(customKey) as CustomStudy | null).then((loaded) => {
       if (!cancelled) update({ loaded, shownAt: runtime().clock.now() });
     });
     return () => {
       cancelled = true;
     };
-  }, [deckId, update]);
+  }, [deckId, customKey, update]);
 
   const s = state.current;
   // biome-ignore lint/correctness/useExhaustiveDependencies: the queue is rebuilt on every change (version) and when time passes (tick)

@@ -1,6 +1,7 @@
 import { fireEvent, screen, waitFor, within } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
 import { beforeEach, describe, expect, it, vi } from "vitest";
+import { makeReviewLog } from "../../../../tests/factories";
 import { renderWithRouter } from "../../../../tests/render";
 import { setupRuntime } from "../../../../tests/runtime";
 import { ensureSeed, SEED_IDS } from "../../../data/seed";
@@ -273,5 +274,57 @@ describe("StudyScreen", () => {
   it("says so when the deck does not exist", async () => {
     renderWithRouter(<StudyScreen deckId="00000000-0000-7000-8000-000000000999" />);
     expect(await screen.findByText("Esse baralho não existe mais.")).toBeInTheDocument();
+  });
+
+  describe("custom study", () => {
+    it("reviews today's forgotten cards, even past the daily limits", async () => {
+      await rt.repos.presets.update(SEED_IDS.preset, { newPerDay: 0 });
+      const { card: forgotten } = await addNote("cat", "gato");
+      await addNote("dog", "cão");
+      await rt.db.reviewLogs.add(
+        makeReviewLog({ cardId: forgotten.id, rating: 1, reviewedAt: NOW - 60_000 }),
+      );
+      renderWithRouter(<StudyScreen deckId={deck.id} custom={{ kind: "forgotten" }} />);
+      expect(await screen.findByText("Esquecidos hoje")).toBeInTheDocument();
+      expect(await card()).toHaveTextContent(/^cat$/);
+      await showAnswer();
+      await userEvent.click(answerButton("Fácil"));
+      expect(
+        await screen.findByText("Pronto! Você terminou este estudo personalizado."),
+      ).toBeInTheDocument();
+    });
+
+    it("studies the cards of a tag", async () => {
+      const { note } = await addNote("cat", "gato");
+      await rt.db.notes.update(note.id, { tags: ["animais"] });
+      await addNote("dog", "cão");
+      renderWithRouter(<StudyScreen deckId={deck.id} custom={{ kind: "tag", tag: "animais" }} />);
+      expect(await screen.findByText("Etiqueta: animais")).toBeInTheDocument();
+      expect(await screen.findByText("1 novo, 0 aprendendo, 0 para revisar")).toBeInTheDocument();
+    });
+
+    it("reviews ahead of time", async () => {
+      const { card: c } = await addNote("cat", "gato");
+      await rt.db.cards.update(c.id, {
+        queue: "review",
+        state: "review",
+        reps: 2,
+        stability: 5,
+        difficulty: 5,
+        scheduledDays: 5,
+        due: NOW + 2 * DAY,
+        lastReviewAt: NOW - 3 * DAY,
+      });
+      renderWithRouter(<StudyScreen deckId={deck.id} custom={{ kind: "ahead", days: 3 }} />);
+      expect(await screen.findByText("Adiantar 3 dias")).toBeInTheDocument();
+      expect(await card()).toHaveTextContent("cat");
+    });
+
+    it("says so when nothing matches", async () => {
+      renderWithRouter(<StudyScreen deckId={deck.id} custom={{ kind: "forgotten" }} />);
+      expect(
+        await screen.findByText("Pronto! Você terminou este estudo personalizado."),
+      ).toBeInTheDocument();
+    });
   });
 });

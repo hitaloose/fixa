@@ -8,6 +8,7 @@ import type { Card, Deck, Preset, ReviewLog } from "../../../domain/model";
 import {
   buildQueue,
   burySiblings,
+  customQueue,
   doneTodayFrom,
   LEARN_AHEAD_MS,
   type QueueCounts,
@@ -26,6 +27,8 @@ export interface SessionData {
   timeZone: string;
   /** A card to show first (the one just undone), while it is still in the queue. */
   pinnedId: string | null;
+  /** Custom study: a fixed list of cards, no daily limits (null = the normal queue). */
+  custom: { cardIds: string[]; answered: string[] } | null;
 }
 
 export interface UpNext {
@@ -52,7 +55,32 @@ export interface AnswerInput {
   logId: string;
 }
 
+function upNextCustom(data: SessionData, now: number): UpNext {
+  const custom = data.custom as NonNullable<SessionData["custom"]>;
+  const ids = customQueue(custom.cardIds, data.cards, new Set(custom.answered), now);
+  const byId = new Map(data.cards.map((c) => [c.id, c]));
+  const queue = ids.map((id) => byId.get(id) as Card);
+  const counts = { new: 0, learning: 0, review: 0 };
+  for (const c of queue)
+    counts[c.queue === "new" ? "new" : c.queue === "review" ? "review" : "learning"] += 1;
+  const pinned = queue.find((c) => c.id === data.pinnedId);
+  const card = pinned ?? queue[0] ?? null;
+  const later = custom.answered
+    .map((id) => byId.get(id))
+    .filter(
+      (c): c is Card =>
+        !!c && (c.queue === "learning" || c.queue === "relearning") && c.due > now + LEARN_AHEAD_MS,
+    )
+    .map((c) => c.due);
+  return {
+    card,
+    counts,
+    waitUntil: card === null && later.length > 0 ? Math.min(...later) - LEARN_AHEAD_MS : null,
+  };
+}
+
 export function upNext(data: SessionData, now: number): UpNext {
+  if (data.custom) return upNextCustom(data, now);
   const { cutoffHour, timeZone, cards } = data;
   const today = studyDay(now, cutoffHour, timeZone);
   const endOfDay = endOfStudyDay(now, cutoffHour, timeZone);
@@ -131,6 +159,9 @@ export function answerCard(
       cards: replaceAll(data.cards, [nextCard, ...buried]),
       logsToday: [...data.logsToday, reviewLog],
       pinnedId: data.pinnedId === cardId ? null : data.pinnedId,
+      custom: data.custom
+        ? { ...data.custom, answered: [...new Set([...data.custom.answered, cardId])] }
+        : null,
     },
     change,
   };
@@ -143,6 +174,9 @@ export function undoAnswer(data: SessionData, change: AnswerChange, now: number)
     cards: replaceAll(data.cards, [change.before, ...change.buriedBefore]),
     logsToday: data.logsToday.map((l) => (l.id === change.log.id ? { ...l, undoneAt: now } : l)),
     pinnedId: change.before.id,
+    custom: data.custom
+      ? { ...data.custom, answered: data.custom.answered.filter((id) => id !== change.before.id) }
+      : null,
   };
 }
 

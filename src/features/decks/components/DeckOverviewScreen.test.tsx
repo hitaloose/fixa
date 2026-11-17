@@ -1,4 +1,5 @@
 import { screen, within } from "@testing-library/react";
+import userEvent from "@testing-library/user-event";
 import { describe, expect, it } from "vitest";
 import { makeCard } from "../../../../tests/factories";
 import { renderWithRouter } from "../../../../tests/render";
@@ -34,6 +35,34 @@ describe("DeckOverviewScreen", () => {
     expect(await screen.findByRole("link", { name: "Estudar" })).toHaveAttribute(
       "href",
       `/decks/${deck.id}/study`,
+    );
+  });
+
+  it("offers custom study: forgotten today, reviews ahead and a tag", async () => {
+    const { repos } = await setup();
+    const deck = await repos.decks.createByPath("Inglês", SEED_IDS.preset);
+    renderWithRouter(<DeckOverviewScreen deckId={deck.id} />);
+    await userEvent.click(await screen.findByRole("button", { name: "Estudo personalizado" }));
+    const sheet = screen.getByRole("dialog", { name: "Estudo personalizado" });
+    const base = `/decks/${deck.id}/study`;
+    expect(within(sheet).getByRole("link", { name: /Esquecidos hoje/ })).toHaveAttribute(
+      "href",
+      `${base}?custom=forgotten`,
+    );
+    expect(within(sheet).getByRole("link", { name: "Adiantar 3 dias" })).toHaveAttribute(
+      "href",
+      `${base}?custom=ahead&days=3`,
+    );
+    await userEvent.click(within(sheet).getByRole("button", { name: "Aumentar Quantos dias" }));
+    expect(within(sheet).getByRole("link", { name: "Adiantar 4 dias" })).toHaveAttribute(
+      "href",
+      `${base}?custom=ahead&days=4`,
+    );
+    expect(within(sheet).queryByRole("link", { name: "Estudar etiqueta" })).not.toBeInTheDocument();
+    await userEvent.type(within(sheet).getByRole("textbox", { name: "Etiqueta" }), "verbos");
+    expect(within(sheet).getByRole("link", { name: "Estudar etiqueta" })).toHaveAttribute(
+      "href",
+      `${base}?custom=tag&tag=verbos`,
     );
   });
 

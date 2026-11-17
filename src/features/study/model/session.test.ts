@@ -22,6 +22,7 @@ function session(cards: Card[], overrides: Partial<SessionData> = {}): SessionDa
     cutoffHour: 4,
     timeZone: TZ,
     pinnedId: null,
+    custom: null,
     ...overrides,
   };
 }
@@ -186,5 +187,55 @@ describe("replaceCard", () => {
     const after = replaceCard(session([a], { pinnedId: a.id }), suspended);
     expect(after.cards).toEqual([suspended]);
     expect(upNext(after, NOW).card).toBeNull();
+  });
+});
+
+describe("custom study", () => {
+  it("shows the chosen cards in order, ignoring daily limits, and counts what is left", () => {
+    const limited = makePreset({ id: preset.id, newPerDay: 0 });
+    const a = newCard({ newPosition: 2 });
+    const b = newCard({ newPosition: 1 });
+    const data = session([a, b], {
+      presets: [limited],
+      custom: { cardIds: [a.id, b.id], answered: [] },
+    });
+    const next = upNext(data, NOW);
+    expect(next.card?.id).toBe(a.id);
+    expect(next.counts).toEqual({ new: 2, learning: 0, review: 0 });
+  });
+
+  it("moves on after each answer and undo brings the card back", () => {
+    const a = newCard();
+    const b = newCard();
+    const data = session([a, b], { custom: { cardIds: [a.id, b.id], answered: [] } });
+    const { data: after, change } = answerCard(data, {
+      cardId: a.id,
+      rating: 4,
+      now: NOW,
+      durationMs: 0,
+      logId: "00000000-0000-7000-8000-00000000f001",
+    });
+    expect(after.custom?.answered).toEqual([a.id]);
+    expect(upNext(after, NOW).card?.id).toBe(b.id);
+    const undone = undoAnswer(after, change, NOW);
+    expect(undone.custom?.answered).toEqual([]);
+    expect(upNext(undone, NOW).card?.id).toBe(a.id);
+  });
+
+  it("finishes when every chosen card was answered", () => {
+    const a = newCard();
+    const data = session([a], { custom: { cardIds: [a.id], answered: [] } });
+    const { data: after } = answerCard(data, {
+      cardId: a.id,
+      rating: 4,
+      now: NOW,
+      durationMs: 0,
+      logId: "00000000-0000-7000-8000-00000000f001",
+    });
+    expect(upNext(after, NOW)).toEqual({
+      card: null,
+      counts: { new: 0, learning: 0, review: 0 },
+      waitUntil: null,
+    });
   });
 });

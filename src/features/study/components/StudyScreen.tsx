@@ -8,7 +8,12 @@ import { t } from "../../../i18n/pt-BR";
 import { formatInterval } from "../../../lib/format";
 import { Button, CardView, Icon, IconButton, Sheet, Toast } from "../../../ui";
 import { useMediaResolver } from "../hooks/useMediaResolver";
-import { type StudyCard, type StudySession, useStudySession } from "../hooks/useStudySession";
+import {
+  type CustomStudy,
+  type StudyCard,
+  type StudySession,
+  useStudySession,
+} from "../hooks/useStudySession";
 
 const RATINGS: Rating[] = [1, 2, 3, 4];
 const RATING_STYLE: Record<Rating, string> = {
@@ -156,8 +161,15 @@ const isTyping = (target: EventTarget | null) =>
   target instanceof HTMLElement &&
   (target.isContentEditable || ["INPUT", "TEXTAREA", "SELECT"].includes(target.tagName));
 
-export function StudyScreen({ deckId }: { deckId: string }) {
-  const session = useStudySession(deckId);
+const customTitle = (custom: CustomStudy) =>
+  custom.kind === "forgotten"
+    ? t.study.custom.forgotten
+    : custom.kind === "tag"
+      ? t.study.custom.tag(custom.tag)
+      : t.study.custom.ahead(custom.days);
+
+export function StudyScreen({ deckId, custom }: { deckId: string; custom?: CustomStudy }) {
+  const session = useStudySession(deckId, custom ?? null);
   const media = useMediaResolver();
   const [moreOpen, setMoreOpen] = useState(false);
   const swipeStart = useRef<number | null>(null);
@@ -235,6 +247,9 @@ export function StudyScreen({ deckId }: { deckId: string }) {
           ) : null}
         </div>
       </header>
+      {custom ? (
+        <p className="-mt-2 text-center text-sm font-medium text-muted">{customTitle(custom)}</p>
+      ) : null}
 
       {current ? (
         <>
@@ -273,7 +288,9 @@ export function StudyScreen({ deckId }: { deckId: string }) {
               ? t.study.waiting(
                   formatInterval(session.waitUntil - runtime().clock.now(), t.interval),
                 )
-              : t.study.done}
+              : custom
+                ? t.study.custom.done
+                : t.study.done}
           </p>
           <Link
             to="/decks/$deckId"

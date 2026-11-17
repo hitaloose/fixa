@@ -1,7 +1,7 @@
 import { Link } from "@tanstack/react-router";
-import { useId } from "react";
+import { useId, useState } from "react";
 import { t } from "../../../i18n/pt-BR";
-import { Icon } from "../../../ui";
+import { Icon, Sheet, Stepper, TextField } from "../../../ui";
 import { useDeckOverview } from "../hooks/useDeckOverview";
 import { CountTriplet } from "./CountTriplet";
 
@@ -23,7 +23,62 @@ function BackLink() {
   );
 }
 
+function CustomStudySheet({ deckId, onClose }: { deckId: string; onClose: () => void }) {
+  const c = t.study.custom;
+  const [days, setDays] = useState(3);
+  const [tag, setTag] = useState("");
+  const option =
+    "flex min-h-11 flex-col justify-center rounded-list border border-line bg-surface px-4 py-2 font-semibold";
+  return (
+    <Sheet
+      open
+      onOpenChange={(open) => !open && onClose()}
+      title={c.open}
+      description={c.intro}
+      closeLabel={t.common.close}
+    >
+      <div className="flex flex-col gap-4">
+        <Link
+          to="/decks/$deckId/study"
+          params={{ deckId }}
+          search={{ custom: "forgotten" }}
+          className={option}
+        >
+          {c.forgotten}
+          <span className="text-xs font-normal text-muted">{c.forgottenHint}</span>
+        </Link>
+        <div className="flex flex-col gap-2">
+          <span className="text-sm font-medium">{c.aheadLabel}</span>
+          <Stepper label={c.aheadDays} value={days} onChange={setDays} min={1} max={30} />
+          <Link
+            to="/decks/$deckId/study"
+            params={{ deckId }}
+            search={{ custom: "ahead", days }}
+            className={option}
+          >
+            {c.ahead(days)}
+          </Link>
+        </div>
+        <div className="flex flex-col gap-2">
+          <TextField label={c.tagLabel} value={tag} onChange={setTag} autoCapitalize="none" />
+          {tag.trim() ? (
+            <Link
+              to="/decks/$deckId/study"
+              params={{ deckId }}
+              search={{ custom: "tag", tag: tag.trim() }}
+              className={option}
+            >
+              {c.byTag}
+            </Link>
+          ) : null}
+        </div>
+      </div>
+    </Sheet>
+  );
+}
+
 export function DeckOverviewScreen({ deckId }: { deckId: string }) {
+  const [customOpen, setCustomOpen] = useState(false);
   const overview = useDeckOverview(deckId);
   const todayId = useId();
   const forecastId = useId();
@@ -119,6 +174,17 @@ export function DeckOverviewScreen({ deckId }: { deckId: string }) {
         <Icon name="add" className="size-5" />
         {t.overview.addCard}
       </Link>
+
+      <button
+        type="button"
+        onClick={() => setCustomOpen(true)}
+        className="inline-flex min-h-11 items-center justify-center rounded-button px-4 font-semibold text-primary"
+      >
+        {t.study.custom.open}
+      </button>
+      {customOpen ? (
+        <CustomStudySheet deckId={deck.id} onClose={() => setCustomOpen(false)} />
+      ) : null}
 
       <Link
         to="/decks/$deckId/options"

@@ -67,3 +67,26 @@ test("studies a deck with buttons, keyboard and undo", async ({ page }) => {
   await expect(card).toHaveText("dog");
   await expect(page.getByText("1 novo, 1 aprendendo, 0 para revisar")).toBeAttached();
 });
+
+test("custom study: reviews the cards forgotten today", async ({ page }) => {
+  await setup(page);
+  await page.goto("/");
+  await page.getByRole("link", { name: "Inglês" }).click();
+  await page.getByRole("link", { name: "Estudar" }).click();
+  await page.getByRole("button", { name: "Mostrar resposta" }).click();
+  await page.getByRole("button", { name: /^De novo/ }).click();
+  await expect
+    .poll(() =>
+      page.evaluate(() => document.querySelector("[data-testid=card-content]")?.textContent),
+    )
+    .toBe("dog");
+
+  await page.getByRole("link", { name: "Voltar para o baralho" }).click();
+  await page.getByRole("button", { name: "Estudo personalizado" }).click();
+  await page
+    .getByRole("dialog", { name: "Estudo personalizado" })
+    .getByRole("link", { name: /Esquecidos hoje/ })
+    .click();
+  await expect(page.getByText("Esquecidos hoje")).toBeVisible();
+  await expect(page.getByTestId("card-content")).toHaveText("cat");
+});
