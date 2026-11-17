@@ -1,6 +1,4 @@
 import { createFileRoute } from "@tanstack/react-router";
-import { t } from "../i18n/pt-BR";
+import { StatsScreen } from "../features/stats";
 
-export const Route = createFileRoute("/stats")({
-  component: () => <h1 className="pt-6 font-display text-[32px] font-bold">{t.nav.stats}</h1>,
-});
+export const Route = createFileRoute("/stats")({ component: StatsScreen });
