@@ -2,10 +2,13 @@ import { mergeAttributes, Node, type NodeViewRendererProps } from "@tiptap/core"
 import Image from "@tiptap/extension-image";
 import { EditorContent, useEditor, useEditorState } from "@tiptap/react";
 import StarterKit from "@tiptap/starter-kit";
-import { type ChangeEvent, useEffect, useMemo, useRef } from "react";
+import { type ChangeEvent, useEffect, useMemo, useRef, useState } from "react";
 import { t } from "../../../i18n/pt-BR";
+import { hasMath } from "../../../lib/math/render";
 import { Icon, IconButton, type IconName } from "../../../ui";
-import { fromEditorHtml } from "../model/fieldHtml";
+import { fromEditorHtml, toEditorHtml } from "../model/fieldHtml";
+import { MathSheet, type MathValue } from "./MathSheet";
+import { createMathNode, type MathAttrs } from "./mathNode";
 
 export interface FieldEditorProps {
   label: string;
@@ -17,7 +20,12 @@ export interface FieldEditorProps {
   resolveMedia: (fileName: string) => Promise<string | undefined>;
   /** When set, shows the cloze button, which creates cloze number `nextCloze`. */
   nextCloze?: number;
+  /** Defines MathLive's <math-field> (loaded on demand by default). */
+  loadMathField?: () => Promise<void>;
 }
+
+const escapeHtml = (text: string) =>
+  text.replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;");
 
 type Resolve = FieldEditorProps["resolveMedia"];
 
@@ -36,7 +44,10 @@ function mediaView(tag: "img" | "audio", resolve: { current: Resolve }) {
   };
 }
 
-function extensions(resolve: { current: Resolve }) {
+function extensions(
+  resolve: { current: Resolve },
+  onEditMath: { current: (pos: number, attrs: MathAttrs) => void },
+) {
   const MediaImage = Image.extend({ addNodeView: () => mediaView("img", resolve) }).configure({
     inline: true,
   });
@@ -65,6 +76,7 @@ function extensions(resolve: { current: Resolve }) {
     }),
     MediaImage,
     Audio,
+    createMathNode(onEditMath),
   ];
 }
 
@@ -101,18 +113,35 @@ export function FieldEditor({
   storeMedia,
   resolveMedia,
   nextCloze,
+  loadMathField,
 }: FieldEditorProps) {
   const resolve = useRef(resolveMedia);
   resolve.current = resolveMedia;
   const emit = useRef(onChange);
   emit.current = onChange;
   const lastValue = useRef(value);
-  const exts = useMemo(() => extensions(resolve), []);
+  /** The formula being edited: its position, or null for a new one. */
+  const [mathEdit, setMathEdit] = useState<{ pos: number | null; value: MathValue } | null>(null);
+  const onEditMath = useRef((pos: number, attrs: MathAttrs) =>
+    setMathEdit({ pos, value: { latex: attrs.latex, display: attrs.display } }),
+  );
+  const exts = useMemo(() => extensions(resolve, onEditMath), []);
+  const editorRef = useRef<ReturnType<typeof useEditor>>(null);
 
   const editor = useEditor({
     extensions: exts,
-    content: value,
+    content: toEditorHtml(value),
     editorProps: {
+      transformPastedHTML: toEditorHtml,
+      // Plain text with \(…\) / \[…\] becomes formulas (docs/07-formulas.md).
+      handlePaste: (_view, event) => {
+        const data = event.clipboardData;
+        if (!data || data.types.includes("text/html")) return false;
+        const text = data.getData("text/plain");
+        if (!hasMath(text)) return false;
+        editorRef.current?.commands.insertContent(toEditorHtml(escapeHtml(text)));
+        return true;
+      },
       attributes: {
         role: "textbox",
         "aria-label": label,
@@ -127,11 +156,38 @@ export function FieldEditor({
     },
   });
 
+  editorRef.current = editor;
+
   useEffect(() => {
     if (!editor || value === lastValue.current) return;
     lastValue.current = value;
-    editor.commands.setContent(value, { emitUpdate: false });
+    editor.commands.setContent(toEditorHtml(value), { emitUpdate: false });
   }, [editor, value]);
+
+  const saveMath = (math: MathValue) => {
+    const pos = mathEdit?.pos ?? null;
+    setMathEdit(null);
+    const chain = editor.chain().focus();
+    if (pos === null) chain.insertContent({ type: "math", attrs: math }).run();
+    else
+      chain
+        .command(({ tr }) => {
+          tr.setNodeMarkup(pos, undefined, math);
+          return true;
+        })
+        .run();
+  };
+
+  const removeMath = () => {
+    const pos = mathEdit?.pos ?? null;
+    setMathEdit(null);
+    if (pos !== null)
+      editor
+        .chain()
+        .focus()
+        .deleteRange({ from: pos, to: pos + 1 })
+        .run();
+  };
 
   const active = useEditorState({
     editor,
@@ -189,6 +245,12 @@ export function FieldEditor({
           accept="audio/*"
           onPick={(f) => void insertMedia(f, "audio")}
         />
+        <IconButton
+          icon="sigma"
+          label={t.editor.insertMath}
+          onMouseDown={(e) => e.preventDefault()}
+          onClick={() => setMathEdit({ pos: null, value: { latex: "", display: false } })}
+        />
         {nextCloze !== undefined && (
           <IconButton
             icon="cloze"
@@ -198,6 +260,19 @@ export function FieldEditor({
           />
         )}
       </div>
+      {mathEdit ? (
+        <MathSheet
+          open
+          onOpenChange={(open) => {
+            if (!open) setMathEdit(null);
+          }}
+          initial={mathEdit.value}
+          isNew={mathEdit.pos === null}
+          onSave={saveMath}
+          onRemove={removeMath}
+          {...(loadMathField ? { loadMathField } : {})}
+        />
+      ) : null}
     </div>
   );
 }

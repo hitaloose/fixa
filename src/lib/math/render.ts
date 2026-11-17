@@ -18,16 +18,20 @@ export async function loadKatex(): Promise<MathRenderer> {
   return autoRender.default;
 }
 
+const KATEX_OPTIONS = {
+  throwOnError: false,
+  errorColor: "var(--color-danger)",
+  strict: "ignore",
+  // Cloze deletions inside formulas are marked with \htmlClass{cloze}{…} (domain/templates).
+  trust: (context: { command: string }) => context.command === "\\htmlClass",
+} as const;
+
 const OPTIONS: RenderMathInElementOptions = {
   delimiters: [
     { left: "\\(", right: "\\)", display: false },
     { left: "\\[", right: "\\]", display: true },
   ],
-  throwOnError: false,
-  errorColor: "var(--color-danger)",
-  strict: "ignore",
-  // Cloze deletions inside formulas are marked with \htmlClass{cloze}{…} (domain/templates).
-  trust: (context) => context.command === "\\htmlClass",
+  ...KATEX_OPTIONS,
 };
 
 /** Renders the formulas inside an element that already holds sanitized card HTML. */
@@ -35,4 +39,10 @@ export async function renderMath(el: HTMLElement, load: () => Promise<MathRender
   if (!hasMath(el.innerHTML)) return;
   const render = await load();
   render(el, OPTIONS);
+}
+
+/** Renders a single formula (no delimiters) into `el`, e.g. a math node in the editor. */
+export async function renderLatex(el: HTMLElement, latex: string, display: boolean) {
+  const [katex] = await Promise.all([import("katex"), import("katex/dist/katex.min.css")]);
+  katex.default.render(latex, el, { ...KATEX_OPTIONS, displayMode: display });
 }
