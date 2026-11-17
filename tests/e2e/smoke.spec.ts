@@ -32,12 +32,46 @@ test("touch targets in the navigation are at least 44px tall", async ({ page }) 
   }
 });
 
+test("shows the logo at the top of the home screen", async ({ page }) => {
+  await page.goto("/");
+  const logo = page.getByRole("img", { name: "Fixa" });
+  await expect(logo).toBeVisible();
+  expect(await logo.evaluate((img: HTMLImageElement) => img.complete && img.naturalWidth > 0)).toBe(
+    true,
+  );
+});
+
 test("exposes an installable web app manifest", async ({ page, request }) => {
   await page.goto("/");
   const href = await page.locator('link[rel="manifest"]').getAttribute("href");
   expect(href).toBeTruthy();
   const manifest = await (await request.get(href as string)).json();
   expect(manifest).toMatchObject({ name: "Fixa", lang: "pt-BR", display: "standalone" });
+});
+
+test("has a full-bleed maskable icon for Android's round and squircle masks", async ({
+  page,
+  request,
+}) => {
+  await page.goto("/");
+  const href = await page.locator('link[rel="manifest"]').getAttribute("href");
+  const manifest = await (await request.get(href as string)).json();
+  const maskable = manifest.icons.filter((i: { purpose?: string }) => i.purpose === "maskable");
+  expect(maskable).toEqual([
+    { src: "pwa-maskable-512.png", sizes: "512x512", type: "image/png", purpose: "maskable" },
+  ]);
+  const cornerAlpha = await page.evaluate(async (src) => {
+    const img = new Image();
+    img.src = src;
+    await img.decode();
+    const canvas = document.createElement("canvas");
+    canvas.width = img.width;
+    canvas.height = img.height;
+    const ctx = canvas.getContext("2d") as CanvasRenderingContext2D;
+    ctx.drawImage(img, 0, 0);
+    return ctx.getImageData(0, 0, 1, 1).data[3];
+  }, "/pwa-maskable-512.png");
+  expect(cornerAlpha).toBe(255);
 });
 
 test("works offline after the first visit", async ({ page, context }) => {

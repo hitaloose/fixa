@@ -1,4 +1,5 @@
 export { AppShell } from "./patterns/AppShell";
+export { Brand } from "./patterns/Brand";
 export { CardView, type CardViewProps } from "./patterns/CardView";
 export { SearchField, type SearchFieldProps } from "./patterns/SearchField";
 export { Sheet, type SheetProps } from "./patterns/Sheet";
