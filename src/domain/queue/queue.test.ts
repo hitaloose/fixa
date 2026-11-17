@@ -76,12 +76,14 @@ describe("effectiveLimits", () => {
 });
 
 describe("buildQueue — what is due", () => {
-  it("puts learning cards due within the learn-ahead window first, by due time", () => {
-    const later = learningCard({ due: NOW + 10 * MIN });
-    const sooner = learningCard({ due: NOW - MIN });
+  it("puts overdue learning cards first and learn-ahead ones last, each by due time", () => {
+    const ahead = learningCard({ due: NOW + 10 * MIN });
+    const aheadSooner = learningCard({ due: NOW + 5 * MIN });
+    const overdue = learningCard({ due: NOW - MIN });
+    const dueNow = learningCard({ due: NOW });
     const review = reviewCard();
-    const q = buildQueue(input([review, later, sooner]));
-    expect(ids(q.cards)).toEqual([sooner.id, later.id, review.id]);
+    const q = buildQueue(input([review, ahead, overdue, aheadSooner, dueNow]));
+    expect(ids(q.cards)).toEqual([overdue.id, dueNow.id, review.id, aheadSooner.id, ahead.id]);
   });
 
   it("learns ahead 20 minutes", () => {

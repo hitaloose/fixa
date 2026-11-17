@@ -23,7 +23,7 @@ Tudo aqui mora em `src/domain` (`scheduler/`, `queue/`, `day/`) e segue `docs/11
 Entrada: baralho selecionado (inclui subbaralhos), `now`, predefinição + overrides, contagens já feitas hoje (de `ReviewLog`).
 
 1. **Limites efetivos** por baralho: `todayOnly` > `overrides` > preset. Limites de um pai também limitam a soma dos filhos.
-2. **Aprendendo/reaprendendo** com `due <= now + learnAheadMinutes (20)` — sem limite diário, sempre primeiro quando vencidos.
+2. **Aprendendo/reaprendendo** com `due <= now + learnAheadMinutes (20)` — sem limite diário. Os vencidos (`due <= now`) vêm sempre primeiro; os que ainda vão vencer dentro da janela de 20 min só aparecem depois das revisões e novos, como no Anki.
 3. **Revisões** com `due <= fim do dia de estudo`, até `reviewsPerDay − feitasHoje`, ordenadas por `reviewOrder`.
 4. **Novos**, até `newPerDay − introduzidosHoje` e sem passar do saldo de revisões, ordenados por `newCardOrder`/`newPosition`.
 5. **Intercalação:** novos distribuídos entre as revisões (1 novo a cada N revisões, N = revisões/novos). Aprendendo vencido sempre fura a fila.

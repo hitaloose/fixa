@@ -191,7 +191,12 @@ export function buildQueue(input: QueueInput): StudyQueue {
   const news = take(newCandidates, "newPerDay", "reviewsPerDay");
 
   return {
-    cards: [...learningNow, ...interleave(reviews, news)],
+    // Overdue learning cards jump the queue; learn-ahead ones wait until nothing else is left.
+    cards: [
+      ...learningNow.filter((c) => c.due <= now),
+      ...interleave(reviews, news),
+      ...learningNow.filter((c) => c.due > now),
+    ],
     counts: { new: news.length, learning: learningToday.length, review: reviews.length },
   };
 }
