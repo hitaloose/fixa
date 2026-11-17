@@ -131,7 +131,8 @@ export function makeReviewLog(overrides: Partial<ReviewLog> = {}): ReviewLog {
     id: nextId(),
     cardId: overrides.cardId ?? nextId(),
     reviewedAt: FACTORY_NOW,
-    rating: 3,
+    // Only answers carry a rating; reschedule/reset/manual logs use 0.
+    rating: (overrides.kind ?? "review") === "review" ? 3 : 0,
     stateBefore: "new",
     cardBefore: NEW_SCHEDULING,
     scheduledDays: 0,

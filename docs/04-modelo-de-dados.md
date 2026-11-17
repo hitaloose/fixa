@@ -88,7 +88,7 @@ Tipos padrão criados no primeiro uso (seed) com IDs fixos conhecidos.
 |---|---|---|
 | `cardId` | string | |
 | `reviewedAt` | number | |
-| `rating` | 1–4 | De novo, Difícil, Bom, Fácil. |
+| `rating` | 0–4 | De novo (1), Difícil, Bom, Fácil (4) em `kind="review"`; 0 nos outros tipos, que não são respostas. |
 | `stateBefore` | `"new" \| "learning" \| "review" \| "relearning"` | |
 | `cardBefore` | snapshot dos campos FSRS | Permite "desfazer" e replay. |
 | `scheduledDays` / `elapsedDays` | int | |

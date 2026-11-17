@@ -205,7 +205,8 @@ describe("every documented enum value is accepted and others rejected", () => {
   });
 
   it.each(["review", "manual", "reschedule", "reset"])("review log kind %s", (kind) => {
-    expect(reviewLogSchema.safeParse({ ...log, kind }).success).toBe(true);
+    const rating = kind === "review" ? 3 : 0; // only answers carry a rating
+    expect(reviewLogSchema.safeParse({ ...log, kind, rating }).success).toBe(true);
   });
 
   it("review log kind outside the list is rejected", () => {

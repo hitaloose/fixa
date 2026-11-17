@@ -297,6 +297,16 @@ describe("reviewLogSchema", () => {
     expect(reviewLogSchema.safeParse({ ...validLog(), rating }).success).toBe(false);
   });
 
+  it.each(["reschedule", "reset", "manual"])("stores no rating (0) for a %s log", (kind) => {
+    expect(reviewLogSchema.safeParse({ ...validLog(), kind, rating: 0 }).success).toBe(true);
+    const rated = reviewLogSchema.safeParse({ ...validLog(), kind, rating: 3 });
+    expect(rated.success).toBe(false);
+    expect(rated.error?.issues[0]).toMatchObject({
+      path: ["rating"],
+      message: "only review logs have a rating (1–4); other kinds use 0",
+    });
+  });
+
   it("rejects a negative duration", () => {
     expect(reviewLogSchema.safeParse({ ...validLog(), durationMs: -1 }).success).toBe(false);
   });
