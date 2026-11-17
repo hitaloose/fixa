@@ -1,3 +1,4 @@
+export type { AnkiPackageData } from "./ankiExport";
 export { AnkiImportError, type AnkiImportSummary, type AnkiMediaFile } from "./ankiImport";
 export { createRepositories, type Repositories, type RepositoryDeps } from "./createRepositories";
 export type { DeckOptionsWrite } from "./decks";

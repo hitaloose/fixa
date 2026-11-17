@@ -48,4 +48,6 @@ Mapeamento:
 
 ## Exportar `.apkg` (fase 2)
 
-Gerar no formato legado (`collection.anki21` + media JSON) para máxima compatibilidade.
+Gerar no formato legado para máxima compatibilidade.
+
+**Implementado (2026-11-17):** `collection.anki2` (esquema 11) + mapa de mídia em JSON, gerado no worker. `domain/export/anki` converte entidades em linhas do Anki: tipos de nota, baralhos com caminho `::`, predefinições (etapas em minutos), notas (`[sound:]` de volta), cartões (tipo/fila/vencimento no formato do Anki, memória FSRS em `cards.data` como `{s, d}`) e respostas não desfeitas. `notes.csum` é o SHA-1 do primeiro campo. Exporta um baralho com subbaralhos (ações do baralho) ou tudo (Ajustes). **Verificação:** ida e volta exportar → importar no próprio Fixa (domínio, dados e e2e). Ainda não foi validado abrindo o arquivo no Anki de verdade; fazer isso antes de anunciar a função.

@@ -5,6 +5,7 @@ import type { Backup } from "../../../domain/backup";
 import { t } from "../../../i18n/pt-BR";
 import { type ShareOutcome, shareOrDownload } from "../../../lib/share";
 import { Button, Sheet, Stepper, Switch, TextField, Toast } from "../../../ui";
+import { useAnkiExport, type WriteAnkiPackage } from "../hooks/useAnkiExport";
 import { useBackupActions, useSettingsData, useStorageInfo } from "../hooks/useBackup";
 
 const s = t.settings;
@@ -13,6 +14,8 @@ export interface SettingsScreenProps {
   /** Hands the backup file to the user (share sheet or download). */
   share?: (blob: Blob, fileName: string) => Promise<ShareOutcome>;
   appVersion?: string;
+  /** Writes an .apkg (a Web Worker in the app); the export button shows only when given. */
+  writeAnkiPackage?: WriteAnkiPackage;
 }
 
 function Section({ title, children }: { title: string; children: ReactNode }) {
@@ -81,7 +84,9 @@ function RestoreSheet({
 export function SettingsScreen({
   share = shareOrDownload,
   appVersion = "0.0.0",
+  writeAnkiPackage,
 }: SettingsScreenProps) {
+  const exportAnki = useAnkiExport(writeAnkiPackage ?? (async () => new Uint8Array()), share);
   const data = useSettingsData();
   const storage = useStorageInfo();
   const actions = useBackupActions();
@@ -158,6 +163,18 @@ export function SettingsScreen({
           onChange={(e) => void pickFile(e)}
         />
         <p className="text-xs text-muted">{s.restoreHint}</p>
+        {writeAnkiPackage ? (
+          <Button
+            variant="secondary"
+            onClick={() =>
+              void exportAnki().then(
+                (outcome) => outcome !== "cancelled" && setToast(s.exportedAnki),
+              )
+            }
+          >
+            {s.exportAnki}
+          </Button>
+        ) : null}
         <Link
           to="/import"
           className="inline-flex min-h-11 items-center justify-center rounded-button border border-line px-4 font-semibold"

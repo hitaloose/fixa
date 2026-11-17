@@ -14,9 +14,11 @@ interface DeckActionsSheetProps {
   /** All active decks with their paths, for the move target list. */
   targets: { deck: Deck; path: string }[];
   onClose: () => void;
+  /** Exports the deck (with subdecks) as an Anki package. */
+  onExport?: (deckId: string) => void;
 }
 
-export function DeckActionsSheet({ row, targets, onClose }: DeckActionsSheetProps) {
+export function DeckActionsSheet({ row, targets, onClose, onExport }: DeckActionsSheetProps) {
   const actions = useDeckActions();
   const [mode, setMode] = useState<Mode>("menu");
   const [name, setName] = useState("");
@@ -77,6 +79,17 @@ export function DeckActionsSheet({ row, targets, onClose }: DeckActionsSheetProp
           <Button variant="secondary" onClick={() => go("move")}>
             {t.decks.actions.move}
           </Button>
+          {onExport ? (
+            <Button
+              variant="secondary"
+              onClick={() => {
+                onExport(deck.id);
+                close();
+              }}
+            >
+              {t.decks.actions.exportAnki}
+            </Button>
+          ) : null}
           <Button variant="danger" onClick={() => go("delete")}>
             {t.decks.actions.delete}
           </Button>

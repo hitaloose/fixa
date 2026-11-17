@@ -1,6 +1,6 @@
 import { screen, waitFor, within } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
-import { describe, expect, it } from "vitest";
+import { describe, expect, it, vi } from "vitest";
 import { makeCard } from "../../../../tests/factories";
 import { renderWithRouter } from "../../../../tests/render";
 import { setupRuntime } from "../../../../tests/runtime";
@@ -185,5 +185,17 @@ describe("DeckListScreen", () => {
     );
     await userEvent.click(within(confirm).getByRole("button", { name: "Excluir" }));
     await waitFor(() => expect(rowNamesNow()).toEqual(["Matemática"]));
+  });
+
+  it("exports a deck as an Anki package from its actions", async () => {
+    const { repos } = await setup();
+    await repos.decks.createByPath("Inglês", PRESET);
+    const writeAnkiPackage = vi.fn(async () => new Uint8Array([9]));
+    const share = vi.fn(async () => "downloaded" as const);
+    renderWithRouter(<DeckListScreen writeAnkiPackage={writeAnkiPackage} share={share} />);
+    const dialog = await openActions("Inglês");
+    await userEvent.click(within(dialog).getByRole("button", { name: "Exportar para o Anki" }));
+    await waitFor(() => expect(share).toHaveBeenCalledOnce());
+    expect((share.mock.calls[0] as unknown as [Blob, string])[1]).toBe("Inglês.apkg");
   });
 });

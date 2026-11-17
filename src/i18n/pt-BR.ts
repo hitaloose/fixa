@@ -44,6 +44,7 @@ export const t = {
       move: "Mover",
       delete: "Excluir",
       overview: "Abrir visão geral",
+      exportAnki: "Exportar para o Anki",
     },
     move: { label: "Mover para", topLevel: "Nível superior", confirm: "Mover" },
     remove: {
@@ -307,6 +308,8 @@ export const t = {
     light: "Leve (sem mídia e sem histórico)",
     export: "Exportar backup",
     exported: "Backup exportado.",
+    exportAnki: "Exportar para o Anki (.apkg)",
+    exportedAnki: "Pacote do Anki exportado.",
     restore: "Restaurar backup",
     restoreHint: "Arquivo .fixa exportado deste ou de outro aparelho",
     restoreTitle: "Restaurar backup",

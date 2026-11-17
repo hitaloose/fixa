@@ -1,6 +1,7 @@
 import { parseNoteType } from "../../domain/model";
 import type { Clock, IdGenerator } from "../../domain/ports";
 import type { FixaDb } from "../db";
+import { createAnkiExportRepository } from "./ankiExport";
 import { createAnkiImportRepository } from "./ankiImport";
 import { createBackupRepository } from "./backup";
 import { createBulkRepository } from "./bulk";
@@ -34,6 +35,7 @@ export function createRepositories({ db, clock, ids }: RepositoryDeps) {
     bulk: createBulkRepository({ db, ...entity }),
     backup: createBackupRepository({ db, clock }),
     ankiImport: createAnkiImportRepository({ db, ...entity, media }),
+    ankiExport: createAnkiExportRepository({ db, clock }),
   };
 }
 

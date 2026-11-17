@@ -3,6 +3,7 @@ import { BackupReminder } from "../features/backup";
 import { DeckListScreen } from "../features/decks";
 import { t } from "../i18n/pt-BR";
 import { Brand, Icon } from "../ui";
+import { writeAnkiPackage } from "../workers/importClient";
 
 export const Route = createFileRoute("/")({
   component: function Home() {
@@ -20,7 +21,7 @@ export const Route = createFileRoute("/")({
           }
         />
         <BackupReminder />
-        <DeckListScreen />
+        <DeckListScreen writeAnkiPackage={writeAnkiPackage} />
       </>
     );
   },

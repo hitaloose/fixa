@@ -1,7 +1,9 @@
 import { useMemo, useState } from "react";
 import { buildDeckTree, visibleRows } from "../../../domain/decks";
 import { t } from "../../../i18n/pt-BR";
+import { type ShareOutcome, shareOrDownload } from "../../../lib/share";
 import { Button, Icon, SearchField } from "../../../ui";
+import { useAnkiExport, type WriteAnkiPackage } from "../hooks/useAnkiExport";
 import { useDeckActions } from "../hooks/useDeckActions";
 import { useDeckList } from "../hooks/useDeckList";
 import type { DeckRow } from "../model/deckList";
@@ -10,7 +12,17 @@ import { DeckTree } from "./DeckTree";
 import { NewDeckSheet } from "./NewDeckSheet";
 import { TodaySummary } from "./TodaySummary";
 
-export function DeckListScreen() {
+export interface DeckListScreenProps {
+  /** Writes an .apkg (a Web Worker in the app); deck export shows only when given. */
+  writeAnkiPackage?: WriteAnkiPackage;
+  share?: (blob: Blob, fileName: string) => Promise<ShareOutcome>;
+}
+
+export function DeckListScreen({
+  writeAnkiPackage,
+  share = shareOrDownload,
+}: DeckListScreenProps = {}) {
+  const exportAnki = useAnkiExport(writeAnkiPackage ?? (async () => new Uint8Array()), share);
   const [query, setQuery] = useState("");
   const [creating, setCreating] = useState(false);
   const [acting, setActing] = useState<DeckRow | null>(null);
@@ -69,7 +81,12 @@ export function DeckListScreen() {
       )}
 
       {creating ? <NewDeckSheet onClose={() => setCreating(false)} /> : null}
-      <DeckActionsSheet row={acting} targets={allDecks} onClose={() => setActing(null)} />
+      <DeckActionsSheet
+        row={acting}
+        targets={allDecks}
+        onClose={() => setActing(null)}
+        {...(writeAnkiPackage ? { onExport: (deckId: string) => void exportAnki(deckId) } : {})}
+      />
     </div>
   );
 }

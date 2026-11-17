@@ -126,6 +126,23 @@ describe("SettingsScreen", () => {
     );
   });
 
+  it("exports everything as an Anki package", async () => {
+    const writeAnkiPackage = vi.fn(async () => new Uint8Array([1, 2, 3]));
+    const { share } = open({ writeAnkiPackage });
+    await userEvent.click(
+      await screen.findByRole("button", { name: "Exportar para o Anki (.apkg)" }),
+    );
+    await waitFor(() => expect(share).toHaveBeenCalledOnce());
+    const [data] = writeAnkiPackage.mock.calls[0] as unknown as [
+      { rows: { col: { decks: string } } },
+    ];
+    const decks = Object.values(JSON.parse(data.rows.col.decks)) as Array<{ name: string }>;
+    expect(decks.map((d) => d.name).sort()).toEqual(["Default", "Inglês"]);
+    const [blob, name] = share.mock.calls[0] as unknown as [Blob, string];
+    expect(name).toBe("fixa.apkg");
+    expect(blob.size).toBe(3);
+  });
+
   it("tells when storage information is unavailable", async () => {
     open();
     expect(

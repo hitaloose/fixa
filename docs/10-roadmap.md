@@ -41,7 +41,7 @@ Marque `[x]` ao concluir. Cada fase termina com o app utilizável. Todo item seg
 - [x] Importar `.apkg` `anki21b` (zstd) e `.colpkg`
 - [x] Importar CSV/TXT com mapeamento de colunas e diretivas `#`
 - [x] Conversão SM-2 → FSRS via replay
-- [ ] Exportar `.apkg` (formato legado)
+- [x] Exportar `.apkg` (formato legado)
 
 ## Fase 3 — Polimento
 
