@@ -368,8 +368,8 @@ export const t = {
         : ""),
     seeDecks: "Ver baralhos",
     errors: {
-      newFormat:
-        "Esse pacote usa o formato novo do Anki, que o Fixa ainda não lê. No Anki, exporte de novo marcando “Suportar versões antigas do Anki”.",
+      unsupported:
+        "Esse pacote foi criado por uma versão do Anki mais nova do que o Fixa conhece. No Anki, exporte de novo marcando “Suportar versões antigas do Anki”.",
       unknown: "Esse arquivo não é um pacote do Anki (.apkg).",
       unreadable: "Não foi possível ler esse arquivo.",
     },

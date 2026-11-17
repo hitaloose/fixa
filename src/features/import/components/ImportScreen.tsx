@@ -29,8 +29,8 @@ export function ImportScreen({ readPackage }: ImportScreenProps) {
     setStatus({ kind: "reading" });
     try {
       const contents = await readPackage(file);
-      if (contents.format === "anki21b")
-        return setStatus({ kind: "error", message: m.errors.newFormat });
+      if (contents.format === "unsupported")
+        return setStatus({ kind: "error", message: m.errors.unsupported });
       if (contents.format === "unknown")
         return setStatus({ kind: "error", message: m.errors.unknown });
       const summary = await importCollection(contents.collection, contents.media);

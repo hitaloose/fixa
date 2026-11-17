@@ -83,7 +83,7 @@ const pick = async (name = "deck.apkg") =>
 
 describe("ImportScreen", () => {
   it("imports an Anki package and summarises what came in", async () => {
-    const readPackage = open({ format: "legacy", collection, media: [] } as ApkgContents);
+    const readPackage = open({ format: "anki", collection, media: [] } as ApkgContents);
     await pick();
     expect(readPackage).toHaveBeenCalledOnce();
     expect(await screen.findByRole("status")).toHaveTextContent(
@@ -94,7 +94,7 @@ describe("ImportScreen", () => {
   });
 
   it("says how many notes were already there on a re-import", async () => {
-    open({ format: "legacy", collection, media: [] } as ApkgContents);
+    open({ format: "anki", collection, media: [] } as ApkgContents);
     await pick();
     await screen.findByRole("status");
     await pick();
@@ -103,8 +103,8 @@ describe("ImportScreen", () => {
     ).toBeInTheDocument();
   });
 
-  it("asks to re-export packages in the newer Anki format", async () => {
-    open({ format: "anki21b" });
+  it("asks to re-export packages from a newer, unknown package version", async () => {
+    open({ format: "unsupported" });
     await pick();
     expect(await screen.findByRole("alert")).toHaveTextContent("Suportar versões antigas do Anki");
   });

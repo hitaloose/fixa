@@ -38,7 +38,7 @@ Marque `[x]` ao concluir. Cada fase termina com o app utilizável. Todo item seg
 ## Fase 2 — Compatibilidade Anki
 
 - [x] Importar `.apkg` legado (worker, progresso, dedupe por `guid`)
-- [ ] Importar `.apkg` `anki21b` (zstd) e `.colpkg`
+- [x] Importar `.apkg` `anki21b` (zstd) e `.colpkg`
 - [ ] Importar CSV/TXT com mapeamento de colunas e diretivas `#`
 - [x] Conversão SM-2 → FSRS via replay
 - [ ] Exportar `.apkg` (formato legado)

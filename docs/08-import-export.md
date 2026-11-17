@@ -19,6 +19,8 @@ Um `.apkg` é um zip com:
 
 Pipeline: `fflate.unzip` → (se `anki21b`) `fzstd.decompress` → `sql.js` abre o banco → ler tabelas → mapear → validar com zod → enviar em lotes para a thread principal.
 
+**Implementado (2026-11-17):** legado e `anki21b`. No `anki21b` o leitor (`lib/anki/apkg.ts`) descomprime com fzstd e remonta, a partir das tabelas `notetypes`/`fields`/`templates`/`decks`/`deck_config` (blobs protobuf, números de campo conferidos nos `.proto` oficiais), o mesmo JSON do formato legado, então o mapeamento é um só. Pacotes com `meta` de versão desconhecida (> 3) recebem a mensagem para reexportar. Fixtures: `tests/fixtures/anki/legacy.apkg` (script Python) e `anki21b.apkg` (script Node); um teste garante que os dois importam igual.
+
 Comece pelo **formato legado** (`collection.anki2`/`anki21`, media em JSON) — é o que o Anki gera com "Suportar versões antigas do Anki" marcado — e depois o `anki21b`. Se o arquivo for de um formato ainda não suportado, mostrar mensagem clara pedindo para reexportar com essa opção.
 
 Mapeamento:

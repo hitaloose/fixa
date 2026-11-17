@@ -37,9 +37,9 @@ async function setup() {
   return { db, repos: createRepositories({ db, clock, ids }) };
 }
 
-function fixture() {
-  const contents = readApkg(new Uint8Array(readFileSync("tests/fixtures/anki/legacy.apkg")), SQL);
-  if (contents.format !== "legacy") throw new Error("fixture is not legacy");
+function fixture(file = "legacy.apkg") {
+  const contents = readApkg(new Uint8Array(readFileSync(`tests/fixtures/anki/${file}`)), SQL);
+  if (contents.format !== "anki") throw new Error(`${file} could not be read`);
   return contents;
 }
 
@@ -84,6 +84,25 @@ describe("ankiImport.importCollection", () => {
     expect(await db.notes.count()).toBe(4);
     expect(await db.decks.count()).toBe(2);
     expect(await db.media.count()).toBe(1);
+  });
+
+  it("imports a current-format package exactly like the legacy one", async () => {
+    const legacy = await setup();
+    const current = await setup();
+    const a = fixture("legacy.apkg");
+    const b = fixture("anki21b.apkg");
+    const summaryA = await legacy.repos.ankiImport.importCollection(a.collection, a.media);
+    const summaryB = await current.repos.ankiImport.importCollection(b.collection, b.media);
+    expect(summaryB).toEqual(summaryA);
+    const shape = async (db: typeof legacy.db) => ({
+      decks: (await db.decks.toArray()).map((d) => [d.name, d.collapsed]).sort(),
+      notes: (await db.notes.toArray()).map((n) => [n.guid, Object.values(n.fields)]).sort(),
+      cards: (await db.cards.toArray()).map((c) => [c.queue, c.due, c.reps, c.flag]).sort(),
+      presets: (await db.presets.toArray())
+        .map((p) => [p.name, p.learningSteps, p.newPerDay])
+        .sort(),
+    });
+    expect(await shape(current.db)).toEqual(await shape(legacy.db));
   });
 
   it("refuses a collection it cannot read", async () => {

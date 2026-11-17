@@ -21,3 +21,15 @@ test("imports a real Anki package in the browser (worker + sql.js), then finds i
   await expect(results.getByRole("link")).toHaveText(["cat"]);
   await expect(results).toContainText("Inglês::Animais");
 });
+
+test("imports a package in Anki's current format (zstd + protobuf)", async ({ page }) => {
+  await page.goto("/import");
+  await page
+    .getByLabel("Escolher arquivo do Anki")
+    .setInputFiles("tests/fixtures/anki/anki21b.apkg");
+  await expect(page.getByRole("status")).toHaveText("Importado: 2 baralhos, 4 notas, 5 cartões.");
+  await page.goto("/browse?q=gato");
+  await expect(page.getByRole("list", { name: "Resultados" }).getByRole("link")).toHaveText([
+    "cat",
+  ]);
+});
