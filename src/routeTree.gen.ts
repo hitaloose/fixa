@@ -16,6 +16,8 @@ import { Route as ImportRouteImport } from './routes/import'
 import { Route as SettingsRouteImport } from './routes/settings'
 import { Route as StatsRouteImport } from './routes/stats'
 import { Route as DecksDeckIdRouteImport } from './routes/decks.$deckId'
+import { Route as NoteTypesIndexRouteImport } from './routes/note-types.index'
+import { Route as NoteTypesNoteTypeIdRouteImport } from './routes/note-types.$noteTypeId'
 import { Route as DecksDeckIdOptionsRouteImport } from './routes/decks.$deckId_.options'
 import { Route as DecksDeckIdStudyRouteImport } from './routes/decks.$deckId_.study'
 import { Route as NotesNoteIdEditRouteImport } from './routes/notes.$noteId.edit'
@@ -55,6 +57,16 @@ const DecksDeckIdRoute = DecksDeckIdRouteImport.update({
   path: '/decks/$deckId',
   getParentRoute: () => rootRouteImport,
 } as any)
+const NoteTypesIndexRoute = NoteTypesIndexRouteImport.update({
+  id: '/note-types/',
+  path: '/note-types/',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const NoteTypesNoteTypeIdRoute = NoteTypesNoteTypeIdRouteImport.update({
+  id: '/note-types/$noteTypeId',
+  path: '/note-types/$noteTypeId',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const DecksDeckIdOptionsRoute = DecksDeckIdOptionsRouteImport.update({
   id: '/decks/$deckId_/options',
   path: '/decks/$deckId/options',
@@ -79,6 +91,8 @@ export interface FileRoutesByFullPath {
   '/settings': typeof SettingsRoute
   '/stats': typeof StatsRoute
   '/decks/$deckId': typeof DecksDeckIdRoute
+  '/note-types/$noteTypeId': typeof NoteTypesNoteTypeIdRoute
+  '/note-types/': typeof NoteTypesIndexRoute
   '/decks/$deckId/options': typeof DecksDeckIdOptionsRoute
   '/decks/$deckId/study': typeof DecksDeckIdStudyRoute
   '/notes/$noteId/edit': typeof NotesNoteIdEditRoute
@@ -91,6 +105,8 @@ export interface FileRoutesByTo {
   '/settings': typeof SettingsRoute
   '/stats': typeof StatsRoute
   '/decks/$deckId': typeof DecksDeckIdRoute
+  '/note-types/$noteTypeId': typeof NoteTypesNoteTypeIdRoute
+  '/note-types': typeof NoteTypesIndexRoute
   '/decks/$deckId/options': typeof DecksDeckIdOptionsRoute
   '/decks/$deckId/study': typeof DecksDeckIdStudyRoute
   '/notes/$noteId/edit': typeof NotesNoteIdEditRoute
@@ -104,6 +120,8 @@ export interface FileRoutesById {
   '/settings': typeof SettingsRoute
   '/stats': typeof StatsRoute
   '/decks/$deckId': typeof DecksDeckIdRoute
+  '/note-types/$noteTypeId': typeof NoteTypesNoteTypeIdRoute
+  '/note-types/': typeof NoteTypesIndexRoute
   '/decks/$deckId_/options': typeof DecksDeckIdOptionsRoute
   '/decks/$deckId_/study': typeof DecksDeckIdStudyRoute
   '/notes/$noteId/edit': typeof NotesNoteIdEditRoute
@@ -118,6 +136,8 @@ export interface FileRouteTypes {
     | '/settings'
     | '/stats'
     | '/decks/$deckId'
+    | '/note-types/$noteTypeId'
+    | '/note-types/'
     | '/decks/$deckId/options'
     | '/decks/$deckId/study'
     | '/notes/$noteId/edit'
@@ -130,6 +150,8 @@ export interface FileRouteTypes {
     | '/settings'
     | '/stats'
     | '/decks/$deckId'
+    | '/note-types/$noteTypeId'
+    | '/note-types'
     | '/decks/$deckId/options'
     | '/decks/$deckId/study'
     | '/notes/$noteId/edit'
@@ -142,6 +164,8 @@ export interface FileRouteTypes {
     | '/settings'
     | '/stats'
     | '/decks/$deckId'
+    | '/note-types/$noteTypeId'
+    | '/note-types/'
     | '/decks/$deckId_/options'
     | '/decks/$deckId_/study'
     | '/notes/$noteId/edit'
@@ -155,6 +179,8 @@ export interface RootRouteChildren {
   SettingsRoute: typeof SettingsRoute
   StatsRoute: typeof StatsRoute
   DecksDeckIdRoute: typeof DecksDeckIdRoute
+  NoteTypesNoteTypeIdRoute: typeof NoteTypesNoteTypeIdRoute
+  NoteTypesIndexRoute: typeof NoteTypesIndexRoute
   DecksDeckIdOptionsRoute: typeof DecksDeckIdOptionsRoute
   DecksDeckIdStudyRoute: typeof DecksDeckIdStudyRoute
   NotesNoteIdEditRoute: typeof NotesNoteIdEditRoute
@@ -211,6 +237,20 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof DecksDeckIdRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/note-types/': {
+      id: '/note-types/'
+      path: '/note-types'
+      fullPath: '/note-types/'
+      preLoaderRoute: typeof NoteTypesIndexRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/note-types/$noteTypeId': {
+      id: '/note-types/$noteTypeId'
+      path: '/note-types/$noteTypeId'
+      fullPath: '/note-types/$noteTypeId'
+      preLoaderRoute: typeof NoteTypesNoteTypeIdRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/decks/$deckId_/options': {
       id: '/decks/$deckId_/options'
       path: '/decks/$deckId/options'
@@ -243,6 +283,8 @@ const rootRouteChildren: RootRouteChildren = {
   SettingsRoute: SettingsRoute,
   StatsRoute: StatsRoute,
   DecksDeckIdRoute: DecksDeckIdRoute,
+  NoteTypesNoteTypeIdRoute: NoteTypesNoteTypeIdRoute,
+  NoteTypesIndexRoute: NoteTypesIndexRoute,
   DecksDeckIdOptionsRoute: DecksDeckIdOptionsRoute,
   DecksDeckIdStudyRoute: DecksDeckIdStudyRoute,
   NotesNoteIdEditRoute: NotesNoteIdEditRoute,

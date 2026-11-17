@@ -177,6 +177,12 @@ export function SettingsScreen({
           </Button>
         ) : null}
         <Link
+          to="/note-types"
+          className="inline-flex min-h-11 items-center justify-center rounded-button border border-line px-4 font-semibold"
+        >
+          {t.noteTypes.open}
+        </Link>
+        <Link
           to="/import"
           className="inline-flex min-h-11 items-center justify-center rounded-button border border-line px-4 font-semibold"
         >
