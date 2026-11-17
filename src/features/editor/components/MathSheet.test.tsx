@@ -35,6 +35,21 @@ function open(props: Partial<MathSheetProps> = {}) {
 const mathField = () => screen.findByLabelText("Fórmula", { selector: "math-field" });
 
 describe("MathSheet", () => {
+  it("stays open while the user taps MathLive's virtual keyboard (outside the sheet)", async () => {
+    const onOpenChange = vi.fn();
+    open({ onOpenChange });
+    await mathField();
+    const keyboard = document.createElement("div");
+    keyboard.className = "ML__keyboard";
+    const key = document.createElement("div");
+    key.style.pointerEvents = "auto"; // MathLive's keys sit above the modal's inert page
+    keyboard.append(key);
+    document.body.append(keyboard);
+    await userEvent.pointer({ keys: "[MouseLeft]", target: key });
+    expect(onOpenChange).not.toHaveBeenCalled();
+    keyboard.remove();
+  });
+
   it("edits visually with MathLive by default", async () => {
     const { onSave } = open({ initial: { latex: "x^2", display: false }, isNew: false });
     const field = (await mathField()) as FakeMathField;

@@ -34,7 +34,7 @@ export function TextField({
         onChange={(e) => onChange(e.target.value)}
         aria-invalid={error ? true : undefined}
         aria-describedby={describedBy || undefined}
-        className="min-h-11 rounded-field border border-line bg-surface px-3 text-[15px] outline-none focus:border-primary aria-invalid:border-danger"
+        className="min-h-11 rounded-field border border-line bg-surface px-3 text-field outline-none focus:border-primary aria-invalid:border-danger"
         {...rest}
       />
       {hint ? (

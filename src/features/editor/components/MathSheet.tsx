@@ -22,6 +22,9 @@ export interface MathSheetProps {
 
 type MathFieldElement = HTMLElement & { value: string };
 
+/** MathLive's virtual keyboard: appended to <body>, outside the sheet, yet part of it. */
+const VIRTUAL_KEYBOARD = ".ML__keyboard";
+
 /** MathLive's <math-field>, created once the library has loaded. */
 function VisualField({
   latex,
@@ -134,7 +137,13 @@ export function MathSheet({
   const m = t.editor.math;
 
   return (
-    <Sheet open={open} onOpenChange={onOpenChange} title={m.title} closeLabel={t.common.close}>
+    <Sheet
+      open={open}
+      onOpenChange={onOpenChange}
+      title={m.title}
+      closeLabel={t.common.close}
+      outsideParts={VIRTUAL_KEYBOARD}
+    >
       <div className="flex flex-col gap-3">
         <Toggle
           options={[
@@ -163,7 +172,7 @@ export function MathSheet({
               rows={3}
               spellCheck={false}
               autoCapitalize="none"
-              className="rounded-field border border-line bg-surface px-3 py-2 font-mono text-[15px]"
+              className="rounded-field border border-line bg-surface px-3 py-2 font-mono text-field"
             />
             <Preview latex={latex} display={display} />
           </>

@@ -4,7 +4,7 @@ import type { Note, NoteType } from "../../../domain/model";
 import { nextClozeNumber, parseTags } from "../../../domain/notes";
 import { generateCards, renderCard } from "../../../domain/templates";
 import { t } from "../../../i18n/pt-BR";
-import { Button, CardView, IconButton, Sheet, TextField } from "../../../ui";
+import { Button, CardView, IconButton, Select as SelectInput, Sheet, TextField } from "../../../ui";
 import { type DeckOption, useEditorData } from "../hooks/useEditorData";
 import { useMedia } from "../hooks/useMedia";
 import { useNote, useRecentlyAdded } from "../hooks/useNote";
@@ -52,18 +52,13 @@ function Select({
       <label htmlFor={id} className="text-sm font-medium">
         {label}
       </label>
-      <select
-        id={id}
-        value={value}
-        onChange={(e) => onChange(e.target.value)}
-        className="min-h-11 rounded-field border border-line bg-surface px-3 text-[15px]"
-      >
+      <SelectInput id={id} value={value} onChange={(e) => onChange(e.target.value)}>
         {options.map((o) => (
           <option key={o.value} value={o.value}>
             {o.label}
           </option>
         ))}
-      </select>
+      </SelectInput>
     </div>
   );
 }

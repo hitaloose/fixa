@@ -65,7 +65,7 @@ export function Stepper({
           if (!Number.isNaN(n)) onChange(clamp(n));
         }}
         onBlur={() => setText(String(value))}
-        className="h-11 w-20 rounded-field border border-line bg-surface text-center tabular-nums"
+        className="h-11 w-20 rounded-field border border-line bg-surface text-center text-field tabular-nums"
       />
       <button
         type="button"

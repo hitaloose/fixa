@@ -3,7 +3,7 @@ import type { DuplicatePolicy } from "../../../data/repositories";
 import { type CsvColumnTarget, type DelimitedFile, planCsvNotes } from "../../../domain/import/csv";
 import { plainText } from "../../../domain/notes";
 import { t } from "../../../i18n/pt-BR";
-import { Button, Switch } from "../../../ui";
+import { Button, Select as SelectInput, Switch } from "../../../ui";
 import { useCsvImport, useImportTargets } from "../hooks/useCsvImport";
 
 const c = t.importer.csv;
@@ -26,18 +26,13 @@ function Select({
       <label htmlFor={id} className="text-sm font-medium">
         {label}
       </label>
-      <select
-        id={id}
-        value={value}
-        onChange={(e) => onChange(e.target.value)}
-        className="min-h-11 rounded-field border border-line bg-surface px-3"
-      >
+      <SelectInput id={id} value={value} onChange={(e) => onChange(e.target.value)}>
         {options.map((o) => (
           <option key={o.value} value={o.value}>
             {o.label}
           </option>
         ))}
-      </select>
+      </SelectInput>
     </div>
   );
 }

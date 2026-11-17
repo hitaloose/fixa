@@ -31,6 +31,7 @@ As três filas diferem também em claridade, não só em matiz (acessível para 
 
 - Títulos e números grandes: **Space Grotesk** 600–700 (32px título de tela, 28px título de baralho, 34px frente do cartão).
 - Interface e corpo: **Inter** 400–600 (15px padrão, 13px secundário, 11–12px rótulos).
+- **Campos (texto, busca, número, `select`, editor de campo, LaTeX): 16px**, token `--text-field` (classe `text-field`). O iOS amplia a página ao focar um campo com fonte menor que 16px e a deixa ampliada, com rolagem lateral. Não use `text-base` em campo: aqui `1rem` = 15px. O E2E `tests/e2e/forms.spec.ts` confere todos os campos das telas.
 - Hospedar as fontes localmente (`@fontsource/inter`, `@fontsource/space-grotesk`) — o PWA precisa delas offline.
 
 ### Forma e espaço
@@ -57,7 +58,7 @@ As três filas diferem também em claridade, não só em matiz (acessível para 
 
 ## Componentes de UI (`src/ui`)
 
-- `ui/primitives`: `Button` (primary, secondary, ghost, danger) · `IconButton` (exige `aria-label`) · `Input` · `Textarea` · `Switch` · `Slider` · `Chip` · `Badge` · `Icon`.
+- `ui/primitives`: `Button` (primary, secondary, ghost, danger) · `IconButton` (exige `aria-label`) · `Select` (`<select>` nativo sem a aparência do sistema, com a mesma altura e padding do `TextField`: o iOS ignora `min-height` no `select` nativo) · `Input` · `Textarea` · `Switch` · `Slider` · `Chip` · `Badge` · `Icon`.
 - `ui/patterns`: `Sheet` (bottom sheet com Vaul) · `ListGroup`/`ListRow` · `Stepper` · `FilterChip` · `SegmentedControl` · `SearchField` · `TabBar` · `EmptyState` · `Toast`.
 - Componentes com regra de negócio ficam na feature, não em `ui` (ex.: `CountTriplet` novos/aprend./revisar fica em `features/decks`).
 

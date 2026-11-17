@@ -1,9 +1,9 @@
-import { type FormEvent, useState } from "react";
+import { type FormEvent, useId, useState } from "react";
 import type { DeckErrorCode } from "../../../data/repositories";
 import { subtreeIds } from "../../../domain/decks";
 import type { Deck } from "../../../domain/model";
 import { t } from "../../../i18n/pt-BR";
-import { Button, Sheet, TextField } from "../../../ui";
+import { Button, Select, Sheet, TextField } from "../../../ui";
 import { useDeckActions } from "../hooks/useDeckActions";
 import type { DeckRow } from "../model/deckList";
 
@@ -23,6 +23,7 @@ export function DeckActionsSheet({ row, targets, onClose, onExport }: DeckAction
   const [mode, setMode] = useState<Mode>("menu");
   const [name, setName] = useState("");
   const [parent, setParent] = useState("");
+  const parentId = useId();
   const [error, setError] = useState<DeckErrorCode | null>(null);
 
   if (!row) return null;
@@ -133,13 +134,11 @@ export function DeckActionsSheet({ row, targets, onClose, onExport }: DeckAction
           className="flex flex-col gap-3"
           onSubmit={submit(() => actions.move(deck.id, parent || null))}
         >
-          <label className="flex flex-col gap-1 text-sm font-medium">
-            {t.decks.move.label}
-            <select
-              value={parent}
-              onChange={(e) => setParent(e.target.value)}
-              className="min-h-11 rounded-field border border-line bg-surface px-3 text-[15px]"
-            >
+          <div className="flex flex-col gap-1">
+            <label htmlFor={parentId} className="text-sm font-medium">
+              {t.decks.move.label}
+            </label>
+            <Select id={parentId} value={parent} onChange={(e) => setParent(e.target.value)}>
               <option value="">{t.decks.move.topLevel}</option>
               {targets
                 .filter((x) => !excluded.has(x.deck.id))
@@ -148,8 +147,8 @@ export function DeckActionsSheet({ row, targets, onClose, onExport }: DeckAction
                     {x.path}
                   </option>
                 ))}
-            </select>
-          </label>
+            </Select>
+          </div>
           {errorText ? (
             <p role="alert" className="text-xs text-danger">
               {errorText}

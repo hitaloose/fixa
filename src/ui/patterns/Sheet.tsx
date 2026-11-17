@@ -10,6 +10,11 @@ export interface SheetProps {
   /** Accessible name of the close button (from i18n). */
   closeLabel: string;
   children: ReactNode;
+  /**
+   * CSS selector of elements rendered outside the sheet that still belong to it (e.g. MathLive's
+   * virtual keyboard, appended to <body>): touching them must not close the sheet.
+   */
+  outsideParts?: string;
 }
 
 /** Bottom sheet (Vaul on Radix Dialog): focus trap, Escape, drag to dismiss. */
@@ -20,13 +25,20 @@ export function Sheet({
   description,
   closeLabel,
   children,
+  outsideParts,
 }: SheetProps) {
+  const keepOpenOnParts = (e: { target: EventTarget | null; preventDefault: () => void }) => {
+    if (outsideParts && e.target instanceof Element && e.target.closest(outsideParts)) {
+      e.preventDefault();
+    }
+  };
   return (
     <Drawer.Root open={open} onOpenChange={onOpenChange}>
       <Drawer.Portal>
         <Drawer.Overlay className="fixed inset-0 z-20 bg-ink/40" />
         <Drawer.Content
           {...(description ? {} : { "aria-describedby": undefined })}
+          onInteractOutside={keepOpenOnParts}
           className="fixed inset-x-0 bottom-0 z-30 mx-auto max-h-[90dvh] max-w-xl overflow-y-auto rounded-t-section bg-surface px-4 pt-2 pb-[calc(16px+env(safe-area-inset-bottom))] outline-none"
         >
           <div aria-hidden="true" className="mx-auto mb-2 h-1.5 w-10 rounded-chip bg-line" />

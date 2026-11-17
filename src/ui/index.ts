@@ -8,6 +8,7 @@ export { Toast, type ToastProps } from "./patterns/Toast";
 export { Button, type ButtonProps, type ButtonVariant } from "./primitives/Button";
 export { Icon, type IconName } from "./primitives/Icon";
 export { IconButton, type IconButtonProps } from "./primitives/IconButton";
+export { Select, type SelectProps } from "./primitives/Select";
 export { Stepper, type StepperProps } from "./primitives/Stepper";
 export { Switch, type SwitchProps } from "./primitives/Switch";
 export { TextField, type TextFieldProps } from "./primitives/TextField";

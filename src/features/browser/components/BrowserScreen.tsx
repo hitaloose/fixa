@@ -4,7 +4,7 @@ import { useId, useMemo, useRef, useState } from "react";
 import { buildDeckTree, type DeckNode } from "../../../domain/decks";
 import { parseTags } from "../../../domain/notes";
 import { t } from "../../../i18n/pt-BR";
-import { Button, SearchField, Sheet, Stepper, TextField, Toast } from "../../../ui";
+import { Button, SearchField, Select, Sheet, Stepper, TextField, Toast } from "../../../ui";
 import { useBrowseData, useBulkActions } from "../hooks/useBrowseData";
 import { type BrowseMode, type BrowseRow, browse, type SortKey, toggleTerm } from "../model/browse";
 
@@ -160,6 +160,7 @@ export function BrowserScreen({
   const [tags, setTags] = useState("");
   const [days, setDays] = useState(1);
   const sortId = useId();
+  const moveToId = useId();
 
   const rows = useMemo(
     () => (data ? browse(data, { query: state.q, sort: state.sort, mode: state.mode }) : []),
@@ -223,18 +224,18 @@ export function BrowserScreen({
         <label htmlFor={sortId} className="sr-only">
           {b.sortBy}
         </label>
-        <select
+        <Select
           id={sortId}
           value={state.sort}
           onChange={(e) => update({ sort: e.target.value as SortKey })}
-          className="min-h-11 flex-1 rounded-field border border-line bg-surface px-3"
+          className="flex-1"
         >
           {(Object.keys(b.sorts) as SortKey[]).map((key) => (
             <option key={key} value={key}>
               {b.sorts[key]}
             </option>
           ))}
-        </select>
+        </Select>
         <div className="flex rounded-button bg-line-soft p-1">
           {(["cards", "notes"] as const).map((mode) => (
             <button
@@ -343,20 +344,18 @@ export function BrowserScreen({
           closeLabel={t.common.close}
         >
           <div className="flex flex-col gap-3">
-            <label className="flex flex-col gap-1 text-sm font-medium">
-              {b.deck}
-              <select
-                value={moveTo}
-                onChange={(e) => setMoveTo(e.target.value)}
-                className="min-h-11 rounded-field border border-line bg-surface px-3 text-[15px] font-normal"
-              >
+            <div className="flex flex-col gap-1">
+              <label htmlFor={moveToId} className="text-sm font-medium">
+                {b.deck}
+              </label>
+              <Select id={moveToId} value={moveTo} onChange={(e) => setMoveTo(e.target.value)}>
                 {decks.map((d) => (
                   <option key={d.deck.id} value={d.deck.id}>
                     {d.path}
                   </option>
                 ))}
-              </select>
-            </label>
+              </Select>
+            </div>
             <Button
               onClick={() => void run(() => actions.move(cardIds, moveTo))}
               disabled={!moveTo}

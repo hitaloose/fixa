@@ -146,7 +146,7 @@ export function FieldEditor({
         role: "textbox",
         "aria-label": label,
         "aria-multiline": "true",
-        class: "min-h-11 px-3 py-2.5 outline-none",
+        class: "min-h-11 px-3 py-2.5 text-field outline-none",
       },
     },
     onUpdate: ({ editor: e }) => {

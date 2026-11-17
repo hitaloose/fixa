@@ -12,7 +12,16 @@ import {
 } from "../../../domain/notetypes";
 import { renderCard } from "../../../domain/templates";
 import { t } from "../../../i18n/pt-BR";
-import { Button, CardView, Icon, IconButton, Sheet, TextField, Toast } from "../../../ui";
+import {
+  Button,
+  CardView,
+  Icon,
+  IconButton,
+  Select as SelectInput,
+  Sheet,
+  TextField,
+  Toast,
+} from "../../../ui";
 import { useNoteType, useNoteTypeActions, useNoteTypeList } from "../hooks/useNoteTypes";
 
 const m = t.noteTypes;
@@ -34,18 +43,13 @@ function Select({
       <label htmlFor={id} className="text-sm font-medium">
         {label}
       </label>
-      <select
-        id={id}
-        value={value}
-        onChange={(e) => onChange(e.target.value)}
-        className="min-h-11 rounded-field border border-line bg-surface px-3"
-      >
+      <SelectInput id={id} value={value} onChange={(e) => onChange(e.target.value)}>
         {options.map((o) => (
           <option key={o.value} value={o.value}>
             {o.label}
           </option>
         ))}
-      </select>
+      </SelectInput>
     </div>
   );
 }
@@ -74,7 +78,7 @@ function TextArea({
         spellCheck={false}
         autoCapitalize="none"
         onChange={(e) => onChange(e.target.value)}
-        className="rounded-field border border-line bg-surface px-3 py-2 font-mono text-sm"
+        className="rounded-field border border-line bg-surface px-3 py-2 font-mono text-field"
       />
     </div>
   );

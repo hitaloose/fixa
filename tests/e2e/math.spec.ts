@@ -77,3 +77,42 @@ test("edits a formula as LaTeX and shows it as a block", async ({ page }) => {
   await sheet.getByRole("button", { name: "Salvar" }).click();
   await expect(front.getByRole("button", { name: "Editar fórmula: E = mc^2" })).toBeVisible();
 });
+
+/** Opens the formula sheet on /add with MathLive's virtual keyboard up. */
+async function openVirtualKeyboard(page: import("@playwright/test").Page) {
+  await page.goto("/");
+  await page.getByRole("button", { name: "Novo baralho" }).click();
+  const newDeck = page.getByRole("dialog", { name: "Novo baralho" });
+  await newDeck.getByRole("textbox", { name: "Nome" }).fill("Matemática");
+  await newDeck.getByRole("button", { name: "Criar" }).click();
+  await expect(newDeck).toBeHidden();
+  await page.goto("/add");
+  await page.getByRole("button", { name: "Inserir fórmula" }).first().click();
+  const sheet = page.getByRole("dialog", { name: "Fórmula" });
+  const field = sheet.locator("math-field");
+  await expect(field).toBeVisible();
+  await field.click(); // a tap brings up MathLive's virtual keyboard
+  const keyboard = page.locator(".ML__keyboard");
+  await expect(keyboard).toBeVisible();
+  return { sheet, field, keyboard };
+}
+
+test("types with the keys of MathLive's virtual keyboard", async ({ page }) => {
+  const { sheet, field, keyboard } = await openVirtualKeyboard(page);
+  await keyboard.getByLabel("7", { exact: true }).filter({ visible: true }).tap();
+  await expect
+    .poll(() => field.evaluate((el) => (el as HTMLElement & { value: string }).value))
+    .toBe("7");
+  await expect(sheet).toBeVisible();
+  await expect(keyboard).toBeVisible();
+  await expect(sheet.getByRole("button", { name: "Inserir" })).toBeEnabled();
+});
+
+test("paints the virtual keyboard with the app's theme, not the device's", async ({ browser }) => {
+  const page = await (await browser.newContext({ colorScheme: "light" })).newPage();
+  await page.goto("/settings");
+  await page.getByRole("radiogroup", { name: "Tema" }).getByText("Escuro").click();
+  await expect(page.locator("html")).toHaveAttribute("data-theme", "dark");
+  const { keyboard } = await openVirtualKeyboard(page);
+  await expect(keyboard.locator(".MLK__backdrop")).toHaveCSS("background-color", "rgb(17, 18, 21)");
+});

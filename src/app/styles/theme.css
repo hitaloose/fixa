@@ -38,6 +38,10 @@
   --font-sans: "Inter", system-ui, sans-serif;
   --font-display: "Space Grotesk", "Inter", system-ui, sans-serif;
 
+  /* Text in anything typed into or picked from (class `text-field`). iOS zooms the page into a
+     focused control under 16px, so this is the floor, in px: the root size is 15px. */
+  --text-field: 16px;
+
   --radius-section: 20px;
   --radius-list: 16px;
   --radius-field: 14px;
@@ -156,4 +160,29 @@
   max-width: 100%;
   height: auto;
   margin-inline: auto;
+}
+
+/* MathLive's virtual keyboard (docs/07-formulas.md) follows the app's tokens, so it switches with
+   the "Tema" setting instead of only the device's colour scheme. Its own dark-mode rule sets a
+   few of these on .ML__keyboard, hence the extra specificity. */
+:root .ML__keyboard {
+  --keyboard-accent-color: var(--color-primary);
+  --keyboard-background: var(--color-bg);
+  --keyboard-border: var(--color-line);
+  --keyboard-toolbar-text: var(--color-muted);
+  --keyboard-toolbar-text-active: var(--color-primary);
+  --keyboard-toolbar-background-hover: var(--color-line-soft);
+  --keyboard-horizontal-rule: 1px solid var(--color-line);
+  --keycap-background: var(--color-surface);
+  --keycap-background-hover: var(--color-line-soft);
+  --keycap-border: var(--color-line);
+  --keycap-border-bottom: var(--color-line);
+  --keycap-text: var(--color-ink);
+  --keycap-secondary-background: var(--color-line);
+  --keycap-secondary-background-hover: var(--color-line-soft);
+  --keycap-secondary-text: var(--color-ink);
+  --keycap-secondary-border: var(--color-line);
+  --keycap-secondary-border-bottom: var(--color-line);
+  --variant-panel-background: var(--color-surface);
+  --variant-keycap-text: var(--color-ink);
 }

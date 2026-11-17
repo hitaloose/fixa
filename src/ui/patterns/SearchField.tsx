@@ -19,7 +19,7 @@ export function SearchField({ label, clearLabel, value, onChange, placeholder }:
         placeholder={placeholder}
         value={value}
         onChange={(e) => onChange(e.target.value)}
-        className="min-h-11 flex-1 bg-transparent text-[15px] text-ink outline-none [&::-webkit-search-cancel-button]:hidden"
+        className="min-h-11 flex-1 bg-transparent text-field text-ink outline-none [&::-webkit-search-cancel-button]:hidden"
       />
       {value ? <IconButton icon="close" label={clearLabel} onClick={() => onChange("")} /> : null}
     </div>

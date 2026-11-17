@@ -2,7 +2,16 @@ import { Link } from "@tanstack/react-router";
 import { type ReactNode, useId, useState } from "react";
 import { type Deck, type Preset, type PresetValues, parseSteps } from "../../../domain/model";
 import { t } from "../../../i18n/pt-BR";
-import { Button, Icon, Sheet, Stepper, Switch, TextField, Toast } from "../../../ui";
+import {
+  Button,
+  Icon,
+  Select as SelectInput,
+  Sheet,
+  Stepper,
+  Switch,
+  TextField,
+  Toast,
+} from "../../../ui";
 import {
   DEFAULT_PRESET_ID,
   type DeckOptionsData,
@@ -55,18 +64,13 @@ function Select<V extends string>({
       <label htmlFor={id} className="font-medium">
         {label}
       </label>
-      <select
-        id={id}
-        value={value}
-        onChange={(e) => onChange(e.target.value as V)}
-        className="min-h-11 rounded-field border border-line bg-surface px-3"
-      >
+      <SelectInput id={id} value={value} onChange={(e) => onChange(e.target.value as V)}>
         {(Object.entries(options) as Array<[V, string]>).map(([v, text]) => (
           <option key={v} value={v}>
             {text}
           </option>
         ))}
-      </select>
+      </SelectInput>
     </div>
   );
 }
@@ -276,18 +280,18 @@ function OptionsForm({ data, onSaved }: { data: DeckOptionsData; onSaved: () => 
         <label htmlFor={presetSelectId} className="font-medium">
           {o.preset}
         </label>
-        <select
+        <SelectInput
           id={presetSelectId}
           value={presetId}
           onChange={(e) => switchPreset(e.target.value)}
-          className="mt-1 min-h-11 w-full rounded-field border border-line bg-surface px-3"
+          className="mt-1"
         >
           {presets.map((p) => (
             <option key={p.id} value={p.id}>
               {p.name}
             </option>
           ))}
-        </select>
+        </SelectInput>
         <p className="mt-1 text-xs text-muted">{o.usedBy(usage[presetId] ?? 0)}</p>
         <div className="mt-2 flex flex-wrap gap-1">
           <button type="button" className={presetActionClass} onClick={() => setDialog("clone")}>

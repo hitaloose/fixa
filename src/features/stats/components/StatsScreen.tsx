@@ -1,5 +1,6 @@
 import { type ReactNode, useId, useState } from "react";
 import { t } from "../../../i18n/pt-BR";
+import { Select } from "../../../ui";
 import { useStats } from "../hooks/useStats";
 import { ButtonsBars, CardStatesBar, Heatmap, ReviewsChart } from "./charts";
 
@@ -41,11 +42,10 @@ export function StatsScreen() {
         <label htmlFor={deckSelect} className="sr-only">
           {s.deck}
         </label>
-        <select
+        <Select
           id={deckSelect}
           value={deckId ?? ""}
           onChange={(e) => setDeckId(e.target.value || null)}
-          className="min-h-11 rounded-field border border-line bg-surface px-3"
         >
           <option value="">{s.allDecks}</option>
           {data?.decks.map((d) => (
@@ -53,7 +53,7 @@ export function StatsScreen() {
               {d.path}
             </option>
           ))}
-        </select>
+        </Select>
         <div role="radiogroup" aria-label={s.period} className="grid grid-cols-4 gap-1">
           {PERIODS.map((p) => (
             <label

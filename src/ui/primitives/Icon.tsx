@@ -4,6 +4,7 @@ const PATHS = {
   add: "M12 5v14M5 12h14",
   stats: "M5 20V11M12 20V4M19 20v-6",
   chevronRight: "M9 6l6 6-6 6",
+  chevronDown: "M6 9l6 6 6-6",
   close: "M6 6l12 12M18 6 6 18",
   more: "M5 12h.01M12 12h.01M19 12h.01",
   bold: "M7 5h6a3.5 3.5 0 0 1 0 7H7zM7 12h7a3.5 3.5 0 0 1 0 7H7z",

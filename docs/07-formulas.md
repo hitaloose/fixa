@@ -25,7 +25,7 @@ Isso mantém compatibilidade total com `.apkg` (o Anki usa os mesmos delimitador
 
 - O editor de campo é Tiptap. Existe um **nó `math`** (inline e bloco) que guarda o LaTeX como atributo e é serializado para `\(...\)` / `\[...\]` no HTML salvo.
 - No editor, o nó aparece **renderizado pelo KaTeX**. Tocar nele abre um **bottom sheet** com o `<math-field>` do MathLive:
-  - teclado matemático virtual do MathLive ativado no celular;
+  - teclado matemático virtual do MathLive ativado no celular. Ele é anexado ao `<body>`, fora do sheet modal; o `Sheet` recebe `outsideParts=".ML__keyboard"` para que tocar nas teclas não conte como toque fora (senão o sheet fecha e a tecla não digita). As cores do teclado vêm dos tokens do app (`theme.css`), então ele segue o ajuste "Tema", não só o tema do aparelho;
   - digitar `3/4` já vira fração empilhada;
   - pré-visualização ao vivo e alternância "visual / LaTeX" para quem prefere digitar;
   - botões "Na linha" / "Em destaque".

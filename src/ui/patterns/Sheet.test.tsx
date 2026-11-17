@@ -59,4 +59,50 @@ describe("Sheet", () => {
     await userEvent.keyboard("{Escape}");
     expect(onOpenChange).toHaveBeenCalledWith(false);
   });
+
+  it("stays open when tapped outside, on a part of it rendered elsewhere", async () => {
+    const onOpenChange = vi.fn();
+    const keyboard = document.createElement("div");
+    keyboard.className = "virtual-keyboard";
+    keyboard.style.pointerEvents = "auto"; // like MathLive's keys, above the modal's inert page
+    const key = document.createElement("button");
+    key.textContent = "7";
+    keyboard.append(key);
+    document.body.append(keyboard);
+    render(
+      <Sheet
+        open
+        onOpenChange={onOpenChange}
+        title="Fórmula"
+        closeLabel="Fechar"
+        outsideParts=".virtual-keyboard"
+      >
+        <p />
+      </Sheet>,
+    );
+    await userEvent.pointer({ keys: "[MouseLeft]", target: key });
+    expect(onOpenChange).not.toHaveBeenCalled();
+    keyboard.remove();
+  });
+
+  it("asks to close when tapped outside, elsewhere", async () => {
+    const onOpenChange = vi.fn();
+    const elsewhere = document.createElement("button");
+    elsewhere.style.pointerEvents = "auto";
+    document.body.append(elsewhere);
+    render(
+      <Sheet
+        open
+        onOpenChange={onOpenChange}
+        title="Fórmula"
+        closeLabel="Fechar"
+        outsideParts=".virtual-keyboard"
+      >
+        <p />
+      </Sheet>,
+    );
+    await userEvent.pointer({ keys: "[MouseLeft]", target: elsewhere });
+    expect(onOpenChange).toHaveBeenCalledWith(false);
+    elsewhere.remove();
+  });
 });
