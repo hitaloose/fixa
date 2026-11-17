@@ -1,4 +1,4 @@
-import { useEffect, useId, useState } from "react";
+import { useId, useState } from "react";
 import { t } from "../../i18n/pt-BR";
 
 export interface StepperProps {
@@ -24,7 +24,14 @@ export function Stepper({
   const id = useId();
   const hintId = useId();
   const [text, setText] = useState(String(value));
-  useEffect(() => setText(String(value)), [value]);
+  // Show a new value from outside (−/+, another source) as soon as it arrives. Done while
+  // rendering, not in an effect: an effect also runs after mount and could overwrite an edit
+  // made in between with the old value.
+  const [shown, setShown] = useState(value);
+  if (value !== shown) {
+    setShown(value);
+    setText(String(value));
+  }
   const clamp = (n: number) => Math.min(max, Math.max(min, n));
   const button =
     "inline-flex size-11 items-center justify-center rounded-button border border-line bg-surface text-lg font-semibold disabled:opacity-40";

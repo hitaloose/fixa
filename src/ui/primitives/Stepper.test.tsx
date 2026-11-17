@@ -1,6 +1,6 @@
-import { render, screen } from "@testing-library/react";
+import { fireEvent, render, screen } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
-import { useState } from "react";
+import { useLayoutEffect, useState } from "react";
 import { describe, expect, it } from "vitest";
 import { Stepper } from "./Stepper";
 
@@ -20,6 +20,16 @@ function Harness({
       <output data-testid="value">{value}</output>
     </>
   );
+}
+
+/** Clears the field during the commit that shows it, before passive effects run. */
+function ClearOnMount() {
+  useLayoutEffect(() => {
+    fireEvent.change(screen.getByRole("spinbutton", { name: "Novos por dia" }), {
+      target: { value: "" },
+    });
+  }, []);
+  return null;
 }
 
 const value = () => screen.getByTestId("value").textContent;
@@ -51,5 +61,18 @@ describe("Stepper", () => {
     expect(value()).toBe("9");
     await userEvent.clear(input);
     expect(value()).toBe("9");
+  });
+
+  // Regression (CI flake in DeckOptionsScreen): when the field was edited right after it
+  // appeared, before React's passive effects ran, the old value came back ("" → "20", then
+  // typing "7" gave "207").
+  it("keeps an edit made right after it appears", () => {
+    render(
+      <>
+        <Stepper label="Novos por dia" value={20} onChange={() => {}} />
+        <ClearOnMount />
+      </>,
+    );
+    expect(screen.getByRole("spinbutton", { name: "Novos por dia" })).toHaveValue(null);
   });
 });
