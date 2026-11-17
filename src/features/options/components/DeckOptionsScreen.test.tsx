@@ -173,6 +173,31 @@ describe("DeckOptionsScreen", () => {
     expect((await rt.db.decks.get(deck.id))?.presetId).toBe(custom.id);
   });
 
+  it("simulates the workload of the next 30 days with the current values", async () => {
+    await rt.repos.notes.add({
+      noteTypeId: SEED_IDS.basic,
+      deckId: deck.id,
+      fields: { front: "cat" },
+      tags: [],
+    });
+    await rt.repos.notes.add({
+      noteTypeId: SEED_IDS.basic,
+      deckId: deck.id,
+      fields: { front: "dog" },
+      tags: [],
+    });
+    renderWithRouter(<DeckOptionsScreen deckId={deck.id} />);
+    await userEvent.click(await screen.findByRole("button", { name: "Simular carga" }));
+    const dialog = screen.getByRole("dialog", { name: "Simular carga" });
+    expect(
+      await within(dialog).findByText(/^Média de \d+(,\d)? revisões por dia/),
+    ).toBeInTheDocument();
+    expect(
+      within(dialog).getByRole("table", { name: "Revisões por dia simuladas" }),
+    ).toBeInTheDocument();
+    expect(within(within(dialog).getByRole("table")).getAllByRole("row")).toHaveLength(31);
+  });
+
   it("says so when the deck does not exist", async () => {
     renderWithRouter(<DeckOptionsScreen deckId="00000000-0000-7000-8000-000000000999" />);
     expect(await screen.findByText("Esse baralho não existe mais.")).toBeInTheDocument();

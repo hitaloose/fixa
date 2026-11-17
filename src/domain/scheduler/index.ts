@@ -8,4 +8,5 @@ export {
   type Rating,
   replay,
   reschedule,
+  retrievability,
 } from "./scheduler";

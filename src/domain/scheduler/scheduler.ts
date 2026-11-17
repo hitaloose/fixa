@@ -56,7 +56,18 @@ const FROM_FSRS_STATE: Record<State, FsrsState> = {
   [State.Relearning]: "relearning",
 };
 
+/** One FSRS instance per preset object (simulations answer thousands of times). */
+const schedulers = new WeakMap<Preset, Scheduler>();
+
 function schedulerFor(preset: Preset): Scheduler {
+  const cached = schedulers.get(preset);
+  if (cached) return cached;
+  const scheduler = createScheduler(preset);
+  schedulers.set(preset, scheduler);
+  return scheduler;
+}
+
+function createScheduler(preset: Preset): Scheduler {
   return fsrs({
     request_retention: preset.desiredRetention,
     maximum_interval: preset.maximumIntervalDays,
@@ -181,6 +192,12 @@ export function answer({
     undoneAt: null,
   };
   return { nextCard, reviewLog, leech };
+}
+
+/** Probability (0–1) of recalling the card at `now` (FSRS forgetting curve). */
+export function retrievability(card: Card, now: number, preset: Preset): number {
+  if (card.state === "new") return 0;
+  return schedulerFor(preset).get_retrievability(toFsrs(card), new Date(now), false);
 }
 
 /** Milliseconds until the card would be due for each rating — labels for the answer buttons. */

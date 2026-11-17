@@ -28,3 +28,8 @@ export function seededShuffle<T>(items: readonly T[], seed: string): T[] {
   }
   return out;
 }
+
+/** A deterministic random number generator in [0, 1) for a seed (simulations, shuffles). */
+export function seededRandom(seed: string): () => number {
+  return mulberry32(hash(seed));
+}

@@ -17,6 +17,7 @@ import {
   limitDraft,
   overridesFrom,
 } from "../model/limits";
+import { SimulationSheet } from "./SimulationSheet";
 
 const o = t.options;
 
@@ -196,7 +197,7 @@ function ConfirmSheet({
   );
 }
 
-type Dialog = "clone" | "rename" | "remove" | "restore" | null;
+type Dialog = "clone" | "rename" | "remove" | "restore" | "simulate" | null;
 
 function OptionsForm({ data, onSaved }: { data: DeckOptionsData; onSaved: () => void }) {
   const { deck, presets, usage, today } = data;
@@ -394,6 +395,13 @@ function OptionsForm({ data, onSaved }: { data: DeckOptionsData; onSaved: () => 
           value={values.desiredRetention}
           onChange={(v) => set("desiredRetention", v)}
         />
+        <button
+          type="button"
+          onClick={() => setDialog("simulate")}
+          className="min-h-11 py-2 text-left font-semibold text-primary"
+        >
+          {o.simulate}
+        </button>
       </Section>
 
       <Section title={o.sections.display}>
@@ -413,6 +421,20 @@ function OptionsForm({ data, onSaved }: { data: DeckOptionsData; onSaved: () => 
         {o.save}
       </Button>
 
+      {dialog === "simulate" ? (
+        <SimulationSheet
+          deckId={deck.id}
+          preset={{
+            ...preset,
+            ...values,
+            learningSteps: parseSteps(steps.learning) ?? preset.learningSteps,
+            relearningSteps: parseSteps(steps.relearning) ?? preset.relearningSteps,
+            newPerDay: limitValue("newPerDay"),
+            reviewsPerDay: limitValue("reviewsPerDay"),
+          }}
+          onClose={close}
+        />
+      ) : null}
       {dialog === "clone" ? (
         <NameSheet
           title={o.clone}

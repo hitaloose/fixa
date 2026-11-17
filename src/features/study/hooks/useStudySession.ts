@@ -155,7 +155,10 @@ export function useStudySession(deckId: string, custom: CustomStudy | null = nul
   const runBackup = useCallback(() => {
     if (backup.current.answers === 0 || backup.current.ran) return;
     backup.current.ran = true;
-    void writes.current.then(() => runtime().repos.autoBackup.runIfConfigured(__APP_VERSION__));
+    // Best effort: a failed automatic backup must not break studying (the reminder still shows).
+    void writes.current
+      .then(() => runtime().repos.autoBackup.runIfConfigured(__APP_VERSION__))
+      .catch(() => undefined);
   }, []);
   const finished =
     s.loaded != null && next !== null && next.card === null && next.waitUntil === null;

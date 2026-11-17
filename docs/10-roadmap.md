@@ -46,7 +46,8 @@ Marque `[x]` ao concluir. Cada fase termina com o app utilizável. Todo item seg
 ## Fase 3 — Polimento
 
 - [x] Backup automático em pasta (File System Access API)
-- [ ] Otimizar parâmetros FSRS (worker) e "Simular carga"
+- [x] "Simular carga" (Monte Carlo sobre o agendador, nas opções do baralho)
+- [ ] Otimizar parâmetros FSRS (worker) — depende de decisão de hospedagem, ver `docs/02-stack.md`
 - [x] Tipos de nota personalizados (campos e templates)
 - [x] Estudo personalizado (esquecidos hoje, por etiqueta, adiantar revisões)
 - [x] Modo escuro
