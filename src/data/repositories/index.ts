@@ -1,3 +1,4 @@
+export { AnkiImportError, type AnkiImportSummary, type AnkiMediaFile } from "./ankiImport";
 export { createRepositories, type Repositories, type RepositoryDeps } from "./createRepositories";
 export type { DeckOptionsWrite } from "./decks";
 export type { EntityRepository } from "./entityRepository";

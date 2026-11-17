@@ -1,6 +1,7 @@
 import { parseNoteType } from "../../domain/model";
 import type { Clock, IdGenerator } from "../../domain/ports";
 import type { FixaDb } from "../db";
+import { createAnkiImportRepository } from "./ankiImport";
 import { createBackupRepository } from "./backup";
 import { createBulkRepository } from "./bulk";
 import { createCardsRepository } from "./cards";
@@ -20,6 +21,7 @@ export interface RepositoryDeps {
 
 export function createRepositories({ db, clock, ids }: RepositoryDeps) {
   const entity = { clock, ids };
+  const media = createMediaRepository({ table: db.media });
   return {
     presets: createPresetsRepository({ db, ...entity }),
     decks: createDecksRepository({ db, ...entity }),
@@ -27,10 +29,11 @@ export function createRepositories({ db, clock, ids }: RepositoryDeps) {
     notes: createNotesRepository({ db, ...entity }),
     cards: createCardsRepository({ db, ...entity }),
     reviewLogs: createReviewLogsRepository({ table: db.reviewLogs, clock }),
-    media: createMediaRepository({ table: db.media }),
+    media,
     settings: createSettingsRepository({ table: db.settings }),
     bulk: createBulkRepository({ db, ...entity }),
     backup: createBackupRepository({ db, clock }),
+    ankiImport: createAnkiImportRepository({ db, ...entity, media }),
   };
 }
 

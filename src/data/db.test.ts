@@ -1,5 +1,5 @@
-import { describe, expect, it } from "vitest";
 import Dexie from "dexie";
+import { describe, expect, it } from "vitest";
 import { testDb } from "../../tests/db";
 import { makeNote } from "../../tests/factories";
 import { createDb } from "./db";
