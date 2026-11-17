@@ -3,9 +3,15 @@ import { type ChangeEvent, type ReactNode, useId, useState } from "react";
 import { BackupFileError } from "../../../data/repositories";
 import type { Backup } from "../../../domain/backup";
 import { t } from "../../../i18n/pt-BR";
+import {
+  type FolderHandle,
+  folderPickerSupported as pickerIn,
+  pickFolder as pickFolderIn,
+} from "../../../lib/fsAccess";
 import { type ShareOutcome, shareOrDownload } from "../../../lib/share";
 import { Button, Sheet, Stepper, Switch, TextField, Toast } from "../../../ui";
 import { useAnkiExport, type WriteAnkiPackage } from "../hooks/useAnkiExport";
+import { useAutoBackup } from "../hooks/useAutoBackup";
 import { useBackupActions, useSettingsData, useStorageInfo } from "../hooks/useBackup";
 
 const s = t.settings;
@@ -16,6 +22,9 @@ export interface SettingsScreenProps {
   appVersion?: string;
   /** Writes an .apkg (a Web Worker in the app); the export button shows only when given. */
   writeAnkiPackage?: WriteAnkiPackage;
+  /** Folder picker for the automatic backup (the File System Access API in the app). */
+  pickFolder?: () => Promise<FolderHandle | null>;
+  folderPickerSupported?: boolean;
 }
 
 function Section({ title, children }: { title: string; children: ReactNode }) {
@@ -85,7 +94,10 @@ export function SettingsScreen({
   share = shareOrDownload,
   appVersion = "0.0.0",
   writeAnkiPackage,
+  pickFolder = () => pickFolderIn(window as never),
+  folderPickerSupported = pickerIn(window as never),
 }: SettingsScreenProps) {
+  const auto = useAutoBackup(pickFolder, appVersion);
   const exportAnki = useAnkiExport(writeAnkiPackage ?? (async () => new Uint8Array()), share);
   const data = useSettingsData();
   const storage = useStorageInfo();
@@ -193,6 +205,57 @@ export function SettingsScreen({
             {error}
           </p>
         ) : null}
+      </Section>
+
+      <Section title={s.auto.title}>
+        {folderPickerSupported ? (
+          <>
+            <p className="text-sm text-muted">{s.auto.intro}</p>
+            {auto.folderName ? (
+              <>
+                <p className="text-sm font-medium">{s.auto.folder(auto.folderName)}</p>
+                <div className="flex flex-wrap gap-2">
+                  <Button
+                    variant="secondary"
+                    onClick={() =>
+                      void auto
+                        .runNow()
+                        .then((r) =>
+                          r
+                            ? setToast(
+                                r.result === "done" ? s.auto.saved(r.name) : s.auto.permission,
+                              )
+                            : null,
+                        )
+                    }
+                  >
+                    {s.auto.now}
+                  </Button>
+                  <Button variant="secondary" onClick={() => void auto.turnOff()}>
+                    {s.auto.off}
+                  </Button>
+                </div>
+              </>
+            ) : (
+              <Button
+                variant="secondary"
+                onClick={() =>
+                  void auto
+                    .choose()
+                    .then((r) =>
+                      r
+                        ? setToast(r.result === "done" ? s.auto.saved(r.name) : s.auto.permission)
+                        : null,
+                    )
+                }
+              >
+                {s.auto.choose}
+              </Button>
+            )}
+          </>
+        ) : (
+          <p className="text-sm text-muted">{s.auto.unsupported}</p>
+        )}
       </Section>
 
       <Section title={s.study}>

@@ -45,7 +45,7 @@ Marque `[x]` ao concluir. Cada fase termina com o app utilizável. Todo item seg
 
 ## Fase 3 — Polimento
 
-- [ ] Backup automático em pasta (File System Access API)
+- [x] Backup automático em pasta (File System Access API)
 - [ ] Otimizar parâmetros FSRS (worker) e "Simular carga"
 - [x] Tipos de nota personalizados (campos e templates)
 - [x] Estudo personalizado (esquecidos hoje, por etiqueta, adiantar revisões)

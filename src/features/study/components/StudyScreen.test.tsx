@@ -271,6 +271,18 @@ describe("StudyScreen", () => {
     expect(await card()).toHaveTextContent("cat");
   });
 
+  it("runs the automatic backup when the session ends", async () => {
+    const run = vi.spyOn(rt.repos.autoBackup, "runIfConfigured").mockResolvedValue("off");
+    await addNote("cat", "gato");
+    renderWithRouter(<StudyScreen deckId={deck.id} />);
+    await card();
+    expect(run).not.toHaveBeenCalled();
+    await showAnswer();
+    await userEvent.click(answerButton("Fácil"));
+    await screen.findByText("Tudo em dia! Nada mais para estudar neste baralho hoje.");
+    await waitFor(() => expect(run).toHaveBeenCalledOnce());
+  });
+
   it("says so when the deck does not exist", async () => {
     renderWithRouter(<StudyScreen deckId="00000000-0000-7000-8000-000000000999" />);
     expect(await screen.findByText("Esse baralho não existe mais.")).toBeInTheDocument();

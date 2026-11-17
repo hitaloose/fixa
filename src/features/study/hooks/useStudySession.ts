@@ -113,6 +113,8 @@ export function useStudySession(deckId: string, custom: CustomStudy | null = nul
   });
   const [version, rerender] = useReducer((x: number) => x + 1, 0);
   const writes = useRef<Promise<void>>(Promise.resolve());
+  /** Answers in this session, and whether the automatic backup already ran for them. */
+  const backup = useRef({ answers: 0, ran: false });
 
   const update = useCallback((patch: Partial<State>) => {
     Object.assign(state.current, patch);
@@ -148,6 +150,19 @@ export function useStudySession(deckId: string, custom: CustomStudy | null = nul
   );
 
   const waitUntil = next?.waitUntil ?? null;
+
+  // Automatic backup (docs/06): once the session is over, or when leaving it after answering.
+  const runBackup = useCallback(() => {
+    if (backup.current.answers === 0 || backup.current.ran) return;
+    backup.current.ran = true;
+    void writes.current.then(() => runtime().repos.autoBackup.runIfConfigured(__APP_VERSION__));
+  }, []);
+  const finished =
+    s.loaded != null && next !== null && next.card === null && next.waitUntil === null;
+  useEffect(() => {
+    if (finished) runBackup();
+  }, [finished, runBackup]);
+  useEffect(() => runBackup, [runBackup]);
   useEffect(() => {
     if (waitUntil === null) return;
     const delay = Math.max(0, waitUntil - runtime().clock.now());
@@ -192,6 +207,7 @@ export function useStudySession(deckId: string, custom: CustomStudy | null = nul
         ? new Map(loaded.notes).set(note.id, { ...note, tags: [...note.tags, LEECH_TAG] })
         : loaded.notes;
     if (loaded.haptics && typeof navigator.vibrate === "function") navigator.vibrate(10);
+    backup.current = { answers: backup.current.answers + 1, ran: false };
     update({
       loaded: { ...loaded, data, notes },
       revealed: false,

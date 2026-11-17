@@ -354,6 +354,18 @@ export const t = {
     usage: (usedMb: string, quotaMb: string) => `${usedMb} MB usados de ${quotaMb} MB`,
     noStorageInfo: "Informação de armazenamento indisponível neste navegador.",
     askPersist: "Pedir armazenamento persistente",
+    auto: {
+      title: "Backup automático",
+      intro:
+        "Escolha uma pasta (por exemplo, uma sincronizada com o Drive) e o Fixa grava o backup lá ao fim de cada sessão de estudo.",
+      unsupported: "O backup automático em pasta funciona no Chrome e no Edge.",
+      choose: "Escolher pasta",
+      folder: (name: string) => `Pasta: ${name}`,
+      now: "Fazer backup agora",
+      off: "Desativar",
+      saved: (name: string) => `Backup salvo em ${name}.`,
+      permission: "Permita o acesso à pasta para o Fixa gravar o backup.",
+    },
     iosHint:
       "No iPhone, instale o app na tela inicial antes de estudar: os dados do Safari e do app instalado ficam separados.",
     trash: "Lixeira",

@@ -53,6 +53,7 @@ Ao importar um backup, o usuário escolhe:
 
 - Guardar `lastBackupAt` em `settings`.
 - Se passaram **7 dias** (configurável) com revisões novas, mostrar aviso discreto na tela inicial: "Seu último backup foi há 9 dias".
+- **Implementado (2026-11-17):** a pasta fica na tabela `handles` (schema v3); o arquivo `fixa-backup-automatico.fixa` é regravado ao fim de cada sessão com respostas (e em "Fazer backup agora"). Sem permissão já concedida, nada é gravado em segundo plano; os Ajustes pedem a permissão com um toque.
 - Backup automático opcional usando a **File System Access API** (Chrome/Edge desktop e Android): o usuário escolhe uma pasta uma vez, e o app grava o backup lá ao fim de cada sessão. Onde a API não existe, fica só o lembrete.
 
 ## Exclusão

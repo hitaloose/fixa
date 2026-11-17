@@ -29,6 +29,28 @@ async function backupFile() {
   return new File([blob], "fixa-backup.fixa", { type: "application/gzip" });
 }
 
+/** A folder the picker returns; a class so IndexedDB can store it (methods stay on the prototype). */
+class FakeFolder {
+  name = "Backups";
+  written: string[] = [];
+  async queryPermission() {
+    return "granted" as PermissionState;
+  }
+  async requestPermission() {
+    return "granted" as PermissionState;
+  }
+  async getFileHandle(name: string) {
+    return {
+      createWritable: async () => ({
+        write: async () => {},
+        close: async () => {
+          this.written.push(name);
+        },
+      }),
+    };
+  }
+}
+
 describe("SettingsScreen", () => {
   it("exports a full backup and remembers when", async () => {
     const { share } = open();
@@ -149,6 +171,27 @@ describe("SettingsScreen", () => {
     const [blob, name] = share.mock.calls[0] as unknown as [Blob, string];
     expect(name).toBe("fixa.apkg");
     expect(blob.size).toBe(3);
+  });
+
+  it("explains where automatic backup to a folder works", async () => {
+    open();
+    expect(
+      await screen.findByText("O backup automático em pasta funciona no Chrome e no Edge."),
+    ).toBeInTheDocument();
+  });
+
+  it("backs up into a chosen folder, now and after study sessions, until turned off", async () => {
+    const folder = new FakeFolder();
+    open({ pickFolder: async () => folder as never, folderPickerSupported: true });
+    await userEvent.click(await screen.findByRole("button", { name: "Escolher pasta" }));
+    expect(await screen.findByText("Pasta: Backups")).toBeInTheDocument();
+    await waitFor(() => expect(folder.written).toEqual(["fixa-backup-automatico.fixa"]));
+    expect(await rt.repos.autoBackup.folder()).not.toBeNull();
+    await userEvent.click(screen.getByRole("button", { name: "Fazer backup agora" }));
+    await waitFor(() => expect(folder.written).toHaveLength(2));
+    await userEvent.click(screen.getByRole("button", { name: "Desativar" }));
+    expect(await screen.findByRole("button", { name: "Escolher pasta" })).toBeInTheDocument();
+    expect(await rt.repos.autoBackup.folder()).toBeNull();
   });
 
   it("tells when storage information is unavailable", async () => {
