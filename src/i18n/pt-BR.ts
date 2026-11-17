@@ -354,6 +354,26 @@ export const t = {
       action: "Fazer backup",
     },
   },
+  importer: {
+    title: "Importar do Anki",
+    open: "Importar do Anki",
+    intro:
+      "Escolha um pacote .apkg exportado do Anki. Baralhos, notas, cartões, histórico de revisões e mídia são importados; importar o mesmo pacote de novo não duplica nada.",
+    pick: "Escolher arquivo do Anki",
+    reading: "Lendo o pacote…",
+    done: (s: { decks: number; notes: number; cards: number; skippedNotes: number }) =>
+      `Importado: ${plural(s.decks, "baralho", "baralhos")}, ${plural(s.notes, "nota", "notas")}, ${plural(s.cards, "cartão", "cartões")}.` +
+      (s.skippedNotes > 0
+        ? ` ${s.skippedNotes === 1 ? "1 nota já existia" : `${s.skippedNotes} notas já existiam`}.`
+        : ""),
+    seeDecks: "Ver baralhos",
+    errors: {
+      newFormat:
+        "Esse pacote usa o formato novo do Anki, que o Fixa ainda não lê. No Anki, exporte de novo marcando “Suportar versões antigas do Anki”.",
+      unknown: "Esse arquivo não é um pacote do Anki (.apkg).",
+      unreadable: "Não foi possível ler esse arquivo.",
+    },
+  },
   app: { name: "Fixa" },
   nav: {
     label: "Navegação principal",

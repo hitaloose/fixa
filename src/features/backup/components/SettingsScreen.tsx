@@ -1,3 +1,4 @@
+import { Link } from "@tanstack/react-router";
 import { type ChangeEvent, type ReactNode, useId, useState } from "react";
 import { BackupFileError } from "../../../data/repositories";
 import type { Backup } from "../../../domain/backup";
@@ -157,6 +158,12 @@ export function SettingsScreen({
           onChange={(e) => void pickFile(e)}
         />
         <p className="text-xs text-muted">{s.restoreHint}</p>
+        <Link
+          to="/import"
+          className="inline-flex min-h-11 items-center justify-center rounded-button border border-line px-4 font-semibold"
+        >
+          {t.importer.open}
+        </Link>
         {error ? (
           <p role="alert" className="text-sm text-danger">
             {error}

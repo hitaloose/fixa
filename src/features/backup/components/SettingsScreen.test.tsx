@@ -118,6 +118,14 @@ describe("SettingsScreen", () => {
     expect(await rt.db.cards.count()).toBe(1);
   });
 
+  it("links to importing from Anki", async () => {
+    open();
+    expect(await screen.findByRole("link", { name: "Importar do Anki" })).toHaveAttribute(
+      "href",
+      "/import",
+    );
+  });
+
   it("tells when storage information is unavailable", async () => {
     open();
     expect(

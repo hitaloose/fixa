@@ -12,6 +12,7 @@ import { Route as rootRouteImport } from './routes/__root'
 import { Route as IndexRouteImport } from './routes/index'
 import { Route as AddRouteImport } from './routes/add'
 import { Route as BrowseRouteImport } from './routes/browse'
+import { Route as ImportRouteImport } from './routes/import'
 import { Route as SettingsRouteImport } from './routes/settings'
 import { Route as StatsRouteImport } from './routes/stats'
 import { Route as DecksDeckIdRouteImport } from './routes/decks.$deckId'
@@ -32,6 +33,11 @@ const AddRoute = AddRouteImport.update({
 const BrowseRoute = BrowseRouteImport.update({
   id: '/browse',
   path: '/browse',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const ImportRoute = ImportRouteImport.update({
+  id: '/import',
+  path: '/import',
   getParentRoute: () => rootRouteImport,
 } as any)
 const SettingsRoute = SettingsRouteImport.update({
@@ -69,6 +75,7 @@ export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
   '/add': typeof AddRoute
   '/browse': typeof BrowseRoute
+  '/import': typeof ImportRoute
   '/settings': typeof SettingsRoute
   '/stats': typeof StatsRoute
   '/decks/$deckId': typeof DecksDeckIdRoute
@@ -80,6 +87,7 @@ export interface FileRoutesByTo {
   '/': typeof IndexRoute
   '/add': typeof AddRoute
   '/browse': typeof BrowseRoute
+  '/import': typeof ImportRoute
   '/settings': typeof SettingsRoute
   '/stats': typeof StatsRoute
   '/decks/$deckId': typeof DecksDeckIdRoute
@@ -92,6 +100,7 @@ export interface FileRoutesById {
   '/': typeof IndexRoute
   '/add': typeof AddRoute
   '/browse': typeof BrowseRoute
+  '/import': typeof ImportRoute
   '/settings': typeof SettingsRoute
   '/stats': typeof StatsRoute
   '/decks/$deckId': typeof DecksDeckIdRoute
@@ -105,6 +114,7 @@ export interface FileRouteTypes {
     | '/'
     | '/add'
     | '/browse'
+    | '/import'
     | '/settings'
     | '/stats'
     | '/decks/$deckId'
@@ -116,6 +126,7 @@ export interface FileRouteTypes {
     | '/'
     | '/add'
     | '/browse'
+    | '/import'
     | '/settings'
     | '/stats'
     | '/decks/$deckId'
@@ -127,6 +138,7 @@ export interface FileRouteTypes {
     | '/'
     | '/add'
     | '/browse'
+    | '/import'
     | '/settings'
     | '/stats'
     | '/decks/$deckId'
@@ -139,6 +151,7 @@ export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
   AddRoute: typeof AddRoute
   BrowseRoute: typeof BrowseRoute
+  ImportRoute: typeof ImportRoute
   SettingsRoute: typeof SettingsRoute
   StatsRoute: typeof StatsRoute
   DecksDeckIdRoute: typeof DecksDeckIdRoute
@@ -168,6 +181,13 @@ declare module '@tanstack/react-router' {
       path: '/browse'
       fullPath: '/browse'
       preLoaderRoute: typeof BrowseRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/import': {
+      id: '/import'
+      path: '/import'
+      fullPath: '/import'
+      preLoaderRoute: typeof ImportRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/settings': {
@@ -219,6 +239,7 @@ const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
   AddRoute: AddRoute,
   BrowseRoute: BrowseRoute,
+  ImportRoute: ImportRoute,
   SettingsRoute: SettingsRoute,
   StatsRoute: StatsRoute,
   DecksDeckIdRoute: DecksDeckIdRoute,
