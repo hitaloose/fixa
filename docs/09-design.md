@@ -37,7 +37,7 @@ As três filas diferem também em claridade, não só em matiz (acessível para 
 ### Forma e espaço
 
 - Raio: 20px (seções), 16px (listas, CTA), 14px (campos, botões de resposta), 12px (botões secundários), 999px (chips).
-- Espaçamento base 4px; padding lateral das telas 16px; gap entre seções 14–16px.
+- Espaçamento base 4px; padding lateral das telas 16px; gap entre seções 14–16px. A escala do Tailwind é fixada em px (`--spacing: 4px` em `theme.css`): o padrão dele é `0.25rem`, e com a raiz em 15px `min-h-11` daria 41,25px, abaixo do alvo de toque de 44px. O E2E `tests/e2e/forms.spec.ts` confere os alvos de toque das telas.
 - Navegação inferior: 84px de altura (inclui área segura), 4 itens: Baralhos, Navegar, Adicionar, Estatísticas.
 - Respeitar `env(safe-area-inset-*)`.
 

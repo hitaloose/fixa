@@ -58,3 +58,35 @@ test("selects are as tall as text fields", async ({ page }) => {
   const [selectBox, fieldBox] = [await select.boundingBox(), await textField.boundingBox()];
   expect(selectBox?.height).toBe(fieldBox?.height);
 });
+
+/** Height and width of every visible tap target (controls and links) on the page. */
+const tapTargets = (page: Page) =>
+  page.locator(`button, a[href], ${CONTROLS}, label:has(> input.sr-only)`).evaluateAll((els) =>
+    els
+      .filter((el) => el.checkVisibility() && !el.closest(".ML__keyboard"))
+      .map((el) => {
+        const r = el.getBoundingClientRect();
+        const name = (el.getAttribute("aria-label") ?? el.textContent ?? "").trim().slice(0, 30);
+        return { target: `${el.tagName.toLowerCase()} ${name}`, h: r.height, w: r.width };
+      }),
+  );
+
+// CLAUDE.md › Acessibilidade: touch targets are at least 44px.
+test("tap targets are at least 44px tall", async ({ page }) => {
+  await page.goto("/");
+  await page.getByRole("button", { name: "Novo baralho" }).click();
+  const newDeck = page.getByRole("dialog", { name: "Novo baralho" });
+  await newDeck.getByRole("textbox", { name: "Nome" }).fill("Geral");
+  await newDeck.getByRole("button", { name: "Criar" }).click();
+  await expect(newDeck).toBeHidden();
+
+  const found: Array<{ target: string; h: number; w: number }> = [];
+  for (const path of ["/", "/add", "/browse", "/stats", "/settings", "/import", "/note-types"]) {
+    await page.goto(path);
+    await expect(page.locator("main")).toBeVisible();
+    found.push(...(await tapTargets(page)));
+  }
+
+  expect(found.length).toBeGreaterThan(10);
+  expect(found.filter((t) => t.h < 44)).toEqual([]);
+});
