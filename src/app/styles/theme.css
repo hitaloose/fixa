@@ -73,3 +73,12 @@
   overflow-x: auto;
   overflow-y: hidden;
 }
+.fixa-card hr {
+  margin: 1rem auto;
+  border-color: var(--color-line);
+}
+.fixa-card img {
+  max-width: 100%;
+  height: auto;
+  margin-inline: auto;
+}

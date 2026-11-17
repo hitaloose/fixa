@@ -100,15 +100,29 @@ describe("StudyScreen", () => {
     await addNote("cat", "gato");
     renderWithRouter(<StudyScreen deckId={deck.id} />);
     const area = await screen.findByTestId("study-card");
-    fireEvent.pointerDown(area, { clientX: 300, pointerId: 1 });
-    fireEvent.pointerUp(area, { clientX: 100, pointerId: 1 });
+    const swipe = (from: number, to: number) => {
+      fireEvent.pointerDown(area, { clientX: from, pointerId: 1, pointerType: "touch" });
+      fireEvent.pointerUp(area, { clientX: to, pointerId: 1, pointerType: "touch" });
+    };
+    swipe(300, 100);
     expect(await rt.db.reviewLogs.count()).toBe(0);
     await showAnswer();
-    fireEvent.pointerDown(area, { clientX: 300, pointerId: 1 });
-    fireEvent.pointerUp(area, { clientX: 100, pointerId: 1 });
+    swipe(300, 100);
     await waitFor(async () =>
       expect((await rt.db.reviewLogs.toArray()).map((l) => l.rating)).toEqual([1]),
     );
+  });
+
+  it("does not answer when the mouse drags across the card to select text", async () => {
+    await addNote("cat", "gato");
+    renderWithRouter(<StudyScreen deckId={deck.id} />);
+    const area = await screen.findByTestId("study-card");
+    await showAnswer();
+    fireEvent.pointerDown(area, { clientX: 300, pointerId: 1, pointerType: "mouse" });
+    fireEvent.pointerUp(area, { clientX: 100, pointerId: 1, pointerType: "mouse" });
+    await new Promise((r) => setTimeout(r, 50));
+    expect(await rt.db.reviewLogs.count()).toBe(0);
+    expect(screen.getByRole("button", { name: /^De novo/ })).toBeInTheDocument();
   });
 
   it("undoes the last answer, showing the card again", async () => {

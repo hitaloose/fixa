@@ -190,8 +190,9 @@ export function StudyScreen({ deckId }: { deckId: string }) {
   }
 
   const { current } = session;
+  // Swipes are a touch gesture; a mouse drag over the card is a text selection.
   const onPointerDown = (e: PointerEvent) => {
-    swipeStart.current = e.clientX;
+    swipeStart.current = e.pointerType === "mouse" ? null : e.clientX;
   };
   const onPointerUp = (e: PointerEvent) => {
     const start = swipeStart.current;
@@ -241,15 +242,18 @@ export function StudyScreen({ deckId }: { deckId: string }) {
             data-testid="study-card"
             onPointerDown={onPointerDown}
             onPointerUp={onPointerUp}
-            className="flex-1 touch-pan-y overflow-y-auto rounded-section border border-line bg-surface p-5 text-center text-xl"
+            className="flex flex-1 touch-pan-y flex-col overflow-y-auto rounded-section border border-line bg-surface p-6 text-center text-2xl leading-snug sm:text-3xl"
           >
-            <CardView
-              key={`${current.card.id}:${session.revealed}`}
-              html={html}
-              css={current.noteType?.css ?? ""}
-              resolveMedia={media}
-              autoplay={current.preset.autoplayAudio}
-            />
+            {/* my-auto centres short cards and still lets long ones scroll from the top. */}
+            <div className="my-auto w-full">
+              <CardView
+                key={`${current.card.id}:${session.revealed}`}
+                html={html}
+                css={current.noteType?.css ?? ""}
+                resolveMedia={media}
+                autoplay={current.preset.autoplayAudio}
+              />
+            </div>
           </section>
           {session.revealed ? (
             <Answers current={current} onAnswer={session.answer} />
