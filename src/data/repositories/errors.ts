@@ -7,3 +7,13 @@ export class DeckOperationError extends Error {
     this.name = "DeckOperationError";
   }
 }
+
+export type NoteErrorCode = "no-cards" | "not-found";
+
+/** A rejected note operation; the UI maps `code` to a message in src/i18n. */
+export class NoteOperationError extends Error {
+  constructor(readonly code: NoteErrorCode) {
+    super(`note operation failed: ${code}`);
+    this.name = "NoteOperationError";
+  }
+}
