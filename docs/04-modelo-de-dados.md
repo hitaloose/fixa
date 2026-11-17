@@ -63,6 +63,7 @@ Tipos padrão criados no primeiro uso (seed) com IDs fixos conhecidos.
 | `tags` | string[] | Minúsculas, sem espaço; hierarquia com `::`. |
 | `sortField` | string | Texto puro do primeiro campo (para ordenar/buscar). |
 | `checksum` | string | Hash do primeiro campo — detecção de duplicatas. |
+| `guid` | string? | Id estável da nota no Anki, guardado ao importar para uma reimportação não duplicar (índice desde o schema v2). |
 
 ### `Card`
 | Campo | Tipo | Notas |
@@ -117,7 +118,7 @@ db.version(1).stores({
   presets:    "id, deletedAt",
   decks:      "id, parentId, presetId, deletedAt",
   noteTypes:  "id, deletedAt",
-  notes:      "id, noteTypeId, checksum, *tags, updatedAt, deletedAt",
+  notes:      "id, noteTypeId, checksum, *tags, updatedAt, deletedAt", // v2: + guid
   cards:      "id, noteId, deckId, [deckId+queue+due], [deckId+queue+newPosition], queue, due, flag, deletedAt",
   reviewLogs: "id, cardId, reviewedAt, [cardId+reviewedAt]",
   media:      "id, fileName",

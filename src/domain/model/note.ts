@@ -14,6 +14,8 @@ export const noteSchema = entity({
   tags: z.array(tagSchema),
   sortField: z.string(),
   checksum: z.string().regex(/^[0-9a-f]{64}$/),
+  /** Anki's stable note id, kept on import so a re-import does not duplicate the note. */
+  guid: z.string().min(1).optional(),
 });
 
 export type Note = z.output<typeof noteSchema>;

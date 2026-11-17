@@ -329,3 +329,11 @@ describe("mediaSchema", () => {
     expect(mediaSchema.safeParse({ ...media, id: ID }).success).toBe(false);
   });
 });
+
+describe("note guid", () => {
+  it("is optional and, when present, a non-empty string (Anki's stable note id)", () => {
+    expect(noteSchema.safeParse({ ...validNote(), guid: "Gk8&cat" }).success).toBe(true);
+    expect(noteSchema.safeParse(validNote()).success).toBe(true);
+    expect(noteSchema.safeParse({ ...validNote(), guid: "" }).success).toBe(false);
+  });
+});
