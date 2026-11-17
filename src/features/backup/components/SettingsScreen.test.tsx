@@ -104,6 +104,11 @@ describe("SettingsScreen", () => {
     expect((await rt.db.decks.toArray()).map((d) => d.name)).toEqual(["Inglês"]);
   });
 
+  it("lets any file be picked for restore (iOS greys out types it does not know, like .fixa)", async () => {
+    open();
+    expect(await screen.findByLabelText("Restaurar backup")).not.toHaveAttribute("accept");
+  });
+
   it("explains when a file cannot be restored", async () => {
     open();
     await userEvent.upload(

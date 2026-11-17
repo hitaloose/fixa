@@ -60,7 +60,7 @@ export function ImportScreen({ readPackage }: ImportScreenProps) {
       <input
         id={inputId}
         type="file"
-        accept=".apkg,.colpkg,.csv,.txt,.tsv"
+        // No `accept`: iOS greys out .apkg/.colpkg (unknown types); content is checked on read.
         className="sr-only"
         disabled={status.kind === "reading"}
         onChange={(e) => void pick(e)}

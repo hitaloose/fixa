@@ -171,7 +171,8 @@ export function SettingsScreen({
         <input
           id={fileId}
           type="file"
-          accept=".fixa,application/gzip"
+          // No `accept`: iOS greys out files whose type it does not know (.fixa); the content
+          // is validated on read instead.
           className="sr-only"
           onChange={(e) => void pickFile(e)}
         />

@@ -106,6 +106,11 @@ describe("ImportScreen", () => {
     expect(await screen.findByRole("alert")).toHaveTextContent("Suportar versões antigas do Anki");
   });
 
+  it("lets any file be picked (iOS greys out .apkg, a type it does not know)", async () => {
+    open({ format: "unknown" });
+    expect(await screen.findByLabelText("Escolher arquivo")).not.toHaveAttribute("accept");
+  });
+
   it("explains files that are not Anki packages", async () => {
     open({ format: "unknown" });
     await pick("renomeado.apkg");
