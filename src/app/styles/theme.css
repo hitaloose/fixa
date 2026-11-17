@@ -63,3 +63,13 @@
     transition-duration: 0.01ms !important;
   }
 }
+
+/* Card content (ui/patterns/CardView) */
+.fixa-card .cloze {
+  font-weight: 700;
+  color: var(--color-primary);
+}
+.fixa-card .katex-display {
+  overflow-x: auto;
+  overflow-y: hidden;
+}
