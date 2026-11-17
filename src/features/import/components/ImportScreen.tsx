@@ -1,14 +1,17 @@
 import { Link } from "@tanstack/react-router";
 import { type ChangeEvent, useId, useState } from "react";
+import { type DelimitedFile, parseDelimited } from "../../../domain/import/csv";
 import { t } from "../../../i18n/pt-BR";
 import type { ApkgContents } from "../../../lib/anki/apkg";
 import { useAnkiImport } from "../hooks/useAnkiImport";
+import { CsvImport } from "./CsvImport";
 
 const m = t.importer;
 
 type Status =
   | { kind: "idle" }
   | { kind: "reading" }
+  | { kind: "mapping"; file: DelimitedFile }
   | { kind: "done"; message: string }
   | { kind: "error"; message: string };
 
@@ -26,6 +29,10 @@ export function ImportScreen({ readPackage }: ImportScreenProps) {
     const file = e.target.files?.[0];
     e.target.value = "";
     if (!file) return;
+    if (/\.(csv|txt|tsv)$/i.test(file.name)) {
+      setStatus({ kind: "mapping", file: parseDelimited(await file.text()) });
+      return;
+    }
     setStatus({ kind: "reading" });
     try {
       const contents = await readPackage(file);
@@ -53,12 +60,15 @@ export function ImportScreen({ readPackage }: ImportScreenProps) {
       <input
         id={inputId}
         type="file"
-        accept=".apkg,.colpkg"
+        accept=".apkg,.colpkg,.csv,.txt,.tsv"
         className="sr-only"
         disabled={status.kind === "reading"}
         onChange={(e) => void pick(e)}
       />
       {status.kind === "reading" ? <p className="text-muted">{m.reading}</p> : null}
+      {status.kind === "mapping" ? (
+        <CsvImport file={status.file} onDone={(message) => setStatus({ kind: "done", message })} />
+      ) : null}
       {status.kind === "done" ? (
         <div className="flex flex-col gap-2 rounded-section border border-line bg-surface p-4">
           <p role="status">{status.message}</p>

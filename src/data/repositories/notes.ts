@@ -14,6 +14,24 @@ export interface NoteInput {
   tags: string[];
 }
 
+export type DuplicatePolicy = "skip" | "update" | "duplicate";
+
+export interface ImportManyInput {
+  noteTypeId: string;
+  deckId: string;
+  notes: Array<Pick<Note, "fields" | "tags">>;
+  /** What to do when a note of the same type already has the same first field. */
+  duplicates: DuplicatePolicy;
+}
+
+export interface ImportManySummary {
+  added: number;
+  updated: number;
+  skipped: number;
+  /** Rows that would create no card (e.g. empty front). */
+  empty: number;
+}
+
 export interface NoteEdit {
   fields: Note["fields"];
   tags: string[];
@@ -123,6 +141,38 @@ export function createNotesRepository({
         }
       });
       return note;
+    },
+
+    /** Adds many notes (CSV import), applying the duplicate policy to each. */
+    async importMany({
+      noteTypeId,
+      deckId,
+      notes,
+      duplicates,
+    }: ImportManyInput): Promise<ImportManySummary> {
+      const noteType = await mustGetNoteType(noteTypeId);
+      const summary: ImportManySummary = { added: 0, updated: 0, skipped: 0, empty: 0 };
+      for (const row of notes) {
+        const [existing] =
+          duplicates === "duplicate"
+            ? []
+            : await this.duplicatesOf(noteTypeId, firstField(noteType, row.fields));
+        try {
+          if (existing && duplicates === "skip") summary.skipped += 1;
+          else if (existing) {
+            const tags = [...new Set([...existing.tags, ...row.tags])];
+            await this.edit(existing.id, { fields: row.fields, tags });
+            summary.updated += 1;
+          } else {
+            await this.add({ noteTypeId, deckId, fields: row.fields, tags: row.tags });
+            summary.added += 1;
+          }
+        } catch (error) {
+          if (error instanceof NoteOperationError && error.code === "no-cards") summary.empty += 1;
+          else throw error;
+        }
+      }
+      return summary;
     },
 
     /** Active notes of the same type whose first field has the same text (duplicate warning). */

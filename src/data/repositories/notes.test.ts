@@ -232,3 +232,55 @@ describe("notes.getMany", () => {
     expect((await repos.notes.getMany([note.id, DECK])).map((n) => n.id)).toEqual([note.id]);
   });
 });
+
+describe("notes.importMany", () => {
+  const row = (front: string, back = "", tags: string[] = []) => ({
+    fields: { front, back },
+    tags,
+  });
+
+  it("adds notes, counting the ones that would have no cards", async () => {
+    const summary = await repos.notes.importMany({
+      noteTypeId: reversed.id,
+      deckId: DECK,
+      notes: [row("cat", "gato"), row(""), row("dog")],
+      duplicates: "skip",
+    });
+    expect(summary).toEqual({ added: 2, updated: 0, skipped: 0, empty: 1 });
+    expect((await db.notes.toArray()).map((n) => n.sortField).sort()).toEqual(["cat", "dog"]);
+  });
+
+  it("skips, updates or duplicates notes whose first field already exists", async () => {
+    await repos.notes.add({
+      noteTypeId: reversed.id,
+      deckId: DECK,
+      fields: { front: "cat", back: "old" },
+      tags: ["a"],
+    });
+    const run = (duplicates: "skip" | "update" | "duplicate") =>
+      repos.notes.importMany({
+        noteTypeId: reversed.id,
+        deckId: DECK,
+        notes: [row("cat", "novo", ["b"])],
+        duplicates,
+      });
+
+    expect(await run("skip")).toEqual({ added: 0, updated: 0, skipped: 1, empty: 0 });
+    expect(await run("update")).toEqual({ added: 0, updated: 1, skipped: 0, empty: 0 });
+    const [updated] = await db.notes.toArray();
+    expect(updated).toMatchObject({ fields: { front: "cat", back: "novo" }, tags: ["a", "b"] });
+    expect(await run("duplicate")).toEqual({ added: 1, updated: 0, skipped: 0, empty: 0 });
+    expect(await db.notes.count()).toBe(2);
+  });
+
+  it("refuses an unknown note type", async () => {
+    await expect(
+      repos.notes.importMany({
+        noteTypeId: DECK,
+        deckId: DECK,
+        notes: [row("x")],
+        duplicates: "skip",
+      }),
+    ).rejects.toEqual(new NoteOperationError("not-found"));
+  });
+});

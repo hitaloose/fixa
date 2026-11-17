@@ -358,8 +358,41 @@ export const t = {
     title: "Importar do Anki",
     open: "Importar do Anki",
     intro:
-      "Escolha um pacote .apkg exportado do Anki. Baralhos, notas, cartões, histórico de revisões e mídia são importados; importar o mesmo pacote de novo não duplica nada.",
-    pick: "Escolher arquivo do Anki",
+      "Escolha um pacote .apkg exportado do Anki: baralhos, notas, cartões, histórico de revisões e mídia são importados, e importar o mesmo pacote de novo não duplica nada. Também dá para importar uma planilha .csv ou .txt.",
+    pick: "Escolher arquivo",
+    csv: {
+      noteType: "Tipo de nota",
+      deck: "Baralho",
+      header: "Primeira linha é cabeçalho",
+      html: "Células com HTML",
+      column: (n: number) => `Coluna ${n}`,
+      tags: "Etiquetas",
+      ignore: "Ignorar",
+      duplicates: "Se a nota já existir",
+      policies: {
+        skip: "Manter a existente",
+        update: "Atualizar a existente",
+        duplicate: "Criar outra",
+      },
+      preview: "Pré-visualização",
+      importRows: (n: number) => `Importar ${plural(n, "linha", "linhas")}`,
+      noDecks: "Crie um baralho antes de importar uma planilha.",
+      done: (s: { added: number; updated: number; skipped: number; empty: number }) =>
+        [
+          `Importado: ${plural(s.added, "nota", "notas")}.`,
+          s.updated > 0
+            ? `${s.updated === 1 ? "1 já existia e foi atualizada" : `${s.updated} já existiam e foram atualizadas`}.`
+            : "",
+          s.skipped > 0
+            ? `${s.skipped === 1 ? "1 já existia e foi mantida" : `${s.skipped} já existiam e foram mantidas`}.`
+            : "",
+          s.empty > 0
+            ? `${s.empty === 1 ? "1 linha sem cartão foi ignorada" : `${s.empty} linhas sem cartão foram ignoradas`}.`
+            : "",
+        ]
+          .filter(Boolean)
+          .join(" "),
+    },
     reading: "Lendo o pacote…",
     done: (s: { decks: number; notes: number; cards: number; skippedNotes: number }) =>
       `Importado: ${plural(s.decks, "baralho", "baralhos")}, ${plural(s.notes, "nota", "notas")}, ${plural(s.cards, "cartão", "cartões")}.` +
