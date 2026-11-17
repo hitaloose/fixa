@@ -6,7 +6,7 @@ export function Brand({ action }: { action?: ReactNode }) {
   return (
     <div className="flex items-center gap-2 pt-4">
       <img
-        src="/favicon.svg"
+        src={`${import.meta.env.BASE_URL}favicon.svg`}
         alt={t.app.name}
         width={32}
         height={32}

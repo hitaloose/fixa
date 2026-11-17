@@ -1,21 +1,55 @@
 name: CI
+
 on:
   push:
     branches: [main]
   pull_request:
 
+concurrency:
+  group: ci-${{ github.ref }}
+  cancel-in-progress: true
+
+permissions:
+  contents: read
+
 jobs:
   check:
+    name: Lint, boundaries, types, tests
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
       - uses: pnpm/action-setup@v4
       - uses: actions/setup-node@v4
-        with: { node-version: 22, cache: pnpm }
+        with:
+          node-version-file: .tool-versions
+          cache: pnpm
       - run: pnpm install --frozen-lockfile
       - run: pnpm check
 
+  e2e:
+    name: End-to-end (Playwright)
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: pnpm/action-setup@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version-file: .tool-versions
+          cache: pnpm
+      - run: pnpm install --frozen-lockfile
+      - run: pnpm exec playwright install --with-deps chromium
+      # Visual baselines are committed per platform (darwin today); until a Linux baseline is
+      # committed, CI skips only the screenshot comparison, not the rest of the visual test.
+      - run: pnpm test:e2e --ignore-snapshots
+      - if: failure()
+        uses: actions/upload-artifact@v4
+        with:
+          name: playwright-results
+          path: test-results/
+          retention-days: 7
+
   mutation:
+    name: Mutation (src/domain)
     if: github.event_name == 'pull_request'
     runs-on: ubuntu-latest
     steps:
@@ -30,19 +64,8 @@ jobs:
         uses: pnpm/action-setup@v4
       - if: steps.changes.outputs.domain == 'true'
         uses: actions/setup-node@v4
-        with: { node-version: 22, cache: pnpm }
+        with:
+          node-version-file: .tool-versions
+          cache: pnpm
       - if: steps.changes.outputs.domain == 'true'
         run: pnpm install --frozen-lockfile && pnpm test:mutation
-
-  e2e:
-    runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@v4
-      - uses: pnpm/action-setup@v4
-      - uses: actions/setup-node@v4
-        with: { node-version: 22, cache: pnpm }
-      - run: pnpm install --frozen-lockfile
-      - run: pnpm exec playwright install --with-deps chromium
-      # Visual baselines are committed per platform (darwin today); until a Linux baseline is
-      # committed, CI skips only the screenshot comparison, not the rest of the visual test.
-      - run: pnpm test:e2e --ignore-snapshots

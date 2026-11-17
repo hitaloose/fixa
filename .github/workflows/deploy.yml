@@ -1,0 +1,58 @@
+name: Deploy to GitHub Pages
+
+# Publishes only what passed CI: runs after a successful CI run on main, or by hand.
+on:
+  workflow_run:
+    workflows: [CI]
+    types: [completed]
+    branches: [main]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  pages: write
+  id-token: write
+
+# One deploy at a time; a newer one waits instead of cancelling a deploy in progress.
+concurrency:
+  group: pages
+  cancel-in-progress: false
+
+jobs:
+  build:
+    if: github.event_name == 'workflow_dispatch' || github.event.workflow_run.conclusion == 'success'
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          # The exact commit CI tested (workflow_run otherwise checks out the default branch head).
+          ref: ${{ github.event.workflow_run.head_sha || github.sha }}
+      - uses: pnpm/action-setup@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version-file: .tool-versions
+          cache: pnpm
+      - run: pnpm install --frozen-lockfile
+      - id: pages
+        uses: actions/configure-pages@v5
+      - name: Build
+        run: pnpm build
+        env:
+          # "/<repo>" for a project site, "" for a user site or a custom domain.
+          BASE_PATH: ${{ steps.pages.outputs.base_path }}
+      # Pages has no SPA rewrites: serve the app for unknown paths (deep links on a first visit;
+      # after that the service worker answers navigations offline).
+      - run: cp dist/index.html dist/404.html
+      - uses: actions/upload-pages-artifact@v3
+        with:
+          path: dist
+
+  deploy:
+    needs: build
+    runs-on: ubuntu-latest
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    steps:
+      - id: deployment
+        uses: actions/deploy-pages@v4

@@ -5,7 +5,14 @@ import { defineConfig } from "vite";
 import { VitePWA } from "vite-plugin-pwa";
 import pkg from "./package.json" with { type: "json" };
 
+/**
+ * Public path. GitHub Pages serves a project site under /<repo>/: the deploy workflow passes it
+ * as BASE_PATH (from actions/configure-pages). Locally, tests and previews use "/".
+ */
+const base = `${(process.env.BASE_PATH ?? "").replace(/\/+$/, "")}/`;
+
 export default defineConfig({
+  base,
   build: { target: "es2022" },
   define: { __APP_VERSION__: JSON.stringify(pkg.version) },
   plugins: [
@@ -20,7 +27,8 @@ export default defineConfig({
         short_name: "Fixa",
         description: "Flashcards com repetição espaçada",
         lang: "pt-BR",
-        start_url: "/",
+        start_url: base,
+        scope: base,
         display: "standalone",
         background_color: "#F5F3EE",
         theme_color: "#F5F3EE",
@@ -32,7 +40,7 @@ export default defineConfig({
       },
       workbox: {
         globPatterns: ["**/*.{js,css,html,svg,png,woff2,wasm}"],
-        navigateFallback: "/index.html",
+        navigateFallback: `${base}index.html`,
       },
     }),
   ],
