@@ -192,6 +192,64 @@ export function previewIntervals(card: Card, now: number, preset: Preset): Inter
   return { again: until(1), hard: until(2), good: until(3), easy: until(4) };
 }
 
+function moveDue(card: Card, days: number, now: number): Card {
+  return { ...card, due: now + days * DAY_MS, scheduledDays: days };
+}
+
+function manualLog(
+  card: Card,
+  id: string,
+  now: number,
+  kind: "reschedule" | "reset",
+  days: number,
+): ReviewLog {
+  return {
+    id,
+    cardId: card.id,
+    reviewedAt: now,
+    rating: 0,
+    stateBefore: card.state,
+    cardBefore: snapshot(card),
+    scheduledDays: days,
+    elapsedDays: 0,
+    durationMs: 0,
+    kind,
+    undoneAt: null,
+  };
+}
+
+/**
+ * "Set due date" from the browser: a studied card becomes due in `days` days; its memory
+ * state (stability, difficulty) is kept. New cards are left alone (null).
+ */
+export function reschedule(
+  card: Card,
+  days: number,
+  now: number,
+  logId: string,
+): { card: Card; log: ReviewLog } | null {
+  if (card.state === "new") return null;
+  return {
+    card: { ...moveDue(card, days, now), updatedAt: now },
+    log: manualLog(card, logId, now, "reschedule", days),
+  };
+}
+
+/** "Forget": back to a new card at the end of the new queue; a suspended card stays so. */
+export function forget(card: Card, now: number, logId: string): { card: Card; log: ReviewLog } {
+  const fresh = asNew(card);
+  return {
+    card: {
+      ...fresh,
+      queue: card.queue === "suspended" ? "suspended" : "new",
+      due: now,
+      newPosition: now,
+      updatedAt: now,
+    },
+    log: manualLog(card, logId, now, "reset", 0),
+  };
+}
+
 /** A card that has never been studied. New cards are ordered by newPosition, not due. */
 function asNew(card: Card): Card {
   return {
@@ -225,6 +283,8 @@ export function replay(card: Card, logs: ReviewLog[], preset: Preset): Card {
     if (log.kind === "reset") current = asNew(card);
     else if (log.kind === "review") {
       current = scheduleNext(current, log.rating as Rating, log.reviewedAt, preset).scheduled;
+    } else if (log.kind === "reschedule") {
+      current = moveDue(current, log.scheduledDays, log.reviewedAt);
     } else throw new Error(`replay does not support "${log.kind}" logs yet`);
   }
   const parked = card.queue === "suspended" || card.queue === "buried";

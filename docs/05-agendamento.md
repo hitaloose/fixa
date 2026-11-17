@@ -13,7 +13,7 @@ Tudo aqui mora em `src/domain` (`scheduler/`, `queue/`, `day/`) e segue `docs/11
 - Parâmetros vêm da predefinição: `desiredRetention`, `fsrsWeights` (ou padrão), `maximumIntervalDays`, `enable_fuzz: true`.
 - **Etapas de aprendizado** (`learningSteps`, `relearningSteps`) são respeitadas antes de o cartão ir para `review`, como no Anki: cada etapa é um intervalo curto; "De novo" volta para a primeira etapa, "Bom" avança, "Fácil" gradua direto. Usamos as etapas **nativas do ts-fsrs 5** (unidades `m`, `h`, `d`). Como no Anki com FSRS ligado, o intervalo de graduação e o de "Fácil" vêm da estabilidade calculada pelo FSRS: `graduatingIntervalDays` e `easyIntervalDays` ficam guardados (vêm do import do Anki) mas não são usados pelo agendador.
 - **Intervalo máximo** é garantido pelo domínio: o ts-fsrs pode passar 1–2 dias de `maximum_interval` para manter Difícil < Bom < Fácil; `answer` e `previewIntervals` cortam no `maximumIntervalDays` da predefinição.
-- **`replay(card, logs, preset)`** reconstrói o estado a partir de um cartão novo, aplicando logs não desfeitos em ordem de `reviewedAt`: `review` responde, `reset` recomeça do zero. `reschedule`/`manual` lançam erro até terem semântica definida (fase 1.8). Leech não suspende durante o replay; um cartão suspenso/enterrado continua assim, com o estado FSRS reconstruído.
+- **`replay(card, logs, preset)`** reconstrói o estado a partir de um cartão novo, aplicando logs não desfeitos em ordem de `reviewedAt`: `review` responde, `reset` recomeça do zero, `reschedule` move o vencimento para `reviewedAt + scheduledDays` mantendo estabilidade e dificuldade. `manual` ainda lança erro (sem uso). Logs que não são respostas têm `rating = 0`. Leech não suspende durante o replay; um cartão suspenso/enterrado continua assim, com o estado FSRS reconstruído.
 - `previewIntervals(card, now, preset) → { again, hard, good, easy }` alimenta os rótulos dos botões ("< 1 min", "6 min", "1 dia", "4 dias"). Formatação em `src/lib/format.ts`.
 - **Lapsos e cartões problemáticos:** ao chegar em `lapses >= leechThreshold`, aplicar `leechAction` (etiqueta `leech` ou suspender) e avisar com toast.
 - **Otimizar parâmetros:** usar o otimizador do ecossistema FSRS sobre os `ReviewLog` do usuário, rodando em Web Worker. Fase 3 — até lá, pesos padrão.
@@ -42,7 +42,7 @@ A fila vive em memória durante a sessão; é recalculada ao abrir a sessão e q
 |---|---|
 | Suspender / reativar | `queue = "suspended"` / volta para a fila derivada do estado FSRS. |
 | Enterrar | `queue = "buried"`, `buriedUntilDay = amanhã`. |
-| Reagendar | Define `due` para data escolhida, gera `ReviewLog kind="reschedule"`. |
+| Reagendar | Define `due` para daqui a N dias, gera `ReviewLog kind="reschedule"`. Só cartões já estudados (novos ficam como estão); estabilidade e dificuldade não mudam. |
 | Esquecer / redefinir | Volta para `new` com nova `newPosition`, zera FSRS, gera `ReviewLog kind="reset"`. |
 | Marcar | `flag = 1..7`. |
 

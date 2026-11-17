@@ -3,7 +3,15 @@ import { default_w } from "ts-fsrs";
 import { describe, expect, it } from "vitest";
 import { FACTORY_NOW, makeCard, makePreset } from "../../../tests/factories";
 import type { Card } from "../model";
-import { answer, MAX_ANSWER_MS, previewIntervals, type Rating, replay } from "./index";
+import {
+  answer,
+  forget,
+  MAX_ANSWER_MS,
+  previewIntervals,
+  type Rating,
+  replay,
+  reschedule,
+} from "./index";
 
 const MIN = 60_000;
 const DAY = 86_400_000;
@@ -430,15 +438,29 @@ describe("replay", () => {
     });
   });
 
-  it.each(["reschedule", "manual"] as const)(
-    "refuses %s logs until their semantics exist",
-    (kind) => {
-      const { logs } = study([3]);
-      const [log] = logs;
-      if (!log) throw new Error("expected a log");
-      expect(() => replay(makeCard(), [{ ...log, kind }], preset)).toThrow(new RegExp(kind));
-    },
-  );
+  it("refuses manual logs until their semantics exist", () => {
+    const { logs } = study([3]);
+    const [log] = logs;
+    if (!log) throw new Error("expected a log");
+    expect(() => replay(makeCard(), [{ ...log, kind: "manual", rating: 0 }], preset)).toThrow(
+      /manual/,
+    );
+  });
+
+  it("moves the due date at a reschedule log, keeping the memory state", () => {
+    const { card, logs } = study([3, 3, 3]);
+    const last = logs.at(-1);
+    if (!last) throw new Error("expected logs");
+    const moved = reschedule(
+      card,
+      5,
+      last.reviewedAt + DAY,
+      "00000000-0000-7000-b000-0000000000fe",
+    );
+    if (!moved) throw new Error("expected a reschedule");
+    const replayed = replay(makeCard(), [...logs, moved.log], preset);
+    expect(scheduling(replayed)).toEqual(scheduling(moved.card));
+  });
 
   it("keeps a buried card buried until the same day", () => {
     const { card, logs } = study([3, 3]);
@@ -487,5 +509,75 @@ describe("replay", () => {
     const { card, logs } = study([3]);
     const replayed = replay(card, logs, preset);
     expect({ ...replayed, ...scheduling(card) }).toEqual(card);
+  });
+});
+
+describe("reschedule", () => {
+  const LOG = "00000000-0000-7000-b000-0000000000a1";
+
+  it("sets a studied card due in N days and logs it without a rating", () => {
+    const card = reviewCard({ due: NOW, scheduledDays: 3 });
+    const result = reschedule(card, 5, NOW + 1, LOG);
+    expect(result?.card).toEqual({
+      ...card,
+      due: NOW + 1 + 5 * DAY,
+      scheduledDays: 5,
+      updatedAt: NOW + 1,
+    });
+    expect(result?.log).toEqual({
+      id: LOG,
+      cardId: card.id,
+      reviewedAt: NOW + 1,
+      rating: 0,
+      stateBefore: "review",
+      cardBefore: { ...scheduling(card), buriedUntilDay: null },
+      scheduledDays: 5,
+      elapsedDays: 0,
+      durationMs: 0,
+      kind: "reschedule",
+      undoneAt: null,
+    });
+  });
+
+  it("keeps a suspended card suspended", () => {
+    const card = reviewCard({ queue: "suspended" });
+    expect(reschedule(card, 1, NOW, LOG)?.card.queue).toBe("suspended");
+  });
+
+  it("leaves new cards alone", () => {
+    expect(reschedule(makeCard(), 5, NOW, LOG)).toBeNull();
+  });
+});
+
+describe("forget", () => {
+  const LOG = "00000000-0000-7000-b000-0000000000a2";
+
+  it("turns the card into a new one at the end of the new queue, logging a reset", () => {
+    const card = reviewCard({ reps: 7, lapses: 2, newPosition: 3 });
+    const result = forget(card, NOW + 9, LOG);
+    expect(result.card).toMatchObject({
+      queue: "new",
+      state: "new",
+      due: NOW + 9,
+      newPosition: NOW + 9,
+      reps: 0,
+      lapses: 0,
+      stability: 0,
+      difficulty: 0,
+      lastReviewAt: null,
+      updatedAt: NOW + 9,
+    });
+    expect(result.log).toMatchObject({
+      id: LOG,
+      kind: "reset",
+      rating: 0,
+      stateBefore: "review",
+      cardBefore: scheduling(card),
+    });
+  });
+
+  it("keeps a suspended card suspended", () => {
+    const card = reviewCard({ queue: "suspended" });
+    expect(forget(card, NOW, LOG).card).toMatchObject({ queue: "suspended", state: "new" });
   });
 });
