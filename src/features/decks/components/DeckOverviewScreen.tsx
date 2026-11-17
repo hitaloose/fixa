@@ -73,7 +73,7 @@ export function DeckOverviewScreen({ deckId }: { deckId: string }) {
       <Link
         to="/decks/$deckId/study"
         params={{ deckId: deck.id }}
-        className="inline-flex min-h-14 items-center justify-center rounded-list bg-ink px-4 font-semibold text-surface"
+        className="inline-flex min-h-14 items-center justify-center rounded-list bg-contrast px-4 font-semibold text-on-contrast"
       >
         {t.study.start}
       </Link>

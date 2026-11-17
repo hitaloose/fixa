@@ -103,6 +103,14 @@ describe("SettingsScreen", () => {
     await waitFor(async () => expect(await rt.repos.settings.get("haptics")).toBe(false));
   });
 
+  it("chooses the theme: device, light or dark", async () => {
+    open();
+    const group = await screen.findByRole("radiogroup", { name: "Tema" });
+    expect(within(group).getByRole("radio", { name: "Igual ao aparelho" })).toBeChecked();
+    await userEvent.click(within(group).getByRole("radio", { name: "Escuro" }));
+    await waitFor(async () => expect(await rt.repos.settings.get("theme")).toBe("dark"));
+  });
+
   it("empties the trash after confirmation", async () => {
     const card = (await rt.db.cards.toArray())[0];
     await rt.db.cards.update(card?.id ?? "", { deletedAt: NOW, updatedAt: NOW });

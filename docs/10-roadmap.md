@@ -49,4 +49,4 @@ Marque `[x]` ao concluir. Cada fase termina com o app utilizável. Todo item seg
 - [ ] Otimizar parâmetros FSRS (worker) e "Simular carga"
 - [ ] Tipos de nota personalizados (campos e templates)
 - [ ] Estudo personalizado (esquecidos hoje, por etiqueta, adiantar revisões)
-- [ ] Modo escuro
+- [x] Modo escuro

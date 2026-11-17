@@ -40,6 +40,12 @@ As três filas diferem também em claridade, não só em matiz (acessível para 
 - Navegação inferior: 84px de altura (inclui área segura), 4 itens: Baralhos, Navegar, Adicionar, Estatísticas.
 - Respeitar `env(safe-area-inset-*)`.
 
+## Modo escuro
+
+- Ajuste "Tema": igual ao aparelho (padrão), claro ou escuro. `src/app/ThemeSync.tsx` aplica `data-theme` no `<html>`; antes de o ajuste ser lido, o CSS segue `prefers-color-scheme` para não piscar claro.
+- Os tokens têm os mesmos nomes nos dois temas (`src/app/styles/theme.css`); nenhum componente usa cor literal. Pares de texto conferidos com contraste ≥ 4,5:1 no escuro.
+- Blocos de destaque (resumo de hoje, "Mostrar resposta", toasts) usam `contrast`/`on-contrast`: tinta no claro, cinza elevado no escuro.
+
 ## Marca
 
 - **Logo "Fração":** o nome escrito como fração empilhada, "fi" sobre "xa", em creme `#F5F3EE` sobre tinta `#17181C`, com a barra da fração em azul `#2B4FD8`. A barra é também a linha que separa frente e verso do cartão; junta os dois assuntos do app, flashcards e fórmulas.

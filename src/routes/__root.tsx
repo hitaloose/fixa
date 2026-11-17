@@ -1,5 +1,6 @@
 import { createRootRoute, Link, Outlet, useRouterState } from "@tanstack/react-router";
 import type { ReactNode } from "react";
+import { ThemeSync } from "../app/ThemeSync";
 import { UpdatePrompt } from "../app/UpdatePrompt";
 import { t } from "../i18n/pt-BR";
 import { AppShell, TabBar, type TabBarItem } from "../ui";
@@ -29,6 +30,7 @@ function RootLayout() {
     <AppShell nav={<TabBar label={t.nav.label} items={items} linkAs={RouterLink} />}>
       <Outlet />
       <UpdatePrompt />
+      <ThemeSync />
     </AppShell>
   );
 }

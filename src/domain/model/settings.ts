@@ -8,7 +8,8 @@ export const settingsSchema = z.object({
   lastBackupAt: epochMs.nullable(),
   backupReminderDays: z.number().int().positive(),
   haptics: z.boolean(),
-  theme: z.enum(["light", "dark"]),
+  /** "system" follows the device (prefers-color-scheme). */
+  theme: z.enum(["system", "light", "dark"]),
 });
 
 export type Settings = z.output<typeof settingsSchema>;
@@ -19,7 +20,7 @@ export const DEFAULT_SETTINGS: Settings = {
   lastBackupAt: null,
   backupReminderDays: 7,
   haptics: true,
-  theme: "light",
+  theme: "system",
 };
 
 /** Validates one setting value; throws when invalid. */

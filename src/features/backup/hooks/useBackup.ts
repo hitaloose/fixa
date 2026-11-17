@@ -13,18 +13,21 @@ export interface SettingsData {
   haptics: boolean;
   backupReminderDays: number;
   trashCount: number;
+  theme: Settings["theme"];
 }
 
 export function useSettingsData(): SettingsData | undefined {
   return useLiveQuery(async () => {
     const { repos, clock } = runtime();
-    const [lastBackupAt, cutoffHour, haptics, backupReminderDays, trashCount] = await Promise.all([
-      repos.settings.get("lastBackupAt"),
-      repos.settings.get("cutoffHour"),
-      repos.settings.get("haptics"),
-      repos.settings.get("backupReminderDays"),
-      repos.backup.trashCount(),
-    ]);
+    const [lastBackupAt, cutoffHour, haptics, backupReminderDays, trashCount, theme] =
+      await Promise.all([
+        repos.settings.get("lastBackupAt"),
+        repos.settings.get("cutoffHour"),
+        repos.settings.get("haptics"),
+        repos.settings.get("backupReminderDays"),
+        repos.backup.trashCount(),
+        repos.settings.get("theme"),
+      ]);
     return {
       daysSinceBackup:
         lastBackupAt === null ? null : Math.floor((clock.now() - lastBackupAt) / DAY_MS),
@@ -32,6 +35,7 @@ export function useSettingsData(): SettingsData | undefined {
       haptics,
       backupReminderDays,
       trashCount,
+      theme,
     };
   }, []);
 }

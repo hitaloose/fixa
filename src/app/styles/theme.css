@@ -11,6 +11,10 @@
   --color-line-soft: #eeebe4;
   --color-primary: #2b4fd8;
   --color-danger: #b42318;
+  /* Emphasis blocks (today's summary, "Mostrar resposta", toasts): dark in light mode, a raised
+     grey in dark mode, so they never turn into a bright slab. */
+  --color-contrast: #17181c;
+  --color-on-contrast: #ffffff;
 
   --color-new: #2b4fd8;
   --color-new-bg: #eef1fc;
@@ -41,6 +45,77 @@
   --radius-chip: 999px;
 
   --spacing-tabbar: 84px;
+}
+
+/* Dark theme (docs/09-design.md › Modo escuro): same token names, redefined. Applied through
+   [data-theme] on <html>, set from the "Tema" setting (src/app/ThemeSync.tsx). */
+:root[data-theme="dark"] {
+  --color-bg: #111215;
+  --color-surface: #1b1c21;
+  --color-ink: #ecebe6;
+  --color-muted: #a3a5ad;
+  --color-faint: #878a92;
+  --color-line: #2e3038;
+  --color-line-soft: #25272d;
+  --color-primary: #7b96ff;
+  --color-danger: #ff7a6e;
+  --color-contrast: #2a2c33;
+  --color-on-contrast: #ecebe6;
+
+  --color-new: #7b96ff;
+  --color-new-bg: #1e2648;
+  --color-new-ink: #b3c2ff;
+  --color-learning: #f0a35c;
+  --color-learning-bg: #36230f;
+  --color-learning-ink: #f7c18f;
+  --color-review: #57c98f;
+  --color-review-bg: #10301e;
+  --color-review-ink: #8fe2b6;
+
+  --color-again-bg: #3d1a16;
+  --color-again-ink: #ffa59b;
+  --color-hard-bg: #2a2c31;
+  --color-hard-ink: #dcdde2;
+  --color-good-bg: #133020;
+  --color-good-ink: #93e3b8;
+  --color-easy-bg: #1d2548;
+  --color-easy-ink: #b3c2ff;
+}
+
+/* Before ThemeSync reads the setting, follow the device so dark devices never flash light. */
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme]) {
+    --color-bg: #111215;
+    --color-surface: #1b1c21;
+    --color-ink: #ecebe6;
+    --color-muted: #a3a5ad;
+    --color-faint: #878a92;
+    --color-line: #2e3038;
+    --color-line-soft: #25272d;
+    --color-primary: #7b96ff;
+    --color-danger: #ff7a6e;
+    --color-contrast: #2a2c33;
+    --color-on-contrast: #ecebe6;
+
+    --color-new: #7b96ff;
+    --color-new-bg: #1e2648;
+    --color-new-ink: #b3c2ff;
+    --color-learning: #f0a35c;
+    --color-learning-bg: #36230f;
+    --color-learning-ink: #f7c18f;
+    --color-review: #57c98f;
+    --color-review-bg: #10301e;
+    --color-review-ink: #8fe2b6;
+
+    --color-again-bg: #3d1a16;
+    --color-again-ink: #ffa59b;
+    --color-hard-bg: #2a2c31;
+    --color-hard-ink: #dcdde2;
+    --color-good-bg: #133020;
+    --color-good-ink: #93e3b8;
+    --color-easy-bg: #1d2548;
+    --color-easy-ink: #b3c2ff;
+  }
 }
 
 @layer base {

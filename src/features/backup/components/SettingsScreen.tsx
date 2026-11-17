@@ -97,6 +97,7 @@ export function SettingsScreen({
   const [confirmTrash, setConfirmTrash] = useState(false);
   const fileId = useId();
   const kindName = useId();
+  const themeName = useId();
 
   if (!data) return null;
 
@@ -197,6 +198,26 @@ export function SettingsScreen({
           max={23}
           onChange={(v) => void actions.setSetting("cutoffHour", v)}
         />
+        <div role="radiogroup" aria-label={s.theme} className="flex flex-col gap-1 py-1">
+          <span className="font-medium">{s.theme}</span>
+          <div className="grid grid-cols-3 gap-1">
+            {(["system", "light", "dark"] as const).map((theme) => (
+              <label
+                key={theme}
+                className="flex min-h-11 items-center justify-center rounded-button border border-line px-2 text-center text-sm has-checked:border-primary has-checked:bg-new-bg has-checked:text-primary"
+              >
+                <input
+                  type="radio"
+                  name={themeName}
+                  checked={data.theme === theme}
+                  onChange={() => void actions.setSetting("theme", theme)}
+                  className="sr-only"
+                />
+                {s.themes[theme]}
+              </label>
+            ))}
+          </div>
+        </div>
         <Switch
           label={s.haptics}
           checked={data.haptics}

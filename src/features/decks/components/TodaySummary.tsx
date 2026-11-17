@@ -6,7 +6,7 @@ export function TodaySummary({ summary }: { summary: DaySummary }) {
   const id = useId();
   const total = summary.counts.new + summary.counts.learning + summary.counts.review;
   return (
-    <section aria-labelledby={id} className="rounded-section bg-ink p-4 text-surface">
+    <section aria-labelledby={id} className="rounded-section bg-contrast p-4 text-on-contrast">
       <h2 id={id} className="text-xs font-semibold tracking-wide uppercase opacity-70">
         {t.decks.today}
       </h2>

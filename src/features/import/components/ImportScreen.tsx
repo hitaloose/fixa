@@ -53,7 +53,7 @@ export function ImportScreen({ readPackage }: ImportScreenProps) {
       <p className="max-w-prose text-muted">{m.intro}</p>
       <label
         htmlFor={inputId}
-        className="inline-flex min-h-14 cursor-pointer items-center justify-center rounded-list bg-ink px-4 font-semibold text-surface focus-within:outline-2"
+        className="inline-flex min-h-14 cursor-pointer items-center justify-center rounded-list bg-contrast px-4 font-semibold text-on-contrast focus-within:outline-2"
       >
         {m.pick}
       </label>

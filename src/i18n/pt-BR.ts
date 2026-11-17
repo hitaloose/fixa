@@ -332,6 +332,8 @@ export const t = {
     cutoffHour: "Virada do dia (hora)",
     cutoffHint: "Revisões depois da meia-noite contam para o dia anterior até essa hora",
     haptics: "Vibrar ao responder",
+    theme: "Tema",
+    themes: { system: "Igual ao aparelho", light: "Claro", dark: "Escuro" },
     reminderDays: "Lembrar de fazer backup a cada (dias)",
     storage: "Armazenamento",
     persisted: (yes: boolean) =>

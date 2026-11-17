@@ -228,6 +228,7 @@ describe("every documented enum value is accepted and others rejected", () => {
   });
 
   it.each([
+    ["system", true],
     ["light", true],
     ["dark", true],
     ["", false],

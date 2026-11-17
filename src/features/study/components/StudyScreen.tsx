@@ -258,7 +258,7 @@ export function StudyScreen({ deckId }: { deckId: string }) {
           {session.revealed ? (
             <Answers current={current} onAnswer={session.answer} />
           ) : (
-            <Button onClick={session.reveal} className="min-h-14 bg-ink text-surface">
+            <Button onClick={session.reveal} className="min-h-14 bg-contrast text-on-contrast">
               {t.study.showAnswer}
             </Button>
           )}

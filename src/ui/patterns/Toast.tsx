@@ -20,7 +20,7 @@ export function Toast({ message, onDismiss, durationMs = 3000 }: ToastProps) {
   return (
     <div
       role="status"
-      className="fixed inset-x-4 bottom-[calc(var(--spacing-tabbar)+env(safe-area-inset-bottom)+12px)] z-50 mx-auto max-w-sm rounded-list bg-ink px-4 py-3 text-center text-sm text-surface shadow-lg"
+      className="fixed inset-x-4 bottom-[calc(var(--spacing-tabbar)+env(safe-area-inset-bottom)+12px)] z-50 mx-auto max-w-sm rounded-list bg-contrast px-4 py-3 text-center text-sm text-on-contrast shadow-lg"
     >
       {message}
     </div>
