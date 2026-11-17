@@ -84,10 +84,14 @@ React 19 · TypeScript · Vite · TanStack Router · Tailwind CSS v4 · Dexie (I
 
 ### Documentação
 
-| | |
-|---|---|
-| [Produto e escopo](docs/01-produto.md) | [Stack e decisões](docs/02-stack.md) |
-| [Arquitetura](docs/03-arquitetura.md) | [Modelo de dados](docs/04-modelo-de-dados.md) |
-| [Agendamento (FSRS)](docs/05-agendamento.md) | [Dados e backup](docs/06-dados-e-backup.md) |
-| [Fórmulas](docs/07-formulas.md) | [Importação e exportação](docs/08-import-export.md) |
-| [Design](docs/09-design.md) | [Roadmap](docs/10-roadmap.md) |
+- [Produto e escopo](docs/01-produto.md): telas e o que entra em cada fase
+- [Stack e decisões](docs/02-stack.md): bibliotecas escolhidas e o porquê de cada uma
+- [Arquitetura](docs/03-arquitetura.md): camadas, pastas e regras de dependência
+- [Modelo de dados](docs/04-modelo-de-dados.md): entidades e esquema do IndexedDB
+- [Agendamento (FSRS)](docs/05-agendamento.md): fila de estudo, limites e algoritmo
+- [Dados e backup](docs/06-dados-e-backup.md): persistência, backup e mescla entre aparelhos
+- [Fórmulas](docs/07-formulas.md): LaTeX, KaTeX e MathLive
+- [Importação e exportação](docs/08-import-export.md): Anki (`.apkg`) e CSV
+- [Design](docs/09-design.md): cores, componentes, modo escuro e marca
+- [Roadmap](docs/10-roadmap.md): o que já foi feito e o que falta
+- [TDD](docs/11-tdd.md): como os testes são escritos
