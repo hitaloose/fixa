@@ -1,6 +1,7 @@
 import { parseNoteType } from "../../domain/model";
 import type { Clock, IdGenerator } from "../../domain/ports";
 import type { FixaDb } from "../db";
+import { createBulkRepository } from "./bulk";
 import { createCardsRepository } from "./cards";
 import { createDecksRepository } from "./decks";
 import { createEntityRepository } from "./entityRepository";
@@ -27,6 +28,7 @@ export function createRepositories({ db, clock, ids }: RepositoryDeps) {
     reviewLogs: createReviewLogsRepository({ table: db.reviewLogs, clock }),
     media: createMediaRepository({ table: db.media }),
     settings: createSettingsRepository({ table: db.settings }),
+    bulk: createBulkRepository({ db, ...entity }),
   };
 }
 
