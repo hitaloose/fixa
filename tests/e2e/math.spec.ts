@@ -108,11 +108,22 @@ test("types with the keys of MathLive's virtual keyboard", async ({ page }) => {
   await expect(sheet.getByRole("button", { name: "Inserir" })).toBeEnabled();
 });
 
-test("paints the virtual keyboard with the app's theme, not the device's", async ({ browser }) => {
+test("paints the formula field and keyboard with the app's theme, not the device's", async ({
+  browser,
+}) => {
   const page = await (await browser.newContext({ colorScheme: "light" })).newPage();
   await page.goto("/settings");
   await page.getByRole("radiogroup", { name: "Tema" }).getByText("Escuro").click();
   await expect(page.locator("html")).toHaveAttribute("data-theme", "dark");
-  const { keyboard } = await openVirtualKeyboard(page);
+  const { field, keyboard } = await openVirtualKeyboard(page);
   await expect(keyboard.locator(".MLK__backdrop")).toHaveCSS("background-color", "rgb(17, 18, 21)");
+  // MathLive paints the field with the system "field" colour, which stays white on iOS.
+  await expect(field).toHaveCSS("background-color", "rgb(27, 28, 33)");
+  await expect(field).toHaveCSS("color", "rgb(236, 235, 230)");
+  // …and the highlight around the structure holding the caret, which is light by default.
+  await page.keyboard.type("3/4");
+  await expect(field.locator(".ML__contains-highlight").first()).toHaveCSS(
+    "background-color",
+    "rgb(37, 39, 45)",
+  );
 });

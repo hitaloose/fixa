@@ -53,7 +53,10 @@ function VisualField({
       if (cancelled || !host.current) return;
       const el = document.createElement("math-field") as MathFieldElement;
       el.setAttribute("aria-label", t.editor.math.field);
-      el.className = "block w-full min-h-14 rounded-field border border-line px-3 py-2 text-xl";
+      // Colours from the app tokens: MathLive paints the field with the system "field" colour,
+      // which stays white on iOS even in the dark theme.
+      el.className =
+        "block w-full min-h-14 rounded-field border border-line bg-surface px-3 py-2 text-xl text-ink";
       el.value = initial.current;
       el.addEventListener("input", () => emit.current(el.value));
       host.current.append(el);

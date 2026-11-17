@@ -189,3 +189,16 @@
   --variant-panel-background: var(--color-surface);
   --variant-keycap-text: var(--color-ink);
 }
+
+/* MathLive's <math-field>: caret, selection and highlights in the app's colours, both themes. */
+math-field {
+  --caret-color: var(--color-primary);
+  --selection-background-color: var(--color-new-bg);
+  --selection-color: var(--color-ink);
+  --primary-color: var(--color-primary);
+  /* Structure around the caret (e.g. a fraction): light by default, which hides the light text
+     of the dark theme. */
+  --contains-highlight-background-color: var(--color-line-soft);
+  --placeholder-color: var(--color-muted);
+  --latex-color: var(--color-primary);
+}
