@@ -1,7 +1,8 @@
+import type { ReactNode } from "react";
 import { t } from "../../i18n/pt-BR";
 
-/** Logo + wordmark at the top of the home screen (docs/09 › Marca). */
-export function Brand() {
+/** Logo + wordmark at the top of the home screen (docs/09 › Marca), with an optional action. */
+export function Brand({ action }: { action?: ReactNode }) {
   return (
     <div className="flex items-center gap-2 pt-4">
       <img
@@ -11,9 +12,10 @@ export function Brand() {
         height={32}
         className="size-8 rounded-lg"
       />
-      <span aria-hidden="true" className="font-display text-xl font-bold tracking-tight">
+      <span aria-hidden="true" className="flex-1 font-display text-xl font-bold tracking-tight">
         {t.app.name}
       </span>
+      {action}
     </div>
   );
 }

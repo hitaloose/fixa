@@ -1,5 +1,6 @@
 import { createDb } from "../data/db";
-import { configureRuntime } from "../data/runtime";
+import { runStartupMaintenance } from "../data/maintenance";
+import { configureRuntime, runtime } from "../data/runtime";
 import { ensureSeed } from "../data/seed";
 import { t } from "../i18n/pt-BR";
 import { systemClock } from "../lib/clock";
@@ -12,6 +13,7 @@ export async function bootstrap(): Promise<void> {
   const db = createDb("fixa");
   configureRuntime({ db, clock: systemClock, ids: uuidv7Generator, timeZone: deviceTimeZone() });
   await ensureSeed({ db, clock: systemClock }, t.seed);
-  // Fire and forget: never block the first render on a permission prompt.
+  // Fire and forget: housekeeping and the permission prompt never block the first render.
+  void runStartupMaintenance(runtime().repos);
   void requestPersistentStorage(navigator);
 }

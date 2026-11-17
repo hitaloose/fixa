@@ -41,6 +41,12 @@ test("shows the logo at the top of the home screen", async ({ page }) => {
   );
 });
 
+test("opens the settings from the home screen", async ({ page }) => {
+  await page.goto("/");
+  await page.getByRole("link", { name: "Ajustes" }).click();
+  await expect(page.getByRole("heading", { level: 1, name: "Ajustes" })).toBeVisible();
+});
+
 test("exposes an installable web app manifest", async ({ page, request }) => {
   await page.goto("/");
   const href = await page.locator('link[rel="manifest"]').getAttribute("href");
