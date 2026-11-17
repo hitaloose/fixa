@@ -6,3 +6,4 @@ export {
   type NoteErrorCode,
   NoteOperationError,
 } from "./errors";
+export type { NoteEdit, NoteInput } from "./notes";

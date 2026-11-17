@@ -1,6 +1,14 @@
+import { cleanup } from "@testing-library/react";
+import { afterEach } from "vitest";
 import { configureRuntime, runtime } from "../src/data/runtime";
 import { fixedClock } from "../src/lib/clock";
 import { testDb } from "./db";
+
+// Hooks run in reverse registration order: unmount components (stopping their live queries)
+// before tests/db.ts deletes the database.
+afterEach(() => {
+  cleanup();
+});
 
 /** Runtime for component tests: real in-memory DB, fixed clock, fixed zone. */
 export function setupRuntime({

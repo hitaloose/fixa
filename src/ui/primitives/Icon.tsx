@@ -6,6 +6,15 @@ const PATHS = {
   chevronRight: "M9 6l6 6-6 6",
   close: "M6 6l12 12M18 6 6 18",
   more: "M5 12h.01M12 12h.01M19 12h.01",
+  bold: "M7 5h6a3.5 3.5 0 0 1 0 7H7zM7 12h7a3.5 3.5 0 0 1 0 7H7z",
+  italic: "M10 5h8M6 19h8M14 5l-4 14",
+  underline: "M7 4v7a5 5 0 0 0 10 0V4M5 20h14",
+  image: "M4 5h16v14H4zM4 16l5-5 4 4 3-3 4 4M15.5 8.5h.01",
+  audio: "M9 18V6l10-2v12M9 18a3 3 0 1 1-6 0 3 3 0 0 1 6 0zM19 16a3 3 0 1 1-6 0 3 3 0 0 1 6 0z",
+  cloze: "M8 5H4v14h4M16 5h4v14h-4M9 12h6",
+  pin: "M9 4h6l-1 6 4 4H6l4-4zM12 14v6",
+  history: "M4 12a8 8 0 1 0 2.3-5.6L4 8.7M4 4v4.7h4.7M12 8v4l3 2",
+  eye: "M2 12s3.5-7 10-7 10 7 10 7-3.5 7-10 7S2 12 2 12zM12 9a3 3 0 1 1 0 6 3 3 0 0 1 0-6z",
 } as const;
 
 export type IconName = keyof typeof PATHS;

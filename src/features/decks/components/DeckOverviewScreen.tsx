@@ -103,6 +103,15 @@ export function DeckOverviewScreen({ deckId }: { deckId: string }) {
         </ul>
       </section>
 
+      <Link
+        to="/add"
+        search={{ deckId: deck.id }}
+        className="inline-flex min-h-11 items-center justify-center gap-2 rounded-button border border-line bg-surface px-4 font-semibold"
+      >
+        <Icon name="add" className="size-5" />
+        {t.overview.addCard}
+      </Link>
+
       {subdecks.length > 0 ? (
         <section>
           <h2 id={subdecksId} className="mb-2 text-sm font-semibold">

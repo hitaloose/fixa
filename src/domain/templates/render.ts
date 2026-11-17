@@ -79,7 +79,10 @@ function renderNodes(nodes: Node[], ctx: Context): { html: string; used: boolean
   return { html, used };
 }
 
-function fieldsByName(noteType: NoteType, note: Note): Map<string, string> {
+/** Only the field contents matter for rendering, so drafts that are not saved yet work too. */
+type NoteFields = Pick<Note, "fields">;
+
+function fieldsByName(noteType: NoteType, note: NoteFields): Map<string, string> {
   return new Map(noteType.fields.map((f) => [f.name, note.fields[f.id] ?? ""]));
 }
 
@@ -92,7 +95,7 @@ function templateFor(noteType: NoteType, templateOrd: number) {
 
 export interface RenderInput {
   noteType: NoteType;
-  note: Note;
+  note: NoteFields;
   /** Template index; for cloze note types, the cloze number − 1. */
   templateOrd: number;
 }
@@ -132,7 +135,7 @@ function clozeFieldNames(nodes: Node[]): string[] {
  * Which cards a note has (their templateOrd): for standard types, each template whose front
  * shows some non-empty field; for cloze types, one per cloze number in the cloze field(s).
  */
-export function generateCards(noteType: NoteType, note: Note): number[] {
+export function generateCards(noteType: NoteType, note: NoteFields): number[] {
   const fields = fieldsByName(noteType, note);
   if (noteType.kind === "cloze") {
     const template = templateFor(noteType, 0);

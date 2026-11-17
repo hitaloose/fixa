@@ -73,7 +73,7 @@ Tipos padrão criados no primeiro uso (seed) com IDs fixos conhecidos.
 | `queue` | `"new" \| "learning" \| "review" \| "relearning" \| "suspended" \| "buried"` | Fila efetiva. `suspended`/`buried` guardam o estado FSRS intacto. |
 | `state` | `"new" \| "learning" \| "review" \| "relearning"` | Estado FSRS. Igual a `queue`, exceto quando suspenso/enterrado — é o que permite reativar o cartão sem perder o estado. Também vai no snapshot `cardBefore` do `ReviewLog`. |
 | `buriedUntilDay` | string \| null | `"2026-11-17"` — volta automaticamente. |
-| `newPosition` | int | Ordem de introdução dos novos. |
+| `newPosition` | int | Ordem de introdução dos novos. Ao criar, recebe o instante de criação da nota (epoch ms), como o Anki faz com o id da nota: cartões irmãos ficam juntos e a ordem sobrevive a backup/mescla. |
 | `due` | number (epoch ms) | Próxima apresentação. |
 | `stability` | float | FSRS. |
 | `difficulty` | float | FSRS. |

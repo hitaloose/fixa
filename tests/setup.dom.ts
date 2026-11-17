@@ -29,6 +29,15 @@ if (!globalThis.ResizeObserver) {
   };
 }
 
+// jsdom has no layout; ProseMirror (Tiptap) asks for rects when scrolling the selection.
+const emptyRects = () => Object.assign([], { item: () => null }) as unknown as DOMRectList;
+const zeroRect = () => new DOMRect(0, 0, 0, 0);
+for (const proto of [Element.prototype, Range.prototype]) {
+  if (!proto.getClientRects) proto.getClientRects = emptyRects;
+}
+if (!Range.prototype.getBoundingClientRect) Range.prototype.getBoundingClientRect = zeroRect;
+if (!document.elementFromPoint) document.elementFromPoint = () => null;
+
 afterEach(() => {
   cleanup();
 });

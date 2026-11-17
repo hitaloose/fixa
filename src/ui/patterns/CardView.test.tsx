@@ -17,6 +17,18 @@ describe("CardView", () => {
     await waitFor(() => expect(content().querySelector(".katex .mfrac")).not.toBeNull());
   });
 
+  it("shows stored media through resolved URLs", async () => {
+    const resolveMedia = async (name: string) => (name === "a.png" ? "blob:a" : undefined);
+    render(
+      <CardView
+        html={'<img src="a.png"><audio controls src="b.mp3"></audio>'}
+        resolveMedia={resolveMedia}
+      />,
+    );
+    await waitFor(() => expect(screen.getByRole("img")).toHaveAttribute("src", "blob:a"));
+    expect(content().querySelector("audio")).toHaveAttribute("src", "b.mp3");
+  });
+
   it("updates when the HTML changes", () => {
     const { rerender } = render(<CardView html="front" />);
     rerender(<CardView html="back" />);
