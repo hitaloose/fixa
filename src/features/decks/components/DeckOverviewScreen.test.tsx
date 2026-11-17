@@ -37,6 +37,16 @@ describe("DeckOverviewScreen", () => {
     );
   });
 
+  it("links to the deck's options", async () => {
+    const { repos } = await setup();
+    const deck = await repos.decks.createByPath("Inglês", SEED_IDS.preset);
+    renderWithRouter(<DeckOverviewScreen deckId={deck.id} />);
+    expect(await screen.findByRole("link", { name: "Opções do baralho" })).toHaveAttribute(
+      "href",
+      `/decks/${deck.id}/options`,
+    );
+  });
+
   it("links to adding a card to this deck", async () => {
     const { repos } = await setup();
     const deck = await repos.decks.createByPath("Inglês", SEED_IDS.preset);

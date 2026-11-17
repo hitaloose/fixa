@@ -5,7 +5,13 @@ import {
   siblingNameTaken,
   subtreeIds,
 } from "../../domain/decks";
-import { type Deck, parseDeck } from "../../domain/model";
+import {
+  type Deck,
+  type DeckOverrides,
+  type PresetValues,
+  parseDeck,
+  parsePreset,
+} from "../../domain/model";
 import type { Clock, IdGenerator } from "../../domain/ports";
 import type { FixaDb } from "../db";
 import { createEntityRepository } from "./entityRepository";
@@ -15,6 +21,13 @@ function validNodeName(name: string): string {
   const trimmed = name.trim();
   if (trimmed === "" || trimmed.includes("::")) throw new DeckOperationError("invalid-name");
   return trimmed;
+}
+
+export interface DeckOptionsWrite {
+  deckId: string;
+  presetId: string;
+  values: PresetValues;
+  overrides: DeckOverrides;
 }
 
 export function createDecksRepository({
@@ -36,6 +49,19 @@ export function createDecksRepository({
 
   return {
     ...base,
+
+    /** Saves the options screen: the preset's values plus this deck's preset and overrides. */
+    async applyOptions({ deckId, presetId, values, overrides }: DeckOptionsWrite): Promise<void> {
+      const now = clock.now();
+      await db.transaction("rw", db.presets, db.decks, async () => {
+        const [deck, preset] = await Promise.all([mustGet(deckId), db.presets.get(presetId)]);
+        if (!preset) throw new DeckOperationError("not-found");
+        const nextPreset = parsePreset({ ...preset, ...values, updatedAt: now });
+        const nextDeck = parseDeck({ ...deck, presetId, overrides, updatedAt: now });
+        await db.presets.put(nextPreset);
+        await db.decks.put(nextDeck);
+      });
+    },
 
     /** Creates "A::B::C", reusing existing ancestors; returns the leaf. */
     createByPath: (path: string, presetId: string): Promise<Deck> =>

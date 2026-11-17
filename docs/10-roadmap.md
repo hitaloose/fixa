@@ -29,7 +29,7 @@ Marque `[x]` ao concluir. Cada fase termina com o app utilizável. Todo item seg
 - [x] Editor de nota (Tiptap): formatação, imagem e áudio locais, etiquetas, fixar campo, pré-visualização, histórico, duplicatas
 - [x] Fórmulas: nó `math` + KaTeX + sheet do MathLive (`docs/07-formulas.md`)
 - [x] Sessão de estudo: frente/verso, 4 botões com intervalos, atalhos, desfazer, marcar, enterrar, suspender, editar, cronômetro, áudio
-- [ ] Opções do baralho (predefinições, overrides "só este baralho"/"só hoje")
+- [x] Opções do baralho (predefinições, overrides "só este baralho"/"só hoje")
 - [ ] Navegador: `domain/search`, filtros, ordenação, cartões/notas, lista virtualizada, ações em massa
 - [ ] Estatísticas: hoje, revisões, retenção, sequência, tempo, heatmap, estado dos cartões, respostas por botão
 - [ ] Backup: exportar, restaurar (substituir/mesclar com replay), lembrete (`docs/06-dados-e-backup.md`)

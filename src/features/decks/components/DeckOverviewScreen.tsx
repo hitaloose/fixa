@@ -120,6 +120,14 @@ export function DeckOverviewScreen({ deckId }: { deckId: string }) {
         {t.overview.addCard}
       </Link>
 
+      <Link
+        to="/decks/$deckId/options"
+        params={{ deckId: deck.id }}
+        className="inline-flex min-h-11 items-center justify-center gap-2 rounded-button px-4 font-semibold text-primary"
+      >
+        {t.options.open}
+      </Link>
+
       {subdecks.length > 0 ? (
         <section>
           <h2 id={subdecksId} className="mb-2 text-sm font-semibold">

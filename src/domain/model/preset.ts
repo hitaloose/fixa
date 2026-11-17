@@ -30,3 +30,24 @@ export type Preset = z.output<typeof presetSchema>;
 
 export type PresetInput = z.input<typeof presetSchema>;
 export const parsePreset = (input: unknown): Preset => presetSchema.parse(input);
+
+/** The tunable part of a preset (what "restore defaults" resets and a clone copies). */
+export type PresetValues = Omit<Preset, "id" | "createdAt" | "updatedAt" | "deletedAt" | "name">;
+
+const PLACEHOLDER_ID = "00000000-0000-7000-8000-000000000000";
+
+export function defaultPresetValues(): PresetValues {
+  const { id, createdAt, updatedAt, deletedAt, name, ...values } = presetSchema.parse({
+    id: PLACEHOLDER_ID,
+    createdAt: 0,
+    updatedAt: 0,
+    deletedAt: null,
+  });
+  return values;
+}
+
+/** "1m 10m" (spaces or commas) → ["1m", "10m"]; null when any step is invalid. */
+export function parseSteps(text: string): string[] | null {
+  const steps = text.split(/[\s,]+/).filter((s) => s !== "");
+  return steps.every((s) => stepSchema.safeParse(s).success) ? steps : null;
+}

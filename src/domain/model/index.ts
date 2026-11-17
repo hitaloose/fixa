@@ -8,7 +8,14 @@ export { type Deck, type DeckOverrides, parseDeck } from "./deck";
 export { type Media, parseMedia } from "./media";
 export { type Note, parseNote } from "./note";
 export { type CardTemplate, type NoteField, type NoteType, parseNoteType } from "./noteType";
-export { type Preset, type PresetInput, parsePreset } from "./preset";
+export {
+  defaultPresetValues,
+  type Preset,
+  type PresetInput,
+  type PresetValues,
+  parsePreset,
+  parseSteps,
+} from "./preset";
 export { type CardSnapshot, parseReviewLog, type ReviewLog } from "./reviewLog";
 export {
   DEFAULT_SETTINGS,

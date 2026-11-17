@@ -119,3 +119,26 @@ describe("domain/model public API", () => {
     expect(safeParseSetting("lastBackupAt", undefined)).toBeUndefined();
   });
 });
+
+describe("parseSteps", () => {
+  it("reads learning steps separated by spaces or commas", () => {
+    expect(model.parseSteps(" 1m, 10m  1h 2d ")).toEqual(["1m", "10m", "1h", "2d"]);
+  });
+
+  it("accepts an empty list", () => {
+    expect(model.parseSteps("  ")).toEqual([]);
+  });
+
+  it.each(["10", "0m", "1x", "1.5m", "m"])("rejects %j", (text) => {
+    expect(model.parseSteps(`1m ${text}`)).toBeNull();
+  });
+});
+
+describe("defaultPresetValues", () => {
+  it("are the preset defaults, without identity or name", () => {
+    const values = model.defaultPresetValues();
+    expect(values).toMatchObject({ newPerDay: 20, reviewsPerDay: 200, desiredRetention: 0.9 });
+    expect(values).not.toHaveProperty("id");
+    expect(values).not.toHaveProperty("name");
+  });
+});

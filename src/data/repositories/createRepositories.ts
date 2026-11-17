@@ -1,4 +1,4 @@
-import { type Preset, type PresetInput, parseNoteType, parsePreset } from "../../domain/model";
+import { parseNoteType } from "../../domain/model";
 import type { Clock, IdGenerator } from "../../domain/ports";
 import type { FixaDb } from "../db";
 import { createCardsRepository } from "./cards";
@@ -6,6 +6,7 @@ import { createDecksRepository } from "./decks";
 import { createEntityRepository } from "./entityRepository";
 import { createMediaRepository } from "./media";
 import { createNotesRepository } from "./notes";
+import { createPresetsRepository } from "./presets";
 import { createReviewLogsRepository } from "./reviewLogs";
 import { createSettingsRepository } from "./settings";
 
@@ -18,11 +19,7 @@ export interface RepositoryDeps {
 export function createRepositories({ db, clock, ids }: RepositoryDeps) {
   const entity = { clock, ids };
   return {
-    presets: createEntityRepository<Preset, PresetInput>({
-      table: db.presets,
-      parse: parsePreset,
-      ...entity,
-    }),
+    presets: createPresetsRepository({ db, ...entity }),
     decks: createDecksRepository({ db, ...entity }),
     noteTypes: createEntityRepository({ table: db.noteTypes, parse: parseNoteType, ...entity }),
     notes: createNotesRepository({ db, ...entity }),
