@@ -27,7 +27,7 @@ Princípios:
 | Tela | Funções |
 |---|---|
 | **Baralhos (início)** | Resumo do dia (cartões, tempo estimado, sequência), busca, árvore de baralhos com contagens Novos/Aprendendo/Revisar, recolher/expandir, menu de ações por baralho, botão "Novo baralho", aviso de backup atrasado. |
-| **Visão geral do baralho** | Contagens, estimativa, previsão de 7 dias, subbaralhos, estudar, estudo personalizado, desfazer, atalhos para navegar/opções/estatísticas/exportar. |
+| **Visão geral do baralho** | Contagens, estimativa, previsão de 7 dias, subbaralhos, estudar, estudo personalizado (esquecidos hoje, etiqueta, adiantar revisões, modo infinito), desfazer, atalhos para navegar/opções/estatísticas/exportar. |
 | **Estudo — frente** | Cartão, áudio, progresso, contagens com fila atual destacada, cronômetro, desfazer, marcar (flag), editar, enterrar, suspender, "Mostrar resposta". |
 | **Estudo — resposta** | Frente + verso, botões De novo / Difícil / Bom / Fácil com o próximo intervalo, atalhos 1–4, gesto de deslizar. |
 | **Estatísticas** | Filtro por baralho e período, resumo de hoje, revisões, retenção real, sequência, tempo, mapa de atividade, estado dos cartões, respostas por botão. |

@@ -32,6 +32,15 @@ Entrada: baralho selecionado (inclui subbaralhos), `now`, predefinição + overr
 
 A fila vive em memória durante a sessão; é recalculada ao abrir a sessão e quando um cartão em aprendizado vence.
 
+## Modo infinito (prática)
+
+Opção do estudo personalizado que dá cartões sem parar. É **só treino**: as respostas não passam pelo FSRS, não geram `ReviewLog`, não mudam `due`/estado e não disparam o backup automático. Lógica em `domain/queue/infinite.ts` (sorteio) e `features/study/model/practice.ts` (sessão em memória).
+
+- **Conjunto:** todos os cartões do baralho e subbaralhos, em qualquer estado (inclusive novos), menos suspensos, enterrados e excluídos. Sem limites diários.
+- **Sorteio ponderado** pela última resposta dada ao cartão na sessão: não visto 1, De novo 4, Difícil 2, Bom 1, Fácil 0,5. O cartão anterior nunca sai duas vezes seguidas (a não ser que seja o único). A aleatoriedade é injetada (`seededRandom` com semente gerada ao abrir a sessão).
+- Botões sem intervalo; o cabeçalho mostra "N cartões praticados" no lugar das contagens.
+- **Desfazer** volta ao cartão anterior e à nota que ele tinha, só em memória. Enterrar/suspender continuam salvos (são ações explícitas) e tiram o cartão da sessão; desfazer devolve.
+
 ## Contagens (tela inicial e do baralho)
 
 `countsFor(deckId, now) → { new, learning, review }` aplicando os mesmos limites da fila (o número mostrado é o que vai ser estudado hoje, não o total existente). Calcular por índice `[deckId+queue+due]`.
