@@ -7,12 +7,21 @@ import {
   buryCard,
   forgottenToday,
   reviewAhead,
+  seededRandom,
   setFlag,
   studyByTag,
   suspendCard,
 } from "../../../domain/queue";
 import type { Rating } from "../../../domain/scheduler";
 import { t } from "../../../i18n/pt-BR";
+import {
+  answerPractice,
+  type PracticeData,
+  removeFromPractice,
+  restoreToPractice,
+  startPractice,
+  undoPractice,
+} from "../model/practice";
 import {
   type AnswerChange,
   answerCard,
@@ -27,13 +36,16 @@ const LEECH_TAG = "leech";
 
 type UndoEntry =
   | { kind: "answer"; change: AnswerChange; taggedLeech: boolean }
-  | { kind: "card"; before: Card };
+  | { kind: "card"; before: Card }
+  | { kind: "practice" };
 
 interface Loaded {
   data: SessionData;
   notes: Map<string, Note>;
   noteTypes: Map<string, NoteType>;
   haptics: boolean;
+  /** Infinite mode: free practice, answers are neither scheduled nor saved (null = off). */
+  practice: { data: PracticeData; random: () => number } | null;
 }
 
 interface State {
@@ -51,10 +63,11 @@ interface State {
 export type CustomStudy =
   | { kind: "forgotten" }
   | { kind: "tag"; tag: string }
-  | { kind: "ahead"; days: number };
+  | { kind: "ahead"; days: number }
+  | { kind: "infinite" };
 
 async function loadSession(deckId: string, custom: CustomStudy | null): Promise<Loaded | null> {
-  const { repos, clock, timeZone } = runtime();
+  const { repos, clock, ids, timeZone } = runtime();
   const now = clock.now();
   const cutoffHour = await repos.settings.get("cutoffHour");
   await repos.cards.releaseBuried(studyDay(now, cutoffHour, timeZone));
@@ -68,13 +81,15 @@ async function loadSession(deckId: string, custom: CustomStudy | null): Promise<
     repos.settings.get("haptics"),
   ]);
   const notes = await repos.notes.getMany([...new Set(cards.map((c) => c.noteId))]);
-  const cardIds = !custom
-    ? null
-    : custom.kind === "forgotten"
-      ? forgottenToday(cards, logsToday, startOfStudyDay(now, cutoffHour, timeZone))
-      : custom.kind === "tag"
-        ? studyByTag(cards, notes, custom.tag)
-        : reviewAhead(cards, endOfStudyDay(now, cutoffHour, timeZone), custom.days);
+  const random = custom?.kind === "infinite" ? seededRandom(ids.next()) : null;
+  const cardIds =
+    !custom || custom.kind === "infinite"
+      ? null
+      : custom.kind === "forgotten"
+        ? forgottenToday(cards, logsToday, startOfStudyDay(now, cutoffHour, timeZone))
+        : custom.kind === "tag"
+          ? studyByTag(cards, notes, custom.tag)
+          : reviewAhead(cards, endOfStudyDay(now, cutoffHour, timeZone), custom.days);
   return {
     data: {
       rootDeckId: deckId,
@@ -90,6 +105,7 @@ async function loadSession(deckId: string, custom: CustomStudy | null): Promise<
     notes: new Map(notes.map((n) => [n.id, n])),
     noteTypes: new Map(noteTypes.map((nt) => [nt.id, nt])),
     haptics,
+    practice: random ? { data: startPractice(cards, random), random } : null,
   };
 }
 
@@ -145,7 +161,7 @@ export function useStudySession(deckId: string, custom: CustomStudy | null = nul
   const s = state.current;
   // biome-ignore lint/correctness/useExhaustiveDependencies: the queue is rebuilt on every change (version) and when time passes (tick)
   const next = useMemo(
-    () => (s.loaded ? upNext(s.loaded.data, runtime().clock.now()) : null),
+    () => (s.loaded && !s.loaded.practice ? upNext(s.loaded.data, runtime().clock.now()) : null),
     [version, s.loaded, s.tick],
   );
 
@@ -160,8 +176,7 @@ export function useStudySession(deckId: string, custom: CustomStudy | null = nul
       .then(() => runtime().repos.autoBackup.runIfConfigured(__APP_VERSION__))
       .catch(() => undefined);
   }, []);
-  const finished =
-    s.loaded != null && next !== null && next.card === null && next.waitUntil === null;
+  const finished = next !== null && next.card === null && next.waitUntil === null;
   useEffect(() => {
     if (finished) runBackup();
   }, [finished, runBackup]);
@@ -175,7 +190,8 @@ export function useStudySession(deckId: string, custom: CustomStudy | null = nul
 
   const current: StudyCard | null = useMemo(() => {
     const loaded = s.loaded;
-    const card = next?.card;
+    const practiceId = loaded?.practice?.data.currentId;
+    const card = loaded?.practice ? loaded.data.cards.find((c) => c.id === practiceId) : next?.card;
     if (!loaded || !card) return null;
     const note = loaded.notes.get(card.noteId);
     const deck = loaded.data.decks.find((d) => d.id === card.deckId);
@@ -196,6 +212,17 @@ export function useStudySession(deckId: string, custom: CustomStudy | null = nul
     if (!loaded || !current || !revealed) return;
     const { clock, ids, repos } = runtime();
     const now = clock.now();
+    if (loaded.haptics && typeof navigator.vibrate === "function") navigator.vibrate(10);
+    if (loaded.practice) {
+      const { data: practice, random } = loaded.practice;
+      update({
+        loaded: { ...loaded, practice: { random, data: answerPractice(practice, rating, random) } },
+        revealed: false,
+        shownAt: now,
+        undo: pushUndo({ kind: "practice" }),
+      });
+      return;
+    }
     const { data, change } = answerCard(loaded.data, {
       cardId: current.card.id,
       rating,
@@ -209,7 +236,6 @@ export function useStudySession(deckId: string, custom: CustomStudy | null = nul
       taggedLeech && note
         ? new Map(loaded.notes).set(note.id, { ...note, tags: [...note.tags, LEECH_TAG] })
         : loaded.notes;
-    if (loaded.haptics && typeof navigator.vibrate === "function") navigator.vibrate(10);
     backup.current = { answers: backup.current.answers + 1, ran: false };
     update({
       loaded: { ...loaded, data, notes },
@@ -237,8 +263,15 @@ export function useStudySession(deckId: string, custom: CustomStudy | null = nul
   const changeCard = (changed: Card, toast: string | null, leaves: boolean) => {
     const { loaded } = state.current;
     if (!loaded || !current) return;
+    const practice =
+      loaded.practice && leaves
+        ? {
+            ...loaded.practice,
+            data: removeFromPractice(loaded.practice.data, changed.id, loaded.practice.random),
+          }
+        : loaded.practice;
     update({
-      loaded: { ...loaded, data: replaceCard(loaded.data, changed) },
+      loaded: { ...loaded, data: replaceCard(loaded.data, changed), practice },
       ...(leaves ? { revealed: false, shownAt: runtime().clock.now() } : {}),
       undo: pushUndo({ kind: "card", before: current.card }),
       toast: toast ?? state.current.toast,
@@ -258,9 +291,12 @@ export function useStudySession(deckId: string, custom: CustomStudy | null = nul
     if (!loaded || !entry) return;
     const { clock, repos } = runtime();
     const now = clock.now();
-    let data: SessionData;
+    let data: SessionData = loaded.data;
     let notes = loaded.notes;
-    if (entry.kind === "answer") {
+    let practice = loaded.practice;
+    if (entry.kind === "practice") {
+      if (practice) practice = { ...practice, data: undoPractice(practice.data) };
+    } else if (entry.kind === "answer") {
       const { change, taggedLeech } = entry;
       data = undoAnswer(loaded.data, change, now);
       const note = notes.get(change.before.noteId);
@@ -280,10 +316,12 @@ export function useStudySession(deckId: string, custom: CustomStudy | null = nul
       );
     } else {
       data = { ...replaceCard(loaded.data, entry.before), pinnedId: entry.before.id };
+      if (practice)
+        practice = { ...practice, data: restoreToPractice(practice.data, entry.before.id) };
       persist(() => repos.cards.save(entry.before));
     }
     update({
-      loaded: { ...loaded, data, notes },
+      loaded: { ...loaded, data, notes, practice },
       revealed: false,
       shownAt: now,
       undo: stack.slice(0, -1),
@@ -298,6 +336,8 @@ export function useStudySession(deckId: string, custom: CustomStudy | null = nul
     revealed: s.revealed,
     shownAt: s.shownAt,
     canUndo: s.undo.length > 0,
+    /** Infinite mode: answers given so far (null outside infinite mode). */
+    practiced: s.loaded?.practice ? s.loaded.practice.data.answered : null,
     toast: s.toast,
     reveal: () => {
       if (state.current.loaded && current) update({ revealed: true });

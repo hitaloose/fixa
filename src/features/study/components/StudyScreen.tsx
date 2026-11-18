@@ -131,10 +131,19 @@ function MoreActions({
   );
 }
 
-function Answers({ current, onAnswer }: { current: StudyCard; onAnswer: (r: Rating) => void }) {
+function Answers({
+  current,
+  onAnswer,
+  intervals,
+}: {
+  current: StudyCard;
+  onAnswer: (r: Rating) => void;
+  /** Off in infinite mode, where answers do not schedule anything. */
+  intervals: boolean;
+}) {
   const now = runtime().clock.now();
-  const preview = previewIntervals(current.card, now, current.preset);
-  const ms: Record<Rating, number> = {
+  const preview = intervals ? previewIntervals(current.card, now, current.preset) : null;
+  const ms: Record<Rating, number> | null = preview && {
     1: preview.again,
     2: preview.hard,
     3: preview.good,
@@ -150,7 +159,9 @@ function Answers({ current, onAnswer }: { current: StudyCard; onAnswer: (r: Rati
           className={`flex min-h-14 flex-col items-center justify-center rounded-field px-1 font-semibold ${RATING_STYLE[r]}`}
         >
           <span>{t.study.ratings[r]}</span>
-          <span className="text-xs font-normal"> {formatInterval(ms[r], t.interval)}</span>
+          {ms ? (
+            <span className="text-xs font-normal"> {formatInterval(ms[r], t.interval)}</span>
+          ) : null}
         </button>
       ))}
     </div>
@@ -166,7 +177,9 @@ const customTitle = (custom: CustomStudy) =>
     ? t.study.custom.forgotten
     : custom.kind === "tag"
       ? t.study.custom.tag(custom.tag)
-      : t.study.custom.ahead(custom.days);
+      : custom.kind === "ahead"
+        ? t.study.custom.ahead(custom.days)
+        : t.study.custom.infinite;
 
 export function StudyScreen({ deckId, custom }: { deckId: string; custom?: CustomStudy }) {
   const session = useStudySession(deckId, custom ?? null);
@@ -230,7 +243,13 @@ export function StudyScreen({ deckId, custom }: { deckId: string; custom?: Custo
       <header className="flex items-center justify-between gap-2">
         {/* When the deck is done, the message below carries the way back. */}
         {current ? <BackLink deckId={deckId} /> : <span className="size-11" />}
-        <Counts counts={session.counts} current={current} />
+        {session.practiced !== null ? (
+          <p aria-live="polite" className="font-display text-lg font-bold tabular-nums">
+            {t.study.custom.practiced(session.practiced)}
+          </p>
+        ) : (
+          <Counts counts={session.counts} current={current} />
+        )}
         <div className="flex items-center">
           {current?.preset.showTimer ? (
             <Timer key={session.shownAt} since={session.shownAt} />
@@ -248,7 +267,10 @@ export function StudyScreen({ deckId, custom }: { deckId: string; custom?: Custo
         </div>
       </header>
       {custom ? (
-        <p className="-mt-2 text-center text-sm font-medium text-muted">{customTitle(custom)}</p>
+        <div className="-mt-2 text-center text-sm text-muted">
+          <p className="font-medium">{customTitle(custom)}</p>
+          {custom.kind === "infinite" ? <p>{t.study.custom.infiniteHint}</p> : null}
+        </div>
       ) : null}
 
       {current ? (
@@ -271,7 +293,11 @@ export function StudyScreen({ deckId, custom }: { deckId: string; custom?: Custo
             </div>
           </section>
           {session.revealed ? (
-            <Answers current={current} onAnswer={session.answer} />
+            <Answers
+              current={current}
+              onAnswer={session.answer}
+              intervals={session.practiced === null}
+            />
           ) : (
             <Button onClick={session.reveal} className="min-h-14 bg-contrast text-on-contrast">
               {t.study.showAnswer}
@@ -288,9 +314,11 @@ export function StudyScreen({ deckId, custom }: { deckId: string; custom?: Custo
               ? t.study.waiting(
                   formatInterval(session.waitUntil - runtime().clock.now(), t.interval),
                 )
-              : custom
-                ? t.study.custom.done
-                : t.study.done}
+              : session.practiced !== null
+                ? t.study.custom.infiniteEmpty
+                : custom
+                  ? t.study.custom.done
+                  : t.study.done}
           </p>
           <Link
             to="/decks/$deckId"

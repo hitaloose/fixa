@@ -146,6 +146,11 @@ export const t = {
       aheadLabel: "Revisões dos próximos dias",
       aheadDays: "Quantos dias",
       done: "Pronto! Você terminou este estudo personalizado.",
+      infinite: "Modo infinito",
+      infiniteHint: "Treino livre: não altera o agendamento.",
+      infiniteOption: "Cartões sem parar, sorteados do baralho todo. Não altera o agendamento.",
+      infiniteEmpty: "Nenhum cartão para praticar neste baralho.",
+      practiced: (n: number) => plural(n, "cartão praticado", "cartões praticados"),
     },
   },
   options: {

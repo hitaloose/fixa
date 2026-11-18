@@ -47,6 +47,15 @@ function CustomStudySheet({ deckId, onClose }: { deckId: string; onClose: () => 
           {c.forgotten}
           <span className="text-xs font-normal text-muted">{c.forgottenHint}</span>
         </Link>
+        <Link
+          to="/decks/$deckId/study"
+          params={{ deckId }}
+          search={{ custom: "infinite" }}
+          className={option}
+        >
+          {c.infinite}
+          <span className="text-xs font-normal text-muted">{c.infiniteOption}</span>
+        </Link>
         <div className="flex flex-col gap-2">
           <span className="text-sm font-medium">{c.aheadLabel}</span>
           <Stepper label={c.aheadDays} value={days} onChange={setDays} min={1} max={30} />
