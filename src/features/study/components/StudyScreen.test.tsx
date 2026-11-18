@@ -339,4 +339,100 @@ describe("StudyScreen", () => {
       ).toBeInTheDocument();
     });
   });
+
+  describe("infinite mode", () => {
+    const infinite = () =>
+      renderWithRouter(<StudyScreen deckId={deck.id} custom={{ kind: "infinite" }} />);
+    const front = () => screen.getByTestId("card-content").textContent;
+    const answerAndWait = async (name: string, before: string | null) => {
+      await showAnswer();
+      await userEvent.click(answerButton(name));
+      await waitFor(() => expect(front()).not.toBe(before));
+    };
+
+    it("keeps dealing cards, past the daily limits and without repeating one in a row", async () => {
+      await rt.repos.presets.update(SEED_IDS.preset, { newPerDay: 0 });
+      await addNote("cat", "gato");
+      await addNote("dog", "cão");
+      infinite();
+      expect(await screen.findByText("Modo infinito")).toBeInTheDocument();
+      expect(screen.getByText("Treino livre: não altera o agendamento.")).toBeInTheDocument();
+      const first = (await card()).textContent;
+      expect(["cat", "dog"]).toContain(first);
+      const seen: (string | null)[] = [first];
+      for (let i = 0; i < 4; i++) {
+        await answerAndWait("Bom", seen[seen.length - 1] ?? null);
+        seen.push(front());
+      }
+      const other = first === "cat" ? "dog" : "cat";
+      expect(seen).toEqual([first, other, first, other, first]);
+    });
+
+    it("counts the cards practised instead of today's counts", async () => {
+      await addNote("cat", "gato");
+      await addNote("dog", "cão");
+      infinite();
+      expect(await screen.findByText("0 cartões praticados")).toBeInTheDocument();
+      expect(screen.queryByText(/para revisar/)).not.toBeInTheDocument();
+      await answerAndWait("De novo", (await card()).textContent);
+      expect(await screen.findByText("1 cartão praticado")).toBeInTheDocument();
+    });
+
+    it("shows the ratings without intervals", async () => {
+      await addNote("cat", "gato");
+      infinite();
+      await card();
+      await showAnswer();
+      expect(answerButton("De novo")).toHaveTextContent(/^De novo$/);
+      expect(answerButton("Fácil")).toHaveTextContent(/^Fácil$/);
+    });
+
+    it("does not schedule or save answers, nor run the automatic backup", async () => {
+      const run = vi.spyOn(rt.repos.autoBackup, "runIfConfigured").mockResolvedValue("off");
+      const { card: cat } = await addNote("cat", "gato");
+      await addNote("dog", "cão");
+      const { unmount } = infinite();
+      for (const name of ["De novo", "Fácil", "Bom"])
+        await answerAndWait(name, (await card()).textContent);
+      expect(await screen.findByText("3 cartões praticados")).toBeInTheDocument();
+      unmount();
+      expect(await rt.db.reviewLogs.count()).toBe(0);
+      expect(await rt.db.cards.get(cat.id)).toEqual(cat);
+      expect(run).not.toHaveBeenCalled();
+    });
+
+    it("undoes the last answer, showing that card again", async () => {
+      await addNote("cat", "gato");
+      await addNote("dog", "cão");
+      infinite();
+      const first = (await card()).textContent;
+      await answerAndWait("Bom", first);
+      await userEvent.click(screen.getByRole("button", { name: "Desfazer" }));
+      await waitFor(() => expect(front()).toBe(first));
+      expect(await screen.findByText("0 cartões praticados")).toBeInTheDocument();
+      expect(screen.getByRole("button", { name: "Desfazer" })).toBeDisabled();
+    });
+
+    it("buries a card out of the session, and can undo it", async () => {
+      const { card: c } = await addNote("cat", "gato");
+      infinite();
+      await card();
+      await userEvent.click(within(await moreActions()).getByRole("button", { name: "Enterrar" }));
+      expect(
+        await screen.findByText("Nenhum cartão para praticar neste baralho."),
+      ).toBeInTheDocument();
+      await waitFor(async () => expect((await rt.db.cards.get(c.id))?.queue).toBe("buried"));
+      await userEvent.click(screen.getByRole("button", { name: "Desfazer" }));
+      await waitFor(() => expect(front()).toBe("cat"));
+      await waitFor(async () => expect((await rt.db.cards.get(c.id))?.queue).toBe("new"));
+    });
+
+    it("says so when the deck has nothing to practise", async () => {
+      infinite();
+      expect(
+        await screen.findByText("Nenhum cartão para praticar neste baralho."),
+      ).toBeInTheDocument();
+      expect(screen.getByRole("link", { name: "Voltar para o baralho" })).toBeInTheDocument();
+    });
+  });
 });

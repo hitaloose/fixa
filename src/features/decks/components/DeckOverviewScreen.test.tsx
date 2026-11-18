@@ -66,6 +66,18 @@ describe("DeckOverviewScreen", () => {
     );
   });
 
+  it("offers infinite mode in custom study", async () => {
+    const { repos } = await setup();
+    const deck = await repos.decks.createByPath("Inglês", SEED_IDS.preset);
+    renderWithRouter(<DeckOverviewScreen deckId={deck.id} />);
+    await userEvent.click(await screen.findByRole("button", { name: "Estudo personalizado" }));
+    const sheet = screen.getByRole("dialog", { name: "Estudo personalizado" });
+    expect(within(sheet).getByRole("link", { name: /^Modo infinito/ })).toHaveAttribute(
+      "href",
+      `/decks/${deck.id}/study?custom=infinite`,
+    );
+  });
+
   it("links to the deck's options", async () => {
     const { repos } = await setup();
     const deck = await repos.decks.createByPath("Inglês", SEED_IDS.preset);
