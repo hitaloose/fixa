@@ -1,5 +1,6 @@
 export { customQueue, forgottenToday, reviewAhead, studyByTag } from "./custom";
 export { doneTodayFrom } from "./doneToday";
+export { nextPractice, PRACTICE_WEIGHT, type PracticeDraw, practicePool } from "./infinite";
 export { buryCard, setFlag, suspendCard, unsuspendCard } from "./manual";
 export {
   buildQueue,

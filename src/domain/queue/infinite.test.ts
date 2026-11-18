@@ -35,9 +35,9 @@ describe("nextPractice", () => {
   });
 
   it("repeats the only card of a one-card pool", () => {
-    expect(
-      nextPractice({ pool: ["a"], lastRating: {}, previousId: "a", random: fixed(0.5) }),
-    ).toBe("a");
+    expect(nextPractice({ pool: ["a"], lastRating: {}, previousId: "a", random: fixed(0.5) })).toBe(
+      "a",
+    );
   });
 
   it.each([

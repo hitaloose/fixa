@@ -4,9 +4,7 @@
  */
 import type { Card, Note, ReviewLog } from "../model";
 import { LEARN_AHEAD_MS } from "./queue";
-
-const studyable = (c: Card | undefined): c is Card =>
-  c !== undefined && c.deletedAt === null && c.queue !== "suspended" && c.queue !== "buried";
+import { studyable } from "./studyable";
 
 /** Cards answered "Again" since the start of today, in the order they were last forgotten. */
 export function forgottenToday(
