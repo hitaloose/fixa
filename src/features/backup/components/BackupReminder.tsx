@@ -1,6 +1,6 @@
 import { Link } from "@tanstack/react-router";
 import { useId } from "react";
-import { t } from "../../../i18n/pt-BR";
+import { t } from "../../../i18n";
 import { useBackupReminder } from "../hooks/useBackup";
 
 const r = t.settings.reminder;

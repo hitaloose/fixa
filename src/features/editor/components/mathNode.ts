@@ -1,6 +1,6 @@
 import { Node } from "@tiptap/core";
 import { renderCloze } from "../../../domain/templates";
-import { t } from "../../../i18n/pt-BR";
+import { t } from "../../../i18n";
 import { renderLatex } from "../../../lib/math/render";
 
 export interface MathAttrs {

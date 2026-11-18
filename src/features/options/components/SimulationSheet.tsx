@@ -3,7 +3,7 @@ import { runtime } from "../../../data/runtime";
 import { subtreeIds } from "../../../domain/decks";
 import type { Preset } from "../../../domain/model";
 import { type SimulatedDay, simulateWorkload } from "../../../domain/stats";
-import { t } from "../../../i18n/pt-BR";
+import { t } from "../../../i18n";
 import { Sheet } from "../../../ui";
 
 const o = t.options;

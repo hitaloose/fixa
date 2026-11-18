@@ -1,16 +1,16 @@
 <p align="center">
-  <img src="public/favicon.svg" alt="Logo do Fixa" width="96" height="96">
+  <img src="public/favicon.svg" alt="Fixa logo" width="96" height="96">
 </p>
 
 <h1 align="center">Fixa</h1>
 
 <p align="center">
-  <strong>Flashcards com repetição espaçada, feitos para o celular e para fórmulas.</strong><br>
-  Funciona offline, guarda tudo no seu aparelho e abre baralhos do Anki.
+  <strong>Spaced-repetition flashcards, built for your phone and for formulas.</strong><br>
+  Works offline, keeps everything on your device and opens Anki decks.
 </p>
 
 <p align="center">
-  <a href="https://hitaloose.github.io/fixa/"><strong>Abrir o app →</strong></a>
+  <a href="https://hitaloose.github.io/fixa/"><strong>Open the app →</strong></a>
 </p>
 
 <p align="center">
@@ -19,60 +19,63 @@
 </p>
 
 <p align="center">
-  <img src="docs/images/inicio.png" alt="Tela inicial com a árvore de baralhos e as contagens de hoje" width="200">
-  <img src="docs/images/estudo.png" alt="Cartão de estudo com a fórmula do volume da esfera e os quatro botões de resposta" width="200">
-  <img src="docs/images/formula.png" alt="Editor de fórmula em LaTeX com pré-visualização" width="200">
-  <img src="docs/images/estatisticas.png" alt="Estatísticas com respostas de hoje, sequência, retenção real e revisões por dia" width="200">
-  <img src="docs/images/escuro.png" alt="Sessão de estudo no modo escuro" width="200">
+  <img src="docs/images/inicio.png" alt="Home screen with the deck tree and today's counts" width="200">
+  <img src="docs/images/estudo.png" alt="Study card with the sphere volume formula and the four answer buttons" width="200">
+  <img src="docs/images/formula.png" alt="LaTeX formula editor with preview" width="200">
+  <img src="docs/images/estatisticas.png" alt="Statistics with today's answers, streak, true retention and reviews per day" width="200">
+  <img src="docs/images/escuro.png" alt="Study session in dark mode" width="200">
 </p>
 
-## O que é
+## What it is
 
-O Fixa é um app de flashcards no estilo do Anki, pensado para estudar no celular. Ele agenda as revisões com o algoritmo **FSRS**, mostra fórmulas matemáticas com **KaTeX** e tem um editor visual de fórmulas (**MathLive**). Frações aparecem empilhadas, como no caderno.
+Fixa is an Anki-style flashcard app designed for studying on your phone. It schedules reviews with the **FSRS** algorithm, renders math with **KaTeX** and has a visual formula editor (**MathLive**). Fractions are stacked, just like in your notebook.
 
-É um app web instalável (PWA): não precisa de conta nem de servidor, e funciona sem internet.
+It's an installable web app (PWA): no account, no server, and it works without an internet connection. The interface is available in **Portuguese (Brazil)** and **English**.
 
-## Recursos
+## Features
 
-- **Estudo com FSRS:** quatro botões com o próximo intervalo, atalhos de teclado, deslizar para responder, desfazer, enterrar, suspender e marcar.
-- **Fórmulas de primeira classe:** `\( … \)` e `\[ … \]` com KaTeX, editor visual com teclado matemático e omissão dentro da fórmula.
-- **Baralhos e subbaralhos:** limites diários por predefinição, só deste baralho ou só de hoje.
-- **Editor de notas:** formatação, imagens e áudio locais, omissão (cloze), etiquetas e pré-visualização.
-- **Tipos de nota personalizados:** campos, cartões, templates e CSS.
-- **Navegador de cartões:** busca com sintaxe (`deck:`, `tag:`, `is:due`, `-negação`) e ações em massa.
-- **Estatísticas:** retenção real, sequência, mapa de atividade e simulação da carga dos próximos 30 dias.
-- **Estudo personalizado:** esquecidos hoje, por etiqueta ou adiantar revisões.
-- **Compatível com o Anki:** importa `.apkg` e `.colpkg` (formato antigo e atual), importa CSV/TXT e exporta `.apkg`.
-- **Modo escuro**, seguindo o aparelho ou a sua escolha.
+- **Study with FSRS:** four buttons showing the next interval, keyboard shortcuts, swipe to answer, undo, bury, suspend and flag.
+- **First-class formulas:** `\( … \)` and `\[ … \]` with KaTeX, a visual editor with a math keyboard, and cloze deletions inside formulas.
+- **Decks and subdecks:** daily limits per preset, for this deck only, or for today only.
+- **Note editor:** formatting, local images and audio, cloze, tags and preview.
+- **Custom note types:** fields, cards, templates and CSS.
+- **Card browser:** search syntax (`deck:`, `tag:`, `is:due`, `-negation`) and bulk actions.
+- **Statistics:** true retention, streak, activity map and a 30-day workload simulation.
+- **Custom study:** forgotten today, by tag, review ahead, or an infinite practice mode that doesn't touch scheduling.
+- **Anki compatible:** imports `.apkg` and `.colpkg` (legacy and current formats), imports CSV/TXT and exports `.apkg`.
+- **Dark mode**, following your device or your choice.
+- **Portuguese or English**, picked in Settings → Language.
 
-## Seus dados ficam com você
+## Your data stays with you
 
-Não existe backend. Tudo fica no IndexedDB do navegador.
+There is no backend. Everything lives in the browser's IndexedDB.
 
-- **Backup em arquivo:** exporte quando quiser, ou deixe o backup automático gravar numa pasta (Chrome e Edge).
-- **Dois aparelhos:** exporte de um e **mescle** no outro. Revisões feitas nos dois lados não se perdem.
-- **Lembrete:** a tela inicial avisa quando o último backup ficou velho.
+- **File backup:** export whenever you want, or let automatic backup write to a folder (Chrome and Edge).
+- **Two devices:** export from one and **merge** into the other. Reviews done on both sides are never lost.
+- **Reminder:** the home screen tells you when your last backup is getting old.
 
-## Instalar no celular
+## Install on your phone
 
-Abra [hitaloose.github.io/fixa](https://hitaloose.github.io/fixa/) e use **Adicionar à tela inicial** (Android) ou **Compartilhar → Adicionar à Tela de Início** (iPhone).
+Open [hitaloose.github.io/fixa](https://hitaloose.github.io/fixa/) and use **Add to Home screen** (Android) or **Share → Add to Home Screen** (iPhone).
 
-No iPhone, instale antes de começar a estudar: os dados do Safari e os do app instalado ficam separados.
+On iPhone, install it before you start studying: Safari's data and the installed app's data are kept separate.
 
-## Desenvolvimento
+## Development
 
-Requer Node 22 e pnpm 10. As versões estão em [`.tool-versions`](.tool-versions).
+Requires Node 22 and pnpm 10. Versions are pinned in [`.tool-versions`](.tool-versions).
 
 ```bash
 pnpm install
-pnpm dev          # servidor de desenvolvimento
-pnpm check        # lint + regras de camadas + tipos + testes com cobertura
-pnpm test:e2e     # Playwright em 390×844
+pnpm dev          # development server
+pnpm check        # lint + layer rules + types + tests with coverage
+pnpm test:e2e     # Playwright at 390×844
 ```
 
-O projeto segue **TDD estrito**: nenhum código de produção entra sem um teste falhando antes. Leia o [`CLAUDE.md`](CLAUDE.md) e o [`docs/11-tdd.md`](docs/11-tdd.md) antes de contribuir.
+The project follows **strict TDD**: no production code goes in without a failing test first. Read [`CLAUDE.md`](CLAUDE.md) and [`docs/11-tdd.md`](docs/11-tdd.md) before contributing.
 
-As capturas acima são geradas por script, com o app rodando em `pnpm build && pnpm preview`:
+UI strings live in [`src/i18n`](src/i18n): `pt-BR.ts` is the reference and `en.ts` must have the same keys (a test and the `Messages` type enforce it). Every new string goes into both.
+
+The screenshots above are generated by a script, with the app running via `pnpm build && pnpm preview`:
 
 ```bash
 node scripts/screenshots.mjs
@@ -82,16 +85,18 @@ node scripts/screenshots.mjs
 
 React 19 · TypeScript · Vite · TanStack Router · Tailwind CSS v4 · Dexie (IndexedDB) · ts-fsrs · Tiptap · KaTeX · MathLive · sql.js · Vitest · Playwright · Stryker
 
-### Documentação
+### Documentation
 
-- [Produto e escopo](docs/01-produto.md): telas e o que entra em cada fase
-- [Stack e decisões](docs/02-stack.md): bibliotecas escolhidas e o porquê de cada uma
-- [Arquitetura](docs/03-arquitetura.md): camadas, pastas e regras de dependência
-- [Modelo de dados](docs/04-modelo-de-dados.md): entidades e esquema do IndexedDB
-- [Agendamento (FSRS)](docs/05-agendamento.md): fila de estudo, limites e algoritmo
-- [Dados e backup](docs/06-dados-e-backup.md): persistência, backup e mescla entre aparelhos
-- [Fórmulas](docs/07-formulas.md): LaTeX, KaTeX e MathLive
-- [Importação e exportação](docs/08-import-export.md): Anki (`.apkg`) e CSV
-- [Design](docs/09-design.md): cores, componentes, modo escuro e marca
-- [Roadmap](docs/10-roadmap.md): o que já foi feito e o que falta
-- [TDD](docs/11-tdd.md): como os testes são escritos
+The design docs are written in Portuguese.
+
+- [Product and scope](docs/01-produto.md): screens and what goes into each phase
+- [Stack and decisions](docs/02-stack.md): chosen libraries and why
+- [Architecture](docs/03-arquitetura.md): layers, folders and dependency rules
+- [Data model](docs/04-modelo-de-dados.md): entities and the IndexedDB schema
+- [Scheduling (FSRS)](docs/05-agendamento.md): study queue, limits and algorithm
+- [Data and backup](docs/06-dados-e-backup.md): persistence, backup and merging across devices
+- [Formulas](docs/07-formulas.md): LaTeX, KaTeX and MathLive
+- [Import and export](docs/08-import-export.md): Anki (`.apkg`) and CSV
+- [Design](docs/09-design.md): colors, components, dark mode and branding
+- [Roadmap](docs/10-roadmap.md): what's done and what's left
+- [TDD](docs/11-tdd.md): how tests are written

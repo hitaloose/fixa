@@ -71,6 +71,7 @@ const SETTING_KEYS: readonly SettingKey[] = [
   "backupReminderDays",
   "haptics",
   "theme",
+  "language",
 ];
 
 const settingsSchema = z.record(z.string(), z.unknown()).transform((raw, ctx) => {

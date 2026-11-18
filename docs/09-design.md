@@ -44,6 +44,7 @@ As três filas diferem também em claridade, não só em matiz (acessível para 
 ## Modo escuro
 
 - Ajuste "Tema": igual ao aparelho (padrão), claro ou escuro. `src/app/ThemeSync.tsx` aplica `data-theme` no `<html>`; antes de o ajuste ser lido, o CSS segue `prefers-color-scheme` para não piscar claro.
+- Ajuste "Idioma": português (padrão) ou inglês. O `bootstrap` lê o ajuste e chama `setLocale` antes de carregar as rotas (vários módulos leem `t` ao carregar), por isso trocar o idioma recarrega o app. O `<html lang>` acompanha.
 - Os tokens têm os mesmos nomes nos dois temas (`src/app/styles/theme.css`); nenhum componente usa cor literal. Pares de texto conferidos com contraste ≥ 4,5:1 no escuro.
 - Blocos de destaque (resumo de hoje, "Mostrar resposta", toasts) usam `contrast`/`on-contrast`: tinta no claro, cinza elevado no escuro.
 

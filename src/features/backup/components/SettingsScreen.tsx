@@ -2,7 +2,7 @@ import { Link } from "@tanstack/react-router";
 import { type ChangeEvent, type ReactNode, useId, useState } from "react";
 import { BackupFileError } from "../../../data/repositories";
 import type { Backup } from "../../../domain/backup";
-import { t } from "../../../i18n/pt-BR";
+import { LOCALES, t } from "../../../i18n";
 import {
   type FolderHandle,
   folderPickerSupported as pickerIn,
@@ -25,6 +25,8 @@ export interface SettingsScreenProps {
   /** Folder picker for the automatic backup (the File System Access API in the app). */
   pickFolder?: () => Promise<FolderHandle | null>;
   folderPickerSupported?: boolean;
+  /** Reloads the app so a new language applies everywhere (strings are read at load). */
+  reload?: () => void;
 }
 
 function Section({ title, children }: { title: string; children: ReactNode }) {
@@ -38,8 +40,6 @@ function Section({ title, children }: { title: string; children: ReactNode }) {
     </section>
   );
 }
-
-const mb = (bytes: number) => (bytes / 1_000_000).toFixed(1).replace(".", ",");
 
 function RestoreSheet({
   backup,
@@ -55,7 +55,7 @@ function RestoreSheet({
   const [word, setWord] = useState("");
   const activeDecks = backup.data.decks.filter((d) => d.deletedAt === null).length;
   const activeCards = backup.data.cards.filter((c) => c.deletedAt === null).length;
-  const date = new Intl.DateTimeFormat("pt-BR", { dateStyle: "medium" }).format(backup.exportedAt);
+  const date = s.date(backup.exportedAt);
   return (
     <Sheet
       open
@@ -96,6 +96,7 @@ export function SettingsScreen({
   writeAnkiPackage,
   pickFolder = () => pickFolderIn(window as never),
   folderPickerSupported = pickerIn(window as never),
+  reload = () => window.location.reload(),
 }: SettingsScreenProps) {
   const auto = useAutoBackup(pickFolder, appVersion);
   const exportAnki = useAnkiExport(writeAnkiPackage ?? (async () => new Uint8Array()), share);
@@ -110,8 +111,14 @@ export function SettingsScreen({
   const fileId = useId();
   const kindName = useId();
   const themeName = useId();
+  const languageName = useId();
 
   if (!data) return null;
+
+  const changeLanguage = async (language: (typeof LOCALES)[number]) => {
+    await actions.setSetting("language", language);
+    reload();
+  };
 
   const exportBackup = async () => {
     const { blob, fileName } = await actions.exportFile(light, appVersion);
@@ -288,6 +295,28 @@ export function SettingsScreen({
             ))}
           </div>
         </div>
+        <div role="radiogroup" aria-label={s.language} className="flex flex-col gap-1 py-1">
+          <span className="font-medium">{s.language}</span>
+          <div className="grid grid-cols-2 gap-1">
+            {LOCALES.map((language) => (
+              <label
+                key={language}
+                lang={language}
+                className="flex min-h-11 items-center justify-center rounded-button border border-line px-2 text-center text-sm has-checked:border-primary has-checked:bg-new-bg has-checked:text-primary"
+              >
+                <input
+                  type="radio"
+                  name={languageName}
+                  checked={data.language === language}
+                  onChange={() => void changeLanguage(language)}
+                  className="sr-only"
+                />
+                {s.languages[language]}
+              </label>
+            ))}
+          </div>
+          <span className="text-sm text-muted">{s.languageHint}</span>
+        </div>
         <Switch
           label={s.haptics}
           checked={data.haptics}
@@ -309,7 +338,7 @@ export function SettingsScreen({
           <>
             <p className="text-sm">{s.persisted(storage.info.persisted)}</p>
             <p className="text-sm text-muted">
-              {s.usage(mb(storage.info.usage), mb(storage.info.quota))}
+              {s.usage(s.megabytes(storage.info.usage), s.megabytes(storage.info.quota))}
             </p>
             {storage.info.persisted ? null : (
               <Button variant="secondary" onClick={() => void storage.askPersist()}>

@@ -110,7 +110,7 @@ Tipos padrão criados no primeiro uso (seed) com IDs fixos conhecidos.
 
 - `addHistory`: últimos N `noteId` adicionados (tela "Histórico de adições").
 - `handles` (schema v3): pasta escolhida para o backup automático (`FileSystemDirectoryHandle`). Só do aparelho, fora do backup.
-- `settings`: preferências do dispositivo (hora de corte do dia, tema, haptics, `lastBackupAt`).
+- `settings`: preferências do dispositivo (hora de corte do dia, tema, idioma `pt-BR` | `en`, haptics, `lastBackupAt`).
 
 ## Índices Dexie (ponto de partida)
 

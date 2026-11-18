@@ -1,5 +1,5 @@
 import { useId } from "react";
-import { t } from "../../../i18n/pt-BR";
+import { t } from "../../../i18n";
 import type { DaySummary } from "../model/deckList";
 
 export function TodaySummary({ summary }: { summary: DaySummary }) {

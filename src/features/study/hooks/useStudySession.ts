@@ -13,7 +13,7 @@ import {
   suspendCard,
 } from "../../../domain/queue";
 import type { Rating } from "../../../domain/scheduler";
-import { t } from "../../../i18n/pt-BR";
+import { t } from "../../../i18n";
 import {
   answerPractice,
   type PracticeData,

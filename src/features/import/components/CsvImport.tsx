@@ -2,7 +2,7 @@ import { useId, useMemo, useState } from "react";
 import type { DuplicatePolicy } from "../../../data/repositories";
 import { type CsvColumnTarget, type DelimitedFile, planCsvNotes } from "../../../domain/import/csv";
 import { plainText } from "../../../domain/notes";
-import { t } from "../../../i18n/pt-BR";
+import { t } from "../../../i18n";
 import { Button, Select as SelectInput, Switch } from "../../../ui";
 import { useCsvImport, useImportTargets } from "../hooks/useCsvImport";
 

@@ -1,5 +1,5 @@
 import type { ReactNode } from "react";
-import { t } from "../../i18n/pt-BR";
+import { t } from "../../i18n";
 
 /** Logo + wordmark at the top of the home screen (docs/09 › Marca), with an optional action. */
 export function Brand({ action }: { action?: ReactNode }) {

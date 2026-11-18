@@ -1,5 +1,5 @@
 import { Link } from "@tanstack/react-router";
-import { t } from "../../../i18n/pt-BR";
+import { t } from "../../../i18n";
 import { Icon, IconButton } from "../../../ui";
 import type { DeckRow } from "../model/deckList";
 import { CountTriplet } from "./CountTriplet";

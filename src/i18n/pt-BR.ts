@@ -1,4 +1,4 @@
-/** Every UI string lives here (CLAUDE.md › Idioma). */
+/** Every UI string lives here and in en.ts (CLAUDE.md › Idioma). pt-BR is the reference shape. */
 
 const decimal = new Intl.NumberFormat("pt-BR", { maximumFractionDigits: 1 });
 /** pt-BR uses the singular below 2 ("1,5 mês"). */
@@ -362,10 +362,15 @@ export const t = {
     haptics: "Vibrar ao responder",
     theme: "Tema",
     themes: { system: "Igual ao aparelho", light: "Claro", dark: "Escuro" },
+    language: "Idioma",
+    languageHint: "O app recarrega para aplicar o idioma.",
+    languages: { "pt-BR": "Português (Brasil)", en: "English" },
     reminderDays: "Lembrar de fazer backup a cada (dias)",
     storage: "Armazenamento",
     persisted: (yes: boolean) =>
       yes ? "Armazenamento persistente: ativado" : "Armazenamento persistente: não garantido",
+    megabytes: (bytes: number) => (bytes / 1_000_000).toFixed(1).replace(".", ","),
+    date: (ms: number) => new Intl.DateTimeFormat("pt-BR", { dateStyle: "medium" }).format(ms),
     usage: (usedMb: string, quotaMb: string) => `${usedMb} MB usados de ${quotaMb} MB`,
     noStorageInfo: "Informação de armazenamento indisponível neste navegador.",
     askPersist: "Pedir armazenamento persistente",
@@ -546,3 +551,12 @@ export const t = {
     card: (n: number) => `Cartão ${n}`,
   },
 } as const;
+
+/** The shape every locale implements: pt-BR with its literal strings widened to `string`. */
+type Widen<T> = T extends string
+  ? string
+  : T extends (...args: infer A) => infer R
+    ? (...args: A) => Widen<R>
+    : { readonly [K in keyof T]: Widen<T[K]> };
+
+export type Messages = Widen<typeof t>;

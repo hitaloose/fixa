@@ -1,5 +1,5 @@
 import { useId, useState } from "react";
-import { t } from "../../i18n/pt-BR";
+import { t } from "../../i18n";
 
 export interface StepperProps {
   label: string;

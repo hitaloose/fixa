@@ -3,7 +3,7 @@ import { type FormEvent, useEffect, useId, useState } from "react";
 import type { Note, NoteType } from "../../../domain/model";
 import { nextClozeNumber, parseTags } from "../../../domain/notes";
 import { generateCards, renderCard } from "../../../domain/templates";
-import { t } from "../../../i18n/pt-BR";
+import { t } from "../../../i18n";
 import { Button, CardView, IconButton, Select as SelectInput, Sheet, TextField } from "../../../ui";
 import { type DeckOption, useEditorData } from "../hooks/useEditorData";
 import { useMedia } from "../hooks/useMedia";

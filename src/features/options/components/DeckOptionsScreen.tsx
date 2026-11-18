@@ -1,7 +1,7 @@
 import { Link } from "@tanstack/react-router";
 import { type ReactNode, useId, useState } from "react";
 import { type Deck, type Preset, type PresetValues, parseSteps } from "../../../domain/model";
-import { t } from "../../../i18n/pt-BR";
+import { t } from "../../../i18n";
 import {
   Button,
   Icon,

@@ -1,5 +1,5 @@
 import type { QueueCounts } from "../../../domain/queue";
-import { t } from "../../../i18n/pt-BR";
+import { t } from "../../../i18n";
 
 const TONES = {
   new: "text-new-ink",

@@ -46,7 +46,7 @@ pnpm check            # lint + boundaries + typecheck + test:run  ← obrigatór
 
 ## Regras do projeto
 
-- **Idioma:** código, nomes, testes, commits e comentários em **inglês**. Textos da interface em **pt-BR**, só em `src/i18n/pt-BR.ts`.
+- **Idioma:** código, nomes, testes, commits e comentários em **inglês**. Textos da interface só em `src/i18n/`: **pt-BR** (`pt-BR.ts`, padrão e forma de referência) e **inglês** (`en.ts`, mesmas chaves — o teste e o tipo `Messages` cobram). Todo texto novo entra nos dois. Código importa `t` de `src/i18n` (índice), nunca de `pt-BR.ts`; testes podem importar de `pt-BR.ts`.
 - **Camadas** (detalhe em `docs/03-arquitetura.md`): `routes → features → ui | data | domain | lib`. `domain` não importa nada do projeto além de si mesmo. `features` não importam umas das outras. Isso é verificado pelo `pnpm boundaries` — não contorne.
 - **`src/domain` é puro:** sem React, sem Dexie, sem DOM, sem `Date.now()`/`Math.random()` diretos (relógio e IDs são injetados).
 - **Acesso a dados só por `src/data/repositories`.** Componentes usam hooks da própria feature.

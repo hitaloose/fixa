@@ -235,4 +235,13 @@ describe("every documented enum value is accepted and others rejected", () => {
   ])("settings theme %j is valid: %s", (theme, ok) => {
     expect(settingsSchema.shape.theme.safeParse(theme).success).toBe(ok);
   });
+
+  it.each([
+    ["pt-BR", true],
+    ["en", true],
+    ["es", false],
+    ["", false],
+  ])("settings language %j is valid: %s", (language, ok) => {
+    expect(settingsSchema.shape.language.safeParse(language).success).toBe(ok);
+  });
 });

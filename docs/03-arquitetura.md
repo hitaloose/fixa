@@ -89,7 +89,7 @@ fixa/
    │  ├─ schema/             # v1.ts, v2.ts … (uma versão por arquivo, nunca editar publicada)
    │  └─ repositories/       # decks.ts, cards.ts, notes.ts … (+ testes com fake-indexeddb)
    ├─ lib/                   # clock.ts, ids.ts, sanitize.ts, format.ts, math/ (KaTeX, MathLive loaders)
-   ├─ i18n/pt-BR.ts
+   ├─ i18n/                  # pt-BR.ts (forma de referência), en.ts, index.ts (`t` ativo + setLocale)
    └─ workers/               # import.worker.ts, stats.worker.ts
 ```
 

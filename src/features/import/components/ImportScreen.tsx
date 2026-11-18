@@ -1,7 +1,7 @@
 import { Link } from "@tanstack/react-router";
 import { type ChangeEvent, useId, useState } from "react";
 import { type DelimitedFile, parseDelimited } from "../../../domain/import/csv";
-import { t } from "../../../i18n/pt-BR";
+import { t } from "../../../i18n";
 import type { ApkgContents } from "../../../lib/anki/apkg";
 import { useAnkiImport } from "../hooks/useAnkiImport";
 import { CsvImport } from "./CsvImport";

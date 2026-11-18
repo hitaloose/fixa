@@ -1,6 +1,6 @@
 import { useMemo, useState } from "react";
 import { buildDeckTree, visibleRows } from "../../../domain/decks";
-import { t } from "../../../i18n/pt-BR";
+import { t } from "../../../i18n";
 import { type ShareOutcome, shareOrDownload } from "../../../lib/share";
 import { Button, Icon, SearchField } from "../../../ui";
 import { useAnkiExport, type WriteAnkiPackage } from "../hooks/useAnkiExport";

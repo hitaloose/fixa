@@ -5,7 +5,7 @@
  */
 import { useEffect, useRef } from "react";
 import type { DayActivity } from "../../../domain/stats";
-import { t } from "../../../i18n/pt-BR";
+import { t } from "../../../i18n";
 
 const s = t.stats;
 

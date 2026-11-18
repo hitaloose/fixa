@@ -1,5 +1,5 @@
 import { useRegisterSW } from "virtual:pwa-register/react";
-import { t } from "../i18n/pt-BR";
+import { t } from "../i18n";
 import { Button } from "../ui";
 
 /** Shown when a new service worker is waiting (registerType: "prompt"). */

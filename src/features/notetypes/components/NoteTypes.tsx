@@ -11,7 +11,7 @@ import {
   renameField,
 } from "../../../domain/notetypes";
 import { renderCard } from "../../../domain/templates";
-import { t } from "../../../i18n/pt-BR";
+import { t } from "../../../i18n";
 import {
   Button,
   CardView,

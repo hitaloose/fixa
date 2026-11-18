@@ -2,7 +2,7 @@ import { type FormEvent, useId, useState } from "react";
 import type { DeckErrorCode } from "../../../data/repositories";
 import { subtreeIds } from "../../../domain/decks";
 import type { Deck } from "../../../domain/model";
-import { t } from "../../../i18n/pt-BR";
+import { t } from "../../../i18n";
 import { Button, Select, Sheet, TextField } from "../../../ui";
 import { useDeckActions } from "../hooks/useDeckActions";
 import type { DeckRow } from "../model/deckList";

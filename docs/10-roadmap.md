@@ -52,3 +52,4 @@ Marque `[x]` ao concluir. Cada fase termina com o app utilizável. Todo item seg
 - [x] Estudo personalizado (esquecidos hoje, por etiqueta, adiantar revisões)
 - [x] Modo infinito (prática sem agendamento, sorteio ponderado)
 - [x] Modo escuro
+- [x] Interface em inglês (ajuste "Idioma"; pt-BR continua o padrão)

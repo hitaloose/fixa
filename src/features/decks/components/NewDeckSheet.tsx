@@ -1,6 +1,6 @@
 import { type FormEvent, useState } from "react";
 import type { DeckErrorCode } from "../../../data/repositories";
-import { t } from "../../../i18n/pt-BR";
+import { t } from "../../../i18n";
 import { Button, Sheet, TextField } from "../../../ui";
 import { useDeckActions } from "../hooks/useDeckActions";
 

@@ -1,5 +1,5 @@
 import { type ReactNode, useId, useState } from "react";
-import { t } from "../../../i18n/pt-BR";
+import { t } from "../../../i18n";
 import { Select } from "../../../ui";
 import { useStats } from "../hooks/useStats";
 import { ButtonsBars, CardStatesBar, Heatmap, ReviewsChart } from "./charts";

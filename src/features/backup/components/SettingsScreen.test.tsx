@@ -138,6 +138,16 @@ describe("SettingsScreen", () => {
     await waitFor(async () => expect(await rt.repos.settings.get("theme")).toBe("dark"));
   });
 
+  it("chooses the language and reloads to apply it", async () => {
+    const reload = vi.fn();
+    open({ reload });
+    const group = await screen.findByRole("radiogroup", { name: "Idioma" });
+    expect(within(group).getByRole("radio", { name: "Português (Brasil)" })).toBeChecked();
+    await userEvent.click(within(group).getByRole("radio", { name: "English" }));
+    await waitFor(() => expect(reload).toHaveBeenCalledOnce());
+    expect(await rt.repos.settings.get("language")).toBe("en");
+  });
+
   it("empties the trash after confirmation", async () => {
     const card = (await rt.db.cards.toArray())[0];
     await rt.db.cards.update(card?.id ?? "", { deletedAt: NOW, updatedAt: NOW });

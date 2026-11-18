@@ -3,7 +3,7 @@ import { observeElementRect, useVirtualizer } from "@tanstack/react-virtual";
 import { useId, useMemo, useRef, useState } from "react";
 import { buildDeckTree, type DeckNode } from "../../../domain/decks";
 import { parseTags } from "../../../domain/notes";
-import { t } from "../../../i18n/pt-BR";
+import { t } from "../../../i18n";
 import { Button, SearchField, Select, Sheet, Stepper, TextField, Toast } from "../../../ui";
 import { useBrowseData, useBulkActions } from "../hooks/useBrowseData";
 import { type BrowseMode, type BrowseRow, browse, type SortKey, toggleTerm } from "../model/browse";

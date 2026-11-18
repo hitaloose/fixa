@@ -14,12 +14,13 @@ export interface SettingsData {
   backupReminderDays: number;
   trashCount: number;
   theme: Settings["theme"];
+  language: Settings["language"];
 }
 
 export function useSettingsData(): SettingsData | undefined {
   return useLiveQuery(async () => {
     const { repos, clock } = runtime();
-    const [lastBackupAt, cutoffHour, haptics, backupReminderDays, trashCount, theme] =
+    const [lastBackupAt, cutoffHour, haptics, backupReminderDays, trashCount, theme, language] =
       await Promise.all([
         repos.settings.get("lastBackupAt"),
         repos.settings.get("cutoffHour"),
@@ -27,6 +28,7 @@ export function useSettingsData(): SettingsData | undefined {
         repos.settings.get("backupReminderDays"),
         repos.backup.trashCount(),
         repos.settings.get("theme"),
+        repos.settings.get("language"),
       ]);
     return {
       daysSinceBackup:
@@ -36,6 +38,7 @@ export function useSettingsData(): SettingsData | undefined {
       backupReminderDays,
       trashCount,
       theme,
+      language,
     };
   }, []);
 }

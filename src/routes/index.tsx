@@ -1,7 +1,7 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { BackupReminder } from "../features/backup";
 import { DeckListScreen } from "../features/decks";
-import { t } from "../i18n/pt-BR";
+import { t } from "../i18n";
 import { Brand, Icon } from "../ui";
 import { writeAnkiPackage } from "../workers/importClient";
 

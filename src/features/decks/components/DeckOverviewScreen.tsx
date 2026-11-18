@@ -1,6 +1,6 @@
 import { Link } from "@tanstack/react-router";
 import { useId, useState } from "react";
-import { t } from "../../../i18n/pt-BR";
+import { t } from "../../../i18n";
 import { Icon, Sheet, Stepper, TextField } from "../../../ui";
 import { useDeckOverview } from "../hooks/useDeckOverview";
 import { CountTriplet } from "./CountTriplet";

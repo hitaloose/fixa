@@ -23,7 +23,7 @@ function sampleData(): BackupData {
     notes: [note],
     cards: [card],
     reviewLogs: [makeReviewLog({ cardId: card.id })],
-    settings: { cutoffHour: 5, haptics: false },
+    settings: { cutoffHour: 5, haptics: false, language: "en" },
   };
 }
 const MEDIA = [

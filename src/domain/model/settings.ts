@@ -10,6 +10,8 @@ export const settingsSchema = z.object({
   haptics: z.boolean(),
   /** "system" follows the device (prefers-color-scheme). */
   theme: z.enum(["system", "light", "dark"]),
+  /** Interface language; applied on the next load (src/i18n/index.ts). */
+  language: z.enum(["pt-BR", "en"]),
 });
 
 export type Settings = z.output<typeof settingsSchema>;
@@ -21,6 +23,7 @@ export const DEFAULT_SETTINGS: Settings = {
   backupReminderDays: 7,
   haptics: true,
   theme: "system",
+  language: "pt-BR",
 };
 
 /** Validates one setting value; throws when invalid. */

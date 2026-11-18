@@ -4,7 +4,7 @@ import { runtime } from "../../../data/runtime";
 import type { QueueCounts } from "../../../domain/queue";
 import { previewIntervals, type Rating } from "../../../domain/scheduler";
 import { renderCard } from "../../../domain/templates";
-import { t } from "../../../i18n/pt-BR";
+import { t } from "../../../i18n";
 import { formatInterval } from "../../../lib/format";
 import { Button, CardView, Icon, IconButton, Sheet, Toast } from "../../../ui";
 import { useMediaResolver } from "../hooks/useMediaResolver";

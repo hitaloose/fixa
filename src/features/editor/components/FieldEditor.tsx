@@ -3,7 +3,7 @@ import Image from "@tiptap/extension-image";
 import { EditorContent, useEditor, useEditorState } from "@tiptap/react";
 import StarterKit from "@tiptap/starter-kit";
 import { type ChangeEvent, useEffect, useMemo, useRef, useState } from "react";
-import { t } from "../../../i18n/pt-BR";
+import { t } from "../../../i18n";
 import { hasMath } from "../../../lib/math/render";
 import { Icon, IconButton, type IconName } from "../../../ui";
 import { fromEditorHtml, toEditorHtml } from "../model/fieldHtml";

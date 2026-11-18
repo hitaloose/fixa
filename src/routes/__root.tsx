@@ -2,7 +2,7 @@ import { createRootRoute, Link, Outlet, useRouterState } from "@tanstack/react-r
 import type { ReactNode } from "react";
 import { ThemeSync } from "../app/ThemeSync";
 import { UpdatePrompt } from "../app/UpdatePrompt";
-import { t } from "../i18n/pt-BR";
+import { t } from "../i18n";
 import { AppShell, TabBar, type TabBarItem } from "../ui";
 
 const TABS = [

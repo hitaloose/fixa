@@ -1,5 +1,5 @@
 import { useEffect, useId, useRef, useState } from "react";
-import { t } from "../../../i18n/pt-BR";
+import { t } from "../../../i18n";
 import { loadMathLive, watchVirtualKeyboard } from "../../../lib/math/mathlive";
 import { renderLatex } from "../../../lib/math/render";
 import { Button, Sheet } from "../../../ui";
